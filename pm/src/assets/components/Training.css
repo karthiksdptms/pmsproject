@@ -1,0 +1,43 @@
+.menu{
+    position: relative;
+    left: 250px;
+   top:50px;
+   display: flex;
+   flex-wrap: wrap;
+   width: 1200px;
+}
+.hea{
+    position: relative;
+    left: 250px;
+    text-decoration: none;
+    color: black;
+    width: 1200px;
+}
+.sce{
+    
+    color:white;
+    justify-content: center;
+    text-align: center;
+    width:230px ;
+    height: 100px;
+    background-color:rgba(10,150,183,255);
+    border-radius: 10px;
+}
+.rep{
+    color:white;
+    justify-content: center;
+    text-align: center;
+    width:230px ;
+    height: 100px;
+    background-color:#ea4645;
+    border-radius: 10px;
+}
+.att{
+    color:white;
+    justify-content: center;
+    text-align: center;
+    width:230px ;
+    height: 100px;
+    background-color:#9bddaf;
+    border-radius: 10px;
+}

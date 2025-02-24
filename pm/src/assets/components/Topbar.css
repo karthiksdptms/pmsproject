@@ -1,0 +1,246 @@
+*{
+    padding: 0px;
+    margin: 0px;   
+   }
+   body {
+    overflow-y: scroll;
+    position: relative;
+    z-index: 2; /* Higher z-index for scrollbar */
+  }
+  
+   .topbar{
+       width: 100%;
+       background-color: #3c6db9;
+       height: 70px;
+       position: fixed;
+        display: flex;
+       flex-direction: row;
+       z-index: 101;
+       img{
+           height: 80px;
+
+       }
+      
+   }
+   .placementword{
+   position: relative;
+   left: 370px;
+   top: 10px;
+   color: white;
+   font-family: Cambria;
+   }
+   .profile{
+       width: 50px;
+       height: 50px;
+       background-color:white;
+       position: relative;
+       left: 320px;
+       border-radius: 100px;
+       top: 10px;
+   }
+   .admin{
+       color:white;
+       position: relative;
+       left: 55px;
+       top: 16px;
+   
+   }
+   .user1{
+       font-size: 30px;
+       position: relative;
+       bottom: 13px;
+       left: 10px;
+   }
+   .filterbox{
+       
+       width: 92%;
+       height:700px;
+       position: relative;
+       margin-left: 20px;
+       margin-right: 20px;
+      
+       top: px;
+      
+       
+   }   
+   .btnma{
+       margin: 20px;
+   }
+   .filterbutton{
+       width: 100px;
+       height: 30px;
+       text-align: center;
+       border-radius: 5px;
+       background-color: #5c85ad;
+       color:white;
+       position: relative;
+      
+       
+   }
+   .filterbutton:hover{
+       cursor: pointer;
+     
+   }
+   
+   
+   .filterbuttondiv:hover{
+       cursor:pointer;
+      
+       
+   }
+   .filtericon{
+       font-size: 20px;
+       position: relative;
+       margin-left: 2px;
+       margin-right: 5px;
+   color: white;
+       top: 3px;
+       right: 30px;
+   }
+   .fil{
+       position: relative;
+       bottom: 20px;
+       font-weight: 500;
+       
+   }
+   .drop1{
+       border-radius: 8px;
+       position: relative;
+       left: 40px;
+       border:1.3px #1075c3 solid;
+       height: 50px;
+       width: 175px;
+       background-color: rgb(255, 255, 255);
+       color:black ;
+      
+   }
+   .dropdown{
+       
+       display: flex;
+       flex-wrap: wrap;
+      width: 150px;
+       position: relative;
+       bottom: 40px;
+   }
+   .lable1{
+       width: 240px;
+       border-radius: 10px;
+       padding: 15px 15px 15px 15px;
+       margin: 30px;
+       
+   }
+   .lable2{
+       width: 240px;
+       border-radius: 10px;
+       padding: 15px 15px 15px 15px;
+       margin: 30px;
+       position: relative;
+       left:290px;
+       bottom:197px;
+       
+   }
+   .lable3{
+       width: 240px;
+       border-radius: 10px;
+       padding: 15px 15px 15px 15px;
+       margin: 30px;
+       position: relative;
+       left:550px;
+       bottom:325px;
+       
+   }
+   .lable4{
+       width: 240px;
+       border-radius: 10px;
+       padding: 15px 15px 15px 15px;
+       margin: 30px;
+       position: relative;
+       bottom:325px;
+       
+   }
+   .lable5{
+       width: 240px;
+       border-radius: 10px;
+       padding: 15px 15px 15px 15px;
+       margin: 30px;
+       position: relative;
+       bottom:450px;
+       left:290px;
+       
+   }
+   TR{
+       text-align: center;
+   }
+   .navbar{
+
+    background-color: #f1f1f25e;
+    position: relative;
+    left: 20px;
+    top: 200px;
+    height: 50px;
+    width: 95%;
+    box-shadow:1px 1px 15px   #d8e2f5,
+    1px 1px 20px  #dee7f2,
+     1px 1px 25px  #eff3f9,
+     1px 1px 30px   #f6f8fb;
+    border-radius: 5px 5px 5px 5px;
+   }
+   .rajalakshmibottomimg{
+    z-index: 100;
+    bottom:20px;
+   position: fixed;
+   bottom: 0px;
+    width: 100%;
+    height: 57px;
+    background-color: #3c6db9;
+    img{
+        height: 57px;
+        position: relative;
+        left: 120px;
+        background-color:rgba(57,102,172,255) ;
+    }
+   }
+.sidebox{
+
+    position: fixed;
+    top: 93px;
+    background-color: rgb(100, 99, 99);
+    width: 234px;
+    height: 600px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    
+    
+}
+.btnn{
+    color:white;
+    width:100%;
+    height: 30px;
+    padding: px;
+    border-color: rgb(56, 56, 56);
+    border-style: solid;
+    border-width: 0.8px;
+    text-align: left ;
+    position: relative;
+    
+}
+.btnn:hover{
+    background-color: rgba(57,102,172,255);
+    color:white;
+   
+}
+button{
+    background-color:rgb(75, 74, 74) ;
+}
+.btnnn{
+    color:white;
+    width:100%;
+    height: 30px;
+    border-color: rgb(56, 56, 56);
+    border-style: solid;
+    border-width: 0.8px;
+    text-align: left;
+    overflow-x: hidden;
+}

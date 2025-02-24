@@ -1,0 +1,15 @@
+.in{
+    width:"0px"
+}
+.trainbody{
+    position: relative;
+    top: 60px;
+    left: 250px;
+   
+    display: inline;
+}
+.table{
+    width: 1200px;
+    position: relative;
+    left: 250px;
+}

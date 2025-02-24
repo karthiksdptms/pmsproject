@@ -1,0 +1,17 @@
+.tsbody{
+    position: relative;
+    background-color: aqua;
+    width: 1200px;
+    height: 200px;
+    left: 250px;
+    top: 100px;
+    }
+    
+.filterboxess{
+    display: flex;
+    flex-wrap: wrap;
+   position: relative;
+ 
+   top: -50px;
+   width: 1250px;
+}

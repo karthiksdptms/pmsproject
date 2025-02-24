@@ -1,0 +1,122 @@
+
+  .instructions-container {
+    border: 0.5px solid rgb(194, 194, 194); /* Border around the entire section */
+    padding: 15px;
+    max-width: 400px; 
+    min-height: 400px;/* Adjust width as needed */
+    margin: 0px;
+    position: relative;
+    border-radius: 10px;
+  }
+  
+  .instructions-content {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
+  }
+  
+  .divider {
+    border-top: 1px solid rgb(194, 194, 194); /* Line between instructions and circles */
+    margin: 10px 0;
+  }
+  
+  .question-circles {
+    display: flex;
+    flex-wrap: wrap; /* Ensure wrapping */
+    
+    
+    gap: 30px;
+    max-width: 350px;
+  }
+  
+  .circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+    border: 2px solid black;
+    background-color: lightgray;
+  }
+  
+  .answered {
+    background-color: rgb(119, 168, 119);
+    color: white;
+  }
+  
+  .skipped {
+    background-color: orange;
+    color: white;
+  }
+  
+  .unanswered {
+    background-color: lightgray;
+    color: black;
+  }
+  
+  
+  .text-wrap {
+    word-wrap: break-word; /* Ensure long words break */
+    overflow-wrap: break-word; /* Break words correctly */
+    white-space: normal; /* Allow natural line breaks */
+    max-width: 100%; /* Prevent overflow */
+  }
+.qq{
+    width: 60%;
+}  
+.qqq{
+    position: relative;
+    bottom: 400px;
+}
+.cc{
+    position: relative;
+    left: 600px;
+}
+.ic{
+    position: relative;
+    left: 700px;
+    bottom: 40px;
+}
+.iic{
+position: relative;
+bottom: 370px;
+}
+.int{
+  padding: 5px;
+  width: 108.8%;
+  height: 35px;
+  position: relative;
+  right: 16px;
+  bottom: 16px;
+  background-color: rgb(243, 192, 192);
+
+}.timer-box {
+  width:80px;
+  padding: 10px;
+  text-align: center;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  border-radius: 8px;
+  margin: auto;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.5s ease-in-out;
+  position: relative;
+  left: 500px;
+  bottom: 50px;
+}
+
+.timer-text {
+  margin: 0;
+}
+
+
+table{
+  box-shadow:1px 1px 10px #dae5f3,
+  1px 1px 15px #dae5f3,
+   1px 1px 20px #dae5f3,
+   1px 1px 25px #dae5f3; }
