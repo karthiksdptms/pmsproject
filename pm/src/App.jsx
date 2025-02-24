@@ -23,7 +23,7 @@ function App() {
   
   return (
     <>
-   <h1>gopikaaah</h1>
+ <h2>gopikaaah</h2>
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Login/>}/>
