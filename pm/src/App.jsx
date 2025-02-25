@@ -40,9 +40,7 @@ function App() {
        <Route path='/Studentdashboard' element={<Studentdashboard/>}/>
        <Route path='/Studenttraining' element={<Studenttraining/>}/>
        <Route path='/Studentplacement' element={<Studentplacement/>}/>
-       <h2>
-       gopika 
-       </h2>
+      
       </Routes>
       </BrowserRouter>
     </>
