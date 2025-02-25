@@ -50,7 +50,7 @@ function Topbar() {
           </button>
         </Link>
         <div className="profile">
-          <h6 className="admin">{user.name}</h6>
+          <h6 className="admin">Admin</h6>
           <FaUser className="user1" />
         </div>
       </div>
