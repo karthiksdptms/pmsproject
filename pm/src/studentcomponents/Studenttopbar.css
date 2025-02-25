@@ -226,11 +226,6 @@
     position: relative;
     
 }
-.btnn:hover{
-    background-color: rgba(57,102,172,255);
-    color:white;
-   
-}
 button{
     background-color:rgb(75, 74, 74) ;
 }

@@ -1,9 +1,10 @@
 import React from "react";
 import "./Topbar.css";
-import { Link } from "react-router-dom";
+import { NavLink,Link } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { GrAchievement } from "react-icons/gr";
 import { useAuth } from "../context/authContext";
+
 
 function Topbar() {
   const {user} = useAuth();
@@ -28,7 +29,7 @@ function Topbar() {
         >
           AN AUTONOMOUS INSTITUTION
         </h6>
-        <Link to="/">
+        <Link to="/Login">
           <button
             type="button"
             class="btn "
@@ -59,50 +60,60 @@ function Topbar() {
       <div className="sidebox">
       <div className="btnn">
       {" "}
-          <Link to="/Maindashboard">
-            <button class="btnn ">
-            <i class="bi bi-speedometer"  style={{ marginRight: "10px",paddingLeft:'5px' }} ></i>
-             
-              Dashboard
-            </button>
-          </Link>
+      <NavLink to="/Maindashboard">
+  {({ isActive }) => (
+    <button className={`btnn ${isActive ? "bgg" : ""}`}>
+      <i className="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
+      Dashboard
+    </button>
+  )}
+</NavLink>
         </div>
     
         <div className="btnn">
-        <Link to="/Dashboard">
-            <button class="btnn">
+        <NavLink to="/Dashboard" >
+        {({ isActive }) => (
+        <button className={`btnn ${isActive ? "bgg" : ""}`}>
             <i class="bi bi-funnel-fill"   style={{ marginRight: "10px" ,paddingLeft:'5px'}} />
               Student's Filters
             </button>
-          </Link>
+             )}
+          </NavLink>
         </div>
         <div className="btnn">
           {" "}
-          <Link to="/Training">
-            <button class="btnn">
+          <NavLink to="/Training">
+          {({ isActive }) => (
+          <button className={`btnn ${isActive ? "bgg" : ""}`}>
               <i class="bi bi-bullseye"   style={{ marginRight: "10px",paddingLeft:'5px' }} />
               Training
             </button>
-          </Link>
+             )}
+          </NavLink>
+          
         </div>
         <div className="btnnn">
           {" "}
-          <Link to="/Placementannounce">
-            <button class="btnn ">
+          <NavLink to="/Placementannounce">
+          {({ isActive }) => (
+          <button className={`btnn ${isActive ? "bgg" : ""}`}>
               <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px'}} />
               Placement Announcements
             </button>
-          </Link>
+             )}
+          </NavLink>
         </div>
        
         <div className="btnn">
         {" "}
-          <Link to="/Aptitude">
-            <button class="btnn ">
+          <NavLink to="/Aptitude">
+          {({ isActive }) => (
+          <button className={`btnn ${isActive ? "bgg" : ""}`}>
               <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px'}} />
               Aptitude
             </button>
-          </Link>
+             )}
+          </NavLink>
         </div>
         <div className="btnn">
           <button class="btnn"></button>
