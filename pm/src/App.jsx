@@ -40,9 +40,6 @@ function App() {
        <Route path='/Studentdashboard' element={<Studentdashboard/>}/>
        <Route path='/Studenttraining' element={<Studenttraining/>}/>
        <Route path='/Studentplacement' element={<Studentplacement/>}/>
-
-       
-
       </Routes>
       </BrowserRouter>
     </>
