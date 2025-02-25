@@ -97,7 +97,7 @@ function Topbar() {
           <NavLink to="/Placementannounce">
           {({ isActive }) => (
           <button className={`btnn ${isActive ? "bgg" : ""}`}>
-              <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px'}} />
+              <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"20px"}} />
               Placement Announcements
             </button>
              )}
@@ -109,7 +109,7 @@ function Topbar() {
           <NavLink to="/Aptitude">
           {({ isActive }) => (
           <button className={`btnn ${isActive ? "bgg" : ""}`}>
-              <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px'}} />
+              <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"20px"}} />
               Aptitude
             </button>
              )}

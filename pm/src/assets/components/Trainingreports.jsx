@@ -222,11 +222,11 @@ function Trainingreports() {
         <div className="row mb-3" style={{ position: "relative", left: "320px", top: "70px", zIndex: "100",width:"600px" }}>
           <div className="col-md-3">
             <label>From Date:</label>
-            <input type="date" className="form-control" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+            <input type="date" className="form-control" value={fromDate} onChange={(e) => setFromDate(e.target.value)}  style={{width:"250px"}}/>
           </div>
-          <div className="col-md-3">
+          <div className="col-md-3" style={{position:"relative",right:"-150px"}}>
             <label>To Date:</label>
-            <input type="date" className="form-control" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+            <input type="date" className="form-control" value={toDate} onChange={(e) => setToDate(e.target.value)} style={{width:"250px"}} />
           </div>
         </div></div>
       <button className="btn btn-success mb-3" style={{
