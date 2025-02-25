@@ -41,7 +41,7 @@ function App() {
        <Route path='/Studenttraining' element={<Studenttraining/>}/>
        <Route path='/Studentplacement' element={<Studentplacement/>}/>
        <h2>
-        ytuyaqaaaaaaa
+       gopika 
        </h2>
       </Routes>
       </BrowserRouter>
