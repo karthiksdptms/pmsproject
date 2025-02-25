@@ -2,19 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Maindashboard.css";
 import Topbar from "./Topbar";
-import { useAuth } from "../context/authContext";
+
 
 function Maindashboard() {
-  const {user,loading}=useAuth()
-  const navigate= useNavigate()
+ 
+  
 
-  if(loading){
-    return <div>Loading...</div>
-  }
 
-  if(!user){
-     navigate('/')
-  }
   const [placed, setPlaced] = useState(20);
   const [notPlaced, setNotPlaced] = useState(80);
 

@@ -1,9 +1,10 @@
 import React, {  useContext,createContext, useState } from 'react'
 const userContext=createContext()
 import { useEffect } from 'react'
+import axios from 'axios'
 
 
-const authContext =({children})=>{
+const AuthContext =({children})=>{
     const [user,setUser]=useState(null)
     const [loading,setLoading]=useState(true)
 
@@ -15,17 +16,21 @@ const authContext =({children})=>{
             if(token){
             const response= await axios.get('http://localhost:3000/api/auth/verify',{
               headers:{
-              "Authorization":`Bearer ${token}`
+              Authorization:`Bearer ${token}`,
             }
             })
+            console.log(response)
+
             if(response.data.success){
               setUser(response.data.user)
 
             }
         }else{
           setUser(null)
+          setLoading(false)
         }
       }catch(error){
+        console.log(error)
           if(error.response && !error.response.data.error){
             setUser(null)
 
@@ -55,4 +60,4 @@ const authContext =({children})=>{
 
 }
  export const useAuth=()=>useContext(userContext)
-export default authContext;
+export default AuthContext;

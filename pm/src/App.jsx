@@ -1,7 +1,7 @@
 import './App.css'
 import Dashboard from './assets/components/Dashboard'
 import Login from './assets/components/Login'
-import { BrowserRouter,Routes,Route } from 'react-router-dom'
+import { BrowserRouter,Routes,Route,Navigate } from 'react-router-dom'
 import Maindashboard from './assets/components/Maindashboard'
 import Trainingreports from './assets/components/Trainingreports'
 import Placementsannounce from './assets/components/Placementannounce'
@@ -16,6 +16,8 @@ import { useEffect } from 'react'
 import Studentdashboard from './studentcomponents/Studentdashboard'
 import Studenttraining from './studentcomponents/Studenttraining'
 import Studentplacement from './studentcomponents/Studentplacement'
+import PrivateRoute from './assets/components/pages/utils/PrivateRoute'
+import RoleBaseRoutes from './assets/components/pages/utils/RoleBaseRoutes'
 
 
 
@@ -25,9 +27,15 @@ function App() {
     <>
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Login/>}/>
+        <Route path='/' element={<Navigate to="Maindashboard"/>}/>
+        <Route path='/Login' element={<Login/>}/>
         <Route path='/Dashboard' element={<Dashboard/>}/>
-        <Route path='/Maindashboard' element={<Maindashboard/>}/>
+        <Route path='/Maindashboard' element={
+          <PrivateRoute>
+            <RoleBaseRoutes requiredRole={["admin"]}>
+          <Maindashboard/>
+          </RoleBaseRoutes>
+          </PrivateRoute>}/>
         <Route path='/Training' element={<Training/>}/>
         <Route  path='/Placementannounce' element= {<Placementsannounce/>}/>
         <Route  path='/Trainingreports' element= {<Trainingreports/>} />
