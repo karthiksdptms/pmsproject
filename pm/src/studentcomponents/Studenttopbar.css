@@ -5,7 +5,7 @@
    body {
     overflow-y: scroll;
     position: relative;
-    z-index: 2; /* Higher z-index for scrollbar */
+    z-index: 2; 
   }
   
    .topbar{
@@ -225,11 +225,6 @@
     text-align: left ;
     position: relative;
     
-}
-.btnn:hover{
-    background-color: rgba(57,102,172,255);
-    color:white;
-   
 }
 button{
     background-color:rgb(75, 74, 74) ;

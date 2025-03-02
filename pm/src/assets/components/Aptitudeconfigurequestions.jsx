@@ -177,7 +177,7 @@ function Aptitudeconfigurequestions() {
     );
 
   return (
-    <><Topbar />
+    <>
       <div
         style={{
           position: "relative",
@@ -188,7 +188,7 @@ function Aptitudeconfigurequestions() {
         }}
       >
         <Link
-          to="/Aptitude"
+          to="/Maindashboard/Aptitude"
           style={{ textDecoration: "none", color: "black" }}
         >
           <div>
@@ -234,7 +234,7 @@ function Aptitudeconfigurequestions() {
               {displayedData.length > 0 && (
   <div className="mt-4 " >
   
-    <h4 className="mb-4" style={{position:"relative",top:"50px",left:"50px",width:'300px'}}>
+    <h4 className="mb-4" style={{position:"relative",top:"50px",left:"50px",width:'350px'}}>
   Total Question Papers: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color:"white" }}>{totalRecords}</span>
 </h4>
 

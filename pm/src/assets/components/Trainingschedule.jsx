@@ -48,7 +48,7 @@ function Trainingschedule() {
 
   const [students,setstudents]=useState([])
   useEffect(() => {
-    axios.get("http://localhost:3005/getstudents")
+    axios.get("http://localhost:3000/getstudents")
       .then(response => setstudents(response.data))
       .catch(error => console.error("Error fetching students:", error));
     }, []);
@@ -157,12 +157,12 @@ function Trainingschedule() {
 
   return (
     <>
-      <Topbar />
+    
       <div>
         <div className="hea">
           {" "}
           <Link
-            to="/Training"
+            to="/Maindashboard/Training"
             style={{ textDecoration: "none", color: "black" }}
           >
             <div>

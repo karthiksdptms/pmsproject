@@ -6,10 +6,10 @@ import { Link } from 'react-router-dom';
 
 function Trainingattendance() {
   return (
-    <><Topbar/>    
+    <>    
     <div className="had">
         <Link
-            to="/Training"
+            to="/Maindashboard/Training"
             style={{ textDecoration: "none", color: "black" }}
           >
             <div>

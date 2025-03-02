@@ -1,0 +1,3 @@
+_id,trtype,trainee,fromdate,todate,duration,batch,department,participated,__v
+67b9b0113af94dc81542f30a,Aptitude,gopika,2025-02-22T00:00:00.000Z,2025-02-24T00:00:00.000Z,5 day,2023-2027,aids,100,0
+67b9b0593af94dc81542f311,Techical,karthik,2025-02-24T00:00:00.000Z,2025-02-26T00:00:00.000Z,1day,2020,aids,20,0

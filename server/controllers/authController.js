@@ -8,12 +8,12 @@ const login = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(404).json({ success: false, error: "you are not the admin" }); 
+            return res.status(404).json({ success: false, error: "User not found" });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ success: false, error: "Incorrect password" }); 
+            return res.status(400).json({ success: false, error: "Incorrect password" });
         }
 
         const token = jwt.sign(
@@ -25,16 +25,19 @@ const login = async (req, res) => {
         return res.status(200).json({
             success: true,
             token,
-            user: { _id: user._id, name: user.name, role: user.role }
+            user: { _id: user._id, name: user.name, role: user.role, profileImage: user.profileImage }
         });
 
     } catch (error) {
-        console.error("Login error:", error); // Log full error for debugging
+        console.error("Login error:", error); 
         return res.status(500).json({ success: false, error: "Server error" });
     }
 };
-const verify=(req,res)=>{
-    return res.status(200).json({success:true,user:req.user})
-}
 
-export { login,verify };
+
+const verify = (req, res) => {
+    return res.status(200).json({success:true,user:req.user})
+   
+};
+
+export { login, verify };
