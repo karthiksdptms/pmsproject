@@ -7,14 +7,22 @@ import connectDatabase from "./db/db.js";
 import FilterModel from "./models/FilterModel.js";
 import QpModel from "./models/QpModel.js";
 import TrainingModel from './models/TrainingModel.js'
+import studentRouter from './routes/students.js'
+
 
 
 connectDatabase();
 
 const app = express();
 app.use(cors());
+app.use (express.static('public/uploads'));
 app.use(express.json());
 app.use('/api/auth',authRouter);
+app.use('/api/student',studentRouter)
+
+
+
+
 
 //filtertable
 app.get("/getstudents", async (req, res) => {
