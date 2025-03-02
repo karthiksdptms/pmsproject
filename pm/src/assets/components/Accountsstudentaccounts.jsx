@@ -474,7 +474,7 @@ function Accountsstudentaccounts() {
 
 
             {!showInput && (
-              <button className="btn btn-primary " style={{ position: "relative", bottom: "72.5px", zIndex: "100", left: "1000px" }} onClick={() => setShowInput(true)}>
+              <button className="btn btn-primary " style={{ position: "relative", bottom: "78.5px", zIndex: "100", left: "1000px" }} onClick={() => setShowInput(true)}>
                 Upload
               </button>
             )}
@@ -605,14 +605,14 @@ function Accountsstudentaccounts() {
                           className="btn btn-primary btn-sm me-2"
                           onClick={() => handleEdit(student._id)}
                         >
-                          <i className="bi bi-pencil"></i> Edit
+                         Edit
                         </button>
 
                         <button
                           className="btn btn-danger btn-sm"
                           onClick={() => handleDelete(student._id)}
                         >
-                          <i className="bi bi-trash"></i> Delete
+                         Delete
                         </button>
                       </td>
                     </tr>

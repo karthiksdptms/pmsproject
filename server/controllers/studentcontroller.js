@@ -406,7 +406,7 @@ const uploadCSV = async (req, res) => {
               achievements,
               language,
               aoi,
-              email,
+             
               address,
               phoneno,
               placement,
