@@ -46,7 +46,7 @@ function Placementsannounce() {
     "API Developer",
     "Others",
   ];
-  //old version
+ 
   const [date, setDate] = useState("");
   const [venue, setVenue] = useState("");
   const [generalReq, setGeneralReq] = useState("");
@@ -386,7 +386,7 @@ function Placementsannounce() {
   return (
     <>
       <div>
-        <Topbar />
+       
       </div>
 
       <div className="trcontainer">
@@ -434,7 +434,8 @@ function Placementsannounce() {
                     </div>
                   </div>
                   <div className="cname">
-                    <img src={item.COMPANYIMG} alt="" />
+                  <img src={`/images/${item.COMPANYIMG}`} alt={item.COMPANYNAME} style={{ width: "100px", height: "100px" }} />
+
                   </div>
                 </div>
               </button>

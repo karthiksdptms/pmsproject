@@ -4,15 +4,17 @@ import { NavLink,Link } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { GrAchievement } from "react-icons/gr";
 import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 
 function Topbar() {
-  const {user} = useAuth();
+  const {user,logout} = useAuth();
+  
   
   return (
     <>
       <div className="topbar">
-        <img src="ritraja.jpg" class="img-fluid" alt="Responsive image" />
+        <img src="/ritraja.jpg" class=""   alt="logo"/>
         <h1 className="placementword">PLACEMENT AND TRAINING</h1>
         <h6
           style={{
@@ -29,8 +31,9 @@ function Topbar() {
         >
           AN AUTONOMOUS INSTITUTION
         </h6>
-        <Link to="/Login">
+       
           <button
+          onClick={logout}
             type="button"
             class="btn "
             style={{
@@ -49,18 +52,19 @@ function Topbar() {
             <i class="bi bi-box-arrow-left" style={{ marginRight: "10px" }}></i>
             Logout
           </button>
-        </Link>
-        <div className="profile">
-          <h6 className="admin">{user.name}</h6>
-          <FaUser className="user1" />
-        </div>
+       
+          <div className="profile1">
+   <h6 className="admin">{user && user.name}</h6>
+  <FaUser className="user1" />
+</div>
+
       </div>
        
      
       <div className="sidebox">
       <div className="btnn">
       {" "}
-      <NavLink to="/Maindashboard">
+      <NavLink to="/Maindashboard" end>
   {({ isActive }) => (
     <button className={`btnn ${isActive ? "bgg" : ""}`}>
       <i className="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
@@ -71,7 +75,7 @@ function Topbar() {
         </div>
     
         <div className="btnn">
-        <NavLink to="/Dashboard" >
+        <NavLink to="/Maindashboard/Dashboard" end>
         {({ isActive }) => (
         <button className={`btnn ${isActive ? "bgg" : ""}`}>
             <i class="bi bi-funnel-fill"   style={{ marginRight: "10px" ,paddingLeft:'5px'}} />
@@ -82,7 +86,7 @@ function Topbar() {
         </div>
         <div className="btnn">
           {" "}
-          <NavLink to="/Training">
+          <NavLink to="/Maindashboard/Training">
           {({ isActive }) => (
           <button className={`btnn ${isActive ? "bgg" : ""}`}>
               <i class="bi bi-bullseye"   style={{ marginRight: "10px",paddingLeft:'5px' }} />
@@ -94,7 +98,7 @@ function Topbar() {
         </div>
         <div className="btnnn">
           {" "}
-          <NavLink to="/Placementannounce">
+          <NavLink to="/Maindashboard/Placementannounce">
           {({ isActive }) => (
           <button className={`btnn ${isActive ? "bgg" : ""}`}>
               <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"20px"}} />
@@ -106,7 +110,7 @@ function Topbar() {
        
         <div className="btnn">
         {" "}
-          <NavLink to="/Aptitude">
+          <NavLink to="/Maindashboard/Aptitude">
           {({ isActive }) => (
           <button className={`btnn ${isActive ? "bgg" : ""}`}>
               <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"20px"}} />
@@ -116,7 +120,14 @@ function Topbar() {
           </NavLink>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+        <NavLink to="/Maindashboard/Accounts">
+          {({ isActive }) => (
+          <button className={`btnn ${isActive ? "bgg" : ""}`}>
+              <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"20px"}} />
+              Accounts
+            </button>
+             )}
+          </NavLink>
         </div>
         <div className="btnn">
           <button class="btnn"></button>
