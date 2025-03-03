@@ -8,8 +8,11 @@ const questionSchema = new mongoose.Schema({
 });
 
 const finalSchema= new mongoose.Schema({
+  qpcode: { type: String, required: true },
   title: { type: String, required: true },
   academicYear: { type: String, required: true },
+  department: { type: String, required: true },
+
   examDate: { type: Date, required: true },
   startTime: { type: String, required: true },
   endTime: { type: String, required: true },

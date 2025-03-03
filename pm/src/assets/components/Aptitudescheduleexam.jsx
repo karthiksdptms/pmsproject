@@ -45,7 +45,7 @@ function Aptitudescheduleexam() {
                      width: "450px",
                    }}
                  >
-                Schedule Exam{" "}
+                Schedule Exam
                  </h2>
                </div>
              </Link>

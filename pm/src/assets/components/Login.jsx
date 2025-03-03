@@ -19,10 +19,8 @@ function Login() {
     setError(null); 
     
     try {
-      const response = await axios.post("http://localhost:3000/api/auth/login", {
-        email,
-        password,
-      });
+      const response = await axios.post("http://localhost:3000/api/auth/login", 
+      {email,password})
 
       console.log("Login Response:", response.data); 
 
@@ -31,7 +29,7 @@ function Login() {
         localStorage.setItem("token", response.data.token);
 
         if (response.data.user.role === "admin") {
-          navigate("/mainDashboard");
+          navigate("/MainDashboard");
         } else if(response.data.user.role === "student") {
           navigate("/Studentdashboard");
         }else{
