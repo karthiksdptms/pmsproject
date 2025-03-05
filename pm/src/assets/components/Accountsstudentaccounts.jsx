@@ -128,7 +128,7 @@ function Accountsstudentaccounts() {
     offers: [],
   });
 
-  // Add Offer
+  
   const addOffer = () => {
     setStudent({
       ...student,
@@ -136,16 +136,15 @@ function Accountsstudentaccounts() {
     });
   };
 
-  // Delete Offer
+
   const deleteOffer = (index) => {
     const updatedOffers = student.offers.filter((_, i) => i !== index);
     setStudent({ ...student, offers: updatedOffers });
   };
 
-  // Handle Input Change
 
 
-  // Handle Offer Input Change
+
   const handleOfferChange = (index, e) => {
     const { name, value } = e.target;
     const updatedOffers = [...student.offers];
@@ -265,7 +264,7 @@ function Accountsstudentaccounts() {
   };
 
 
-  //delete operation
+
 
   const handleDelete = async (id) => {
     const confirm = window.confirm("Are you sure you want to delete this student?");
@@ -288,7 +287,6 @@ function Accountsstudentaccounts() {
     }
   };
 
-  ///editfun
   const handleEdit = (id) => {
     const selectedStudent = displayedData.find((student) => student._id === id);
     if (selectedStudent) {
@@ -296,7 +294,7 @@ function Accountsstudentaccounts() {
         ...selectedStudent,
         offers: selectedStudent.offers || [],
       });
-      setShoww(true); // Show modal
+      setShoww(true); 
     }
   };
 

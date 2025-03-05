@@ -12,6 +12,7 @@ function Aptitudeconfigurequestions() {
   const [instructions, setInstructions] = useState("");
   const [qpcode, setqpcode] = useState("");
   const [department, setdepartment] = useState("");
+  const [batch, setbatch] = useState("");
   const [title, setTitle] = useState("");
   const [academicYear, setAcademicYear] = useState("");
   const [examDate, setExamDate] = useState("");
@@ -27,6 +28,7 @@ function Aptitudeconfigurequestions() {
     Array(questions.length).fill("unanswered")
   );
   const [questionPapers, setQuestionPapers] = useState([]);
+  const [isQpCodeTaken, setIsQpCodeTaken] = useState(false);
   
   
 
@@ -55,7 +57,7 @@ function Aptitudeconfigurequestions() {
 
 
   const handleAddQuestion = () => {
-    setQuestions([...questions, { text: "", marks: "", options: ["", "", "", ""], correctOption: "" }]);
+    setQuestions([...questions, { question: "", marks: "", options: ["", "", "", ""], correctOption: "" }]);
   };
 
   const handleChangeQuestion = (index, field, value) => {
@@ -84,6 +86,7 @@ function Aptitudeconfigurequestions() {
       title,
       academicYear,
       department,
+      batch,
       examDate,
       startTime,
       endTime,
@@ -181,6 +184,23 @@ function Aptitudeconfigurequestions() {
       startIdx + rowsPerPage
     );
 
+    const checkQpCode = async (code) => {
+      if (code.trim() !== "") {
+        try {
+          const response = await fetch(`http://localhost:3000/api/answerkey/check-qpcode/${code}`);
+          const data = await response.json();
+          if (data.exists) {
+            setIsQpCodeTaken(true);
+            alert("This Question Paper Code is already taken!");
+          } else {
+            setIsQpCodeTaken(false);
+          }
+        } catch (error) {
+          console.error("Error checking Question Paper Code:", error);
+        }
+      }
+    };
+
   return (
     <>
       <div
@@ -232,10 +252,10 @@ function Aptitudeconfigurequestions() {
         <div className="container mt-4" style={{ position: "relative", top: "-35px", }}>
           {!showQuestionPaper ? (
             <>
-              {/* Create Questions Button */}
+            
               <button className="btn  " onClick={() => setShowModal(true)} style={{ marginRight: "50px", position: "relative", left: "1080px",top:"50px"}}><i class="bi bi-plus-circle-fill" style={{ fontSize: "40px",color:"blue"  }}></i></button>
 
-
+             
               {displayedData.length > 0 && (
   <div className="mt-4 " >
   
@@ -243,7 +263,7 @@ function Aptitudeconfigurequestions() {
   Total Question Papers: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color:"white" }}>{totalRecords}</span>
 </h4>
 
-{/* Records per page selection */}
+
 <div
                         className="flex justify-right items-center gap-4 mt-4 "
                         style={{ position: "relative", left: "800px",bottom:"20PX",width:'460px' }}
@@ -289,17 +309,18 @@ function Aptitudeconfigurequestions() {
                        top:"20px",
                        left:"-30px",
                         overflowY: "auto",
-                       minWidth:"1200px",
-                        Width:"100px",
+                 
+                        minWidth:'1290px',
                         maxHeight: "800px",
                       }}>
-    <table className="table table-striped  table-hover "style={{position:"relative",right:"0px",left:"25px",top:"20px",marginBottom:'50px'}} >
+    <table className="table table-striped  table-hover "style={{position:"relative",right:"0px",left:"25px",top:"20px",marginBottom:'50px',marginRight:'50px'}} >
       <thead>
         <tr>
           <th>Question paper code</th>
           <th>Title</th>
           <th>Academic year</th>
           <th>Department</th>
+          <th>Batch</th>
           <th>Exam Date</th>
           <th>Start Time</th>
           <th>End Time</th>
@@ -314,7 +335,7 @@ function Aptitudeconfigurequestions() {
             <td>{paper.title}</td>
             <td>{paper.academicYear}</td>
             <td>{paper.department}</td>
-
+            <td>{paper.batch}</td>
             <td>{new Date(paper.examDate).toLocaleDateString("en-GB")}</td>
             <td>{paper.startTime}</td>
             <td>{paper.endTime}</td>
@@ -333,6 +354,8 @@ function Aptitudeconfigurequestions() {
     setTitle(selectedPaper.title);
     setAcademicYear(selectedPaper.academicYear);
     setdepartment(selectedPaper.department);
+    setbatch(selectedPaper.batch);
+
     setExamDate(selectedPaper.examDate);
     setStartTime(selectedPaper.startTime);
     setEndTime(selectedPaper.endTime);
@@ -354,7 +377,7 @@ function Aptitudeconfigurequestions() {
                 View
               </button>
 
-              {/* Edit */}
+             
               <button className="btn btn-warning me-2" 
   onClick={() => {
     console.log("Editing paper index:", index);  
@@ -363,15 +386,15 @@ function Aptitudeconfigurequestions() {
     setTitle(paper.title);
     setAcademicYear(paper.academicYear);
     setdepartment(paper.department);
-
+    setbatch(paper.batch)
     setExamDate(paper.examDate);
     setStartTime(paper.startTime);
     setEndTime(paper.endTime);
     setSemesterType(paper.semesterType);
     setNegativeMarking(paper.negativeMarking);
     setInstructions(paper.instructions);
-    setQuestions([...paper.questions]); // Clone to avoid direct mutation
     setShowModal(true);
+    setQuestions([...paper.questions]); 
   }}>
   Edit
 </button>
@@ -379,7 +402,7 @@ function Aptitudeconfigurequestions() {
 
 
 
-              {/* Delete */}
+           
               <button className="btn btn-danger" 
                 onClick={() => {
                   handleDelete(paper._id)
@@ -400,7 +423,7 @@ function Aptitudeconfigurequestions() {
 
 
 
-              {/* Popup Modal */}
+          
               {showModal && (
                 <div className="modal d-block" tabIndex="-1">
                   <div className="modal-dialog modal-lg">
@@ -410,10 +433,21 @@ function Aptitudeconfigurequestions() {
                         <button className="btn-close" onClick={() => setShowModal(false)}></button>
                       </div>
                       <div className="modal-body">
-                        {/* Title Input */}
+                       
                         <div className="mb-3">
-                          <label className="form-label">Question Paper Code</label>
-                          <input type="text" className="form-control" value={qpcode} onChange={(e) => setqpcode(e.target.value)} />
+                          <label className="form-label">Question Paper Code:(code should be unique)</label>
+                          <input
+  type="text"
+  className="form-control"
+  value={qpcode}
+  onChange={(e) => setqpcode(e.target.value)}
+  onBlur={() => checkQpCode(qpcode)}
+ required
+/>
+{isQpCodeTaken && (
+  <div className="text-danger mt-2">
+     This Question Paper Code is already taken!
+  </div>)}
                         </div>
                         <div className="mb-3">
                           <label className="form-label">Title</label>
@@ -428,6 +462,10 @@ function Aptitudeconfigurequestions() {
                         <div className="mb-3">
                           <label className="form-label">Department</label>
                           <input type="text" className="form-control" value={department} onChange={(e) => setdepartment(e.target.value)} />
+                        </div>
+                        <div className="mb-3">
+                          <label className="form-label">Batch</label>
+                          <input type="text" className="form-control" value={batch} onChange={(e) => setbatch(e.target.value)} />
                         </div>
                       
                         <div className="mb-3">
@@ -486,8 +524,8 @@ function Aptitudeconfigurequestions() {
         type="text"
         className="form-control mb-2"
         placeholder="Enter question"
-        value={question.text}
-        onChange={(e) => handleChangeQuestion(index, "text", e.target.value)}
+        value={question.question}
+        onChange={(e) => handleChangeQuestion(index, "question", e.target.value)}
       />
       <input
         type="number"
@@ -511,7 +549,7 @@ function Aptitudeconfigurequestions() {
         </div>
       ))}
 
-      {/* Delete Question Button */}
+     
       <button className="btn" onClick={() => handleDeleteQuestion(index)}>
       <i class="bi bi-x-circle" style={{fontSize:"30px",color:"red"}}></i>
       </button>
@@ -519,19 +557,24 @@ function Aptitudeconfigurequestions() {
   ))}
 </div>
 
-{/* Add Question Button */}
+
 <button className=" btn"  style={{backgroundColor:"none"}} onClick={handleAddQuestion}><i class="bi bi-plus-circle-fill"style={{fontSize:"40px",color:"grey"}}></i></button>
 
-                        {/* Add Question Button */}
+                      
                         
                       </div>
 
-                      {/* Modal Footer */}
+                    
                       <div className="modal-footer">
                         <button className="btn btn-danger" onClick={() => setShowModal(false)}>Cancel</button>
-                        <button className="btn btn-success" onClick={handleSave}>
+                        <button
+  className="btn btn-success"
+  onClick={handleSave}
+  disabled={isQpCodeTaken || !qpcode || !title || !examDate || !startTime || !endTime}
+>
   Save
 </button>
+
                       </div>
                     </div>
                   </div>
@@ -552,8 +595,9 @@ function Aptitudeconfigurequestions() {
                 onClick={() => setShowQuestionPaper(false)}
               ></button>
 </div>
-              <p className="text-left">
-                Academic Year: {academicYear} | Semester: {semesterType} | Exam Date: {examDate}
+              <p className="text-center">
+                Academic Year: {academicYear} |Department:{department}|Batch:{batch}<br/> Semester: {semesterType} | Exam Date: {new Date(examDate).toLocaleDateString("en-GB")}
+
               </p>
               
 
@@ -569,7 +613,7 @@ function Aptitudeconfigurequestions() {
 
 
               <div className="instructions-container ic">
-                {/* Instructions Section */}
+              
                 <div className="instructions-content">
                
                   <div className="int"><h5>Instructions:</h5></div>
@@ -579,10 +623,10 @@ function Aptitudeconfigurequestions() {
                   <p>{instructions}</p>
                 </div>
 
-                {/* Divider Line */}
+              
                 <div className="divider"></div>
 
-                {/* Question Circles Section */}
+             
                 <div className="question-circles">
                   {questions.map((_, index) => (
                     <div
@@ -609,7 +653,7 @@ function Aptitudeconfigurequestions() {
                     <br />
 
 
-                    {/* Answerable MCQ Options */}
+                  
                     {questions[currentQuestionIndex].options.map((opt, i) => (
                       <div key={i} className="form-check">
                         <input
@@ -621,7 +665,7 @@ function Aptitudeconfigurequestions() {
                           onChange={() => {
                             setSelectedAnswers({ ...selectedAnswers, [currentQuestionIndex]: opt });
 
-                            // Update Answer Status
+                        
                             const newStatus = [...answerStatus];
                             newStatus[currentQuestionIndex] = "answered";
                             setAnswerStatus(newStatus);
@@ -635,7 +679,7 @@ function Aptitudeconfigurequestions() {
 
                   </div>
 
-                  {/* Navigation Buttons */}
+                 
                   <button
                     className="btn btn-secondary me-2"
                     disabled={currentQuestionIndex === 0}

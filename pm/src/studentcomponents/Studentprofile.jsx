@@ -39,7 +39,7 @@ function Studentprofile() {
     
     return (
         <>
-            <Studenttopbar />
+           
             <div className="had">
                 <Link
                     to="/Studentdashboard"

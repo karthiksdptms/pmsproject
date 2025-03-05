@@ -1,5 +1,6 @@
 import StudentModel from "../models/StudentModel.js";
 import User from "../models/User.js";
+import QpModel from "../models/QpModel.js";
 import bcrypt from "bcrypt";
 import multer from "multer";
 import path from "path";
@@ -437,5 +438,141 @@ const uploadCSV = async (req, res) => {
   }
 }
 
+export const toggleAutoPost = async (req, res) => {
+  const { id } = req.params; // qpcode
+  const { autoPost } = req.body; // new status
 
-export { addstudent, upload ,getstudent,editstudent,uploadCSV,getonestudent};
+  console.log("Auto Post Request - QP Code:", id, "New Status:", autoPost);
+
+  try {
+    const questionPaper = await QpModel.findOne({ qpcode: id });
+
+    if (!questionPaper) {
+      console.log("Question Paper not found:", id);
+      return res.status(404).json({ message: "Question Paper not found" });
+    }
+
+    // Update only the autoPost field
+    questionPaper.autoPost = autoPost;
+
+    // Save without validation of other fields
+    await questionPaper.save({ validateBeforeSave: false });
+
+    console.log("Auto Post Updated Successfully:", autoPost);
+    res.status(200).json({ message: `Auto Post ${autoPost ? "Enabled" : "Disabled"} Successfully` });
+  } catch (error) {
+    console.error("Server Error:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
+
+export const postQuestionPaper = async (req, res) => {
+  const { qpcode } = req.params;
+
+  try {
+    const questionPaper = await QpModel.findOne({ qpcode });
+    if (!questionPaper) {
+      return res.status(404).json({ message: "Question Paper Not Found" });
+    }
+
+    const { department, batch } = questionPaper;
+
+    const students = await StudentModel.find({ department: department, batch: batch });
+
+    if (students.length === 0) {
+      return res.status(404).json({ message: "No Students Found for this Department and Batch" });
+    }
+
+    for (const student of students) {
+      student.exams = student.exams || [];
+      student.exams.push({
+        qpcode: questionPaper.qpcode,
+        title: questionPaper.title,
+        academicYear: questionPaper.academicYear,
+        department: questionPaper.department,
+        batch: questionPaper.batch,
+        examDate: questionPaper.examDate,
+        startTime: questionPaper.startTime,
+        endTime: questionPaper.endTime,
+        semesterType: questionPaper.semesterType,
+        questions: questionPaper.questions.map(({ question, options, marks }) => ({
+          question,
+          options,
+          marks,
+        })),
+      });
+      await student.save();
+    }
+
+    res.status(200).json({ message: "Question Paper Posted Successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+const postSpecificQuestionPaper = async (req, res) => {
+  const { registerNumbers, qpcode } = req.body;
+
+  try {
+    const questionPaper = await QpModel.findOne({ qpcode });
+
+    if (!questionPaper) {
+      return res.status(404).json({ message: "Question Paper Not Found" });
+    }
+
+    const { department, batch } = questionPaper;
+
+    console.log("Input Register Numbers:", registerNumbers);
+    console.log("Converted Numbers:", registerNumbers.map((reg) => String(reg)));
+
+    const students = await StudentModel.find({
+      registration_number: { $in: registerNumbers.map((reg) => String(reg)) },
+      department,
+      batch,
+    });
+
+    console.log("Students Found:", students);
+
+    if (students.length === 0) {
+      return res.status(404).json({ message: "No Students Found with Given Register Numbers" });
+    }
+
+    for (const student of students) {
+      student.exams = student.exams || [];
+
+      const alreadyPosted = student.exams.some((exam) => exam.qpcode === qpcode);
+
+      if (!alreadyPosted) {
+        student.exams.push({
+          qpcode: questionPaper.qpcode,
+          title: questionPaper.title,
+          academicYear: questionPaper.academicYear,
+          department: questionPaper.department,
+          batch: questionPaper.batch,
+          examDate: questionPaper.examDate,
+          startTime: questionPaper.startTime,
+          endTime: questionPaper.endTime,
+          semesterType: questionPaper.semesterType,
+          questions: questionPaper.questions.map(({ question, options, marks }) => ({
+            question,
+            options,
+            marks,
+          })),
+        });
+
+        await student.save();
+        console.log(` Posted to: ${student.registernumber}`);
+      }
+    }
+
+    res.status(200).json({ message: "Question Paper Posted to Specific Students Successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+export { addstudent, upload ,getstudent,editstudent,uploadCSV,getonestudent,postSpecificQuestionPaper};

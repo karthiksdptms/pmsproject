@@ -260,7 +260,7 @@ function Trainingreports() {
           bottom: '50px'
         }}
       >
-        <button className="btn" style={{ backgroundColor: "white", border: "none", color: " #3c6db9",position:"relative",bottom:"30px",zIndex:"1000" }} data-bs-toggle="modal" data-bs-target="#addtrainModal" ><i class="bi bi-plus-circle-fill" style={{ fontSize: "40px", position: "relative", top: "70px", left: "30px",position:"relative",left:"1000px",zIndex:"1000" }}></i></button> <h4 className="mb-4" style={{ position: "relative", left: "100px", top: "30px" }}>
+        <button className="btn" style={{ backgroundColor: "white", border: "none", color: " #3c6db9",position:"relative",bottom:"30px",zIndex:"1000" }} data-bs-toggle="modal" data-bs-target="#addtrainModal" ><i class="bi bi-plus-circle-fill" style={{ fontSize: "40px", position: "relative", top: "70px",position:"relative",left:"1000px",zIndex:"1000" }}></i></button> <h4 className="mb-4" style={{ position: "relative", left: "100px", top: "30px" }}>
           Total Records: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white", position: "relative", lef: "1500px" }}>{filteredTrainings.flat().length}</span>
         </h4>
         <div className="modal fade" id="addtrainModal" tabIndex="-1">

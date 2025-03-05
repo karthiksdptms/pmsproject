@@ -105,7 +105,7 @@ function Studenttopbar() {
       </div>
       <div className="btnn">
         {" "}
-        <Link to="/Studentprofile">
+        <Link to="/Studentdashboard/Studentprofile">
           <button class="btnn ">
             <i class="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: '5px' }} ></i>
                 My Profile
@@ -115,7 +115,7 @@ function Studenttopbar() {
 
 
       <div className="btnn">
-        <Link to="/Studenttraining">
+        <Link to="/Studentdashboard/Studenttraining">
           <button class="btnn">
             <i class="bi bi-funnel-fill" style={{ marginRight: "10px", paddingLeft: '5px' }} />
             Training
@@ -124,7 +124,7 @@ function Studenttopbar() {
       </div>
       <div className="btnn">
         {" "}
-        <Link to="/Studentplacement">
+        <Link to="/Studentdashboard/Studentplacement">
           <button class="btnn">
             <i class="bi bi-bullseye" style={{ marginRight: "10px", paddingLeft: '5px' }} />
             Placement

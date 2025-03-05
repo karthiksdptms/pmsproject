@@ -8,6 +8,26 @@ const offerSchema = new mongoose.Schema({
   designation: { type: String,  },
 
 });
+const examSchema = new mongoose.Schema({
+  qpcode: { type: String },
+  title: { type: String },
+  academicYear: { type: String },
+  department: { type: String },
+  batch: { type: String },
+  examDate: { type: Date },
+  startTime: { type: String },
+  endTime: { type: String },
+  semesterType: { type: String },
+  questions: [
+    {
+      question: { type: String },
+      options: [String],
+      marks: { type: Number },
+    },
+  ],
+});
+
+
 
 const studentSchema = new mongoose.Schema({
   userId:{type:Schema.Types.ObjectId,ref:"User",required :true},
@@ -43,7 +63,8 @@ const studentSchema = new mongoose.Schema({
   profileImage: { type: String, },
   placement: { type: String, },
   offers: [offerSchema], 
-  offerpdf: { type: String, }
+  offerpdf: { type: String, },
+  exams: [examSchema],
 });
 
 
