@@ -2,10 +2,14 @@ import express from 'express'
 import { uploadanswerkey } from '../controllers/answerkeycontroller.js';
 import AnswerKeyModel from '../models/AnswerkeyModel.js';
 import QpModel from '../models/QpModel.js';
+import { submitAnswers } from '../controllers/answerkeycontroller.js';
 
 const router = express.Router()
 
 router.post('/uploadanswerkey/:qpcode',uploadanswerkey)
+
+router.post("/submitans", submitAnswers);
+
 
 router.get("/getuploadedanswerkeys", async (req, res) => {
     try {

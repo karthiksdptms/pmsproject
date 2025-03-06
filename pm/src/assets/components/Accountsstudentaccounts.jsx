@@ -35,7 +35,7 @@ function Accountsstudentaccounts() {
           },
         }
         )
-        console.log(responnse.data)
+       
         if (responnse.data.success) {
 
           const data = await responnse.data.students.map((std, index) => ({
@@ -249,7 +249,7 @@ function Accountsstudentaccounts() {
           image: null,
           offerpdf: null,
           placement: "",
-          offers: [], // Reset Offers to Empty Array
+          offers: [], 
         });
         window.location.reload();
 
@@ -565,7 +565,7 @@ function Accountsstudentaccounts() {
                     <th>Registration Number</th>
                     <th>Name</th>
                     <th>Department</th>
-
+                    <th>Batch</th>
                     <th>Email</th>
                     <th>Actions</th>
                   </tr>

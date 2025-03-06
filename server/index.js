@@ -6,6 +6,7 @@ dotenv.config();
 import connectDatabase from "./db/db.js";
 import FilterModel from "./models/FilterModel.js";
 import QpModel from "./models/QpModel.js";
+import StudentModel from "./models/StudentModel.js";
 import TrainingModel from './models/TrainingModel.js'
 import studentRouter from './routes/students.js'
 import answerkeyRouter from './routes/answerkey.js'
@@ -26,6 +27,25 @@ app.use('/api/answerkey',answerkeyRouter)
 
 
 
+
+
+
+app.get('/getstudent/:id', async (req, res) => {
+  try {
+    const student = await StudentModel.findOne({ userId: req.params.id }).populate("userId");
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    console.log("Student Exams:", student.exams);
+
+    res.json({ exams: student.exams });
+  } catch (err) {
+    console.error("API Error:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
 
 
 //filtertable

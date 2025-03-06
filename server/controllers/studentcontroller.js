@@ -439,8 +439,8 @@ const uploadCSV = async (req, res) => {
 }
 
 export const toggleAutoPost = async (req, res) => {
-  const { id } = req.params; // qpcode
-  const { autoPost } = req.body; // new status
+  const { id } = req.params; 
+  const { autoPost } = req.body; 
 
   console.log("Auto Post Request - QP Code:", id, "New Status:", autoPost);
 
@@ -452,10 +452,8 @@ export const toggleAutoPost = async (req, res) => {
       return res.status(404).json({ message: "Question Paper not found" });
     }
 
-    // Update only the autoPost field
     questionPaper.autoPost = autoPost;
 
-    // Save without validation of other fields
     await questionPaper.save({ validateBeforeSave: false });
 
     console.log("Auto Post Updated Successfully:", autoPost);
@@ -465,7 +463,6 @@ export const toggleAutoPost = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
 
 
 export const postQuestionPaper = async (req, res) => {
@@ -487,23 +484,29 @@ export const postQuestionPaper = async (req, res) => {
 
     for (const student of students) {
       student.exams = student.exams || [];
-      student.exams.push({
-        qpcode: questionPaper.qpcode,
-        title: questionPaper.title,
-        academicYear: questionPaper.academicYear,
-        department: questionPaper.department,
-        batch: questionPaper.batch,
-        examDate: questionPaper.examDate,
-        startTime: questionPaper.startTime,
-        endTime: questionPaper.endTime,
-        semesterType: questionPaper.semesterType,
-        questions: questionPaper.questions.map(({ question, options, marks }) => ({
-          question,
-          options,
-          marks,
-        })),
-      });
-      await student.save();
+
+     
+      const isDuplicate = student.exams.some((exam) => exam.qpcode === questionPaper.qpcode);
+
+      if (!isDuplicate) {
+        student.exams.push({
+          qpcode: questionPaper.qpcode,
+          title: questionPaper.title,
+          academicYear: questionPaper.academicYear,
+          department: questionPaper.department,
+          batch: questionPaper.batch,
+          examDate: questionPaper.examDate,
+          startTime: questionPaper.startTime,
+          endTime: questionPaper.endTime,
+          semesterType: questionPaper.semesterType,
+          questions: questionPaper.questions.map(({ question, options, marks }) => ({
+            question,
+            options,
+            marks,
+          })),
+        });
+        await student.save(); 
+      }
     }
 
     res.status(200).json({ message: "Question Paper Posted Successfully" });
@@ -542,6 +545,7 @@ const postSpecificQuestionPaper = async (req, res) => {
     for (const student of students) {
       student.exams = student.exams || [];
 
+      // Check for duplicate Question Paper
       const alreadyPosted = student.exams.some((exam) => exam.qpcode === qpcode);
 
       if (!alreadyPosted) {
@@ -562,8 +566,10 @@ const postSpecificQuestionPaper = async (req, res) => {
           })),
         });
 
-        await student.save();
-        console.log(` Posted to: ${student.registernumber}`);
+        await student.save(); // Save student only if new exam is added
+        console.log(`Posted to: ${student.registration_number}`);
+      } else {
+        console.log(`Already Posted to: ${student.registration_number}`);
       }
     }
 

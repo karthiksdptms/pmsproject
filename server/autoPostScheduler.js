@@ -4,12 +4,12 @@ import StudentModel from "./models/StudentModel.js";
 import moment from "moment";
 
 const autoPostScheduler = async () => {
-  console.log("✅ Auto Posting Scheduler Running Every 1 Minute");
+  
 
   try {
     const currentDate = moment().format("YYYY-MM-DD");
     const currentTime = moment().format("HH:mm");
-    console.log(`🔍 Checking at ${currentDate} ${currentTime}`);
+   
 
     const questionPapers = await QpModel.find({ autoPost: true });
 
@@ -17,14 +17,9 @@ const autoPostScheduler = async () => {
       const paperDate = moment(paper.examDate).format("YYYY-MM-DD");
       const paperTime = moment(paper.startTime, "HH:mm").format("HH:mm");
 
-      console.log(`
-📄 Paper: ${paper.qpcode}
-Date: ${paperDate}
-Time: ${paperTime}
-`);
-
+     
       if (paperDate === currentDate && paperTime === currentTime) {
-        console.log(`🔥 Auto Posting Paper: ${paper.qpcode}`);
+        
 
         const { department, batch } = paper;
 
@@ -55,16 +50,16 @@ Time: ${paperTime}
               });
 
               await student.save();
-              console.log(`✅ Auto Posted to Student: ${student.registration_number}`);
+              console.log(`Auto Posted to Student: ${student.registration_number}`);
             }
           }
         } else {
-          console.log(`🚫 No Students Found for ${department} - ${batch}`);
+          console.log(` No Students Found for ${department} - ${batch}`);
         }
       }
     }
   } catch (error) {
-    console.error("🚨 Auto Post Scheduler Error:", error);
+    console.error("Auto Post Scheduler Error:", error);
   }
 };
 

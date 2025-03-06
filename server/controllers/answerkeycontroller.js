@@ -1,6 +1,10 @@
 import AnswerKeyModel from '../models/AnswerkeyModel.js';
 import QpaperModel from '../models/QpModel.js';
 
+import AnswerModel from "../models/AnswerModel.js";
+import StudentModel from "../models/StudentModel.js";
+
+
 const uploadanswerkey = async (req, res) => {
   const { answerKey } = req.body;
   const { qpcode } = req.params;
@@ -34,7 +38,7 @@ const uploadanswerkey = async (req, res) => {
    
     const totalScore = mappedAnswerKey.reduce((acc, item) => acc + item.marks, 0);
 
-    // Save Answer Key
+    
     const newAnswerKey = new AnswerKeyModel({
       qpcode: qpcode,
       answerKey: mappedAnswerKey,
@@ -52,5 +56,75 @@ const uploadanswerkey = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+export const submitAnswers = async (req, res) => {
+  const { userId, qpcode, answers } = req.body;
+
+
+  try {
+    if (!userId || !qpcode || !answers) {
+     
+      return res.status(400).json({ message: "Invalid Data" });
+    }
+
+    const student = await StudentModel.findOne({ userId: userId });
+   
+
+    if (!student) {
+      
+      return res.status(404).json({ message: "Student Not Found" });
+    }
+
+    const answerKey = await AnswerKeyModel.findOne({ qpcode });
+    
+
+    if (!answerKey) {
+    
+      return res.status(404).json({ message: "Answer Key Not Found" });
+    }
+
+    let score = 0;
+
+    answers.forEach((answer) => {
+      
+
+      const correctAnswer = answerKey.answerKey.find(
+        (key) => key.QuestionNo === answer.question
+      );
+
+      
+
+      if (correctAnswer && correctAnswer.Answer === answer.answer) {
+        score += parseInt(answer.marks);
+        
+      }
+    });
+
+    
+
+    const newAnswer = new AnswerModel({
+      registration_number: student.registration_number,
+      batch: student.batch,
+      department: student.department,
+      qpcode: qpcode,
+      answers: answers,
+      score: score,
+    });
+
+    student.exams = student.exams.filter((exam) => exam.qpcode !== qpcode);
+    await student.save();
+
+    await newAnswer.save();
+
+    res.status(200).json({
+      message: "Answers Submitted Successfully",
+      score: score,
+    });
+  } catch (err) {
+    console.error("Server Error ❌:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 
 export { uploadanswerkey };
