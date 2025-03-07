@@ -43,8 +43,7 @@ function Trainingattendance() {
               </div>
               </Link>
     </div>
-    
-             
+  
     </>
   )
 }

@@ -5,6 +5,9 @@ import { Link } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { useState,useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
+
+
 import { utils, writeFile } from 'xlsx';
 function Trainingschedule() {
   const departments = ["CSE", "MECH", "ECE", "CCE", "AIDS", "AIML"];
@@ -152,6 +155,92 @@ function Trainingschedule() {
     utils.book_append_sheet(wb, ws, `Batch_${batchIndex + 1}`);
     writeFile(wb, `batch_${batchIndex + 1}.xlsx`);
   };
+  //new
+  const [trainingData, setTrainingData] = useState([]);
+
+
+  const handleSave = async () => {
+  const { value: formValues } = await Swal.fire({
+    title: "Enter Details",
+    html:
+      '<input id="scheduleCode" class="swal2-input" placeholder="Enter Schedule Code">' +
+      '<input id="trainingName" class="swal2-input" placeholder="Enter Training Name">',
+    focusConfirm: false,
+    showCancelButton: true,
+    preConfirm: async () => {
+      const scheduleCode = document.getElementById("scheduleCode").value;
+      const trainingName = document.getElementById("trainingName").value;
+
+      if (!scheduleCode || !trainingName) {
+        Swal.showValidationMessage("Both fields are required");
+        return false;
+      }
+
+      try {
+        
+        const checkResponse = await axios.get(
+          `http://localhost:3000/api/training/check-schedule-code/${scheduleCode}`
+        );
+
+        console.log("Check Response:", checkResponse.data); 
+
+        if (checkResponse.data.exists) {
+          Swal.showValidationMessage("Schedule Code Already Taken");
+          return false;
+        }
+
+        return { scheduleCode, trainingName };
+      } catch (error) {
+        console.error("API Error:", error);
+        Swal.showValidationMessage("Failed to check Schedule Code");
+        return false;
+      }
+    },
+  });
+
+  if (!formValues) return;
+
+  const { scheduleCode, trainingName } = formValues;
+
+  try {
+   
+    if (!batches || batches.length === 0) {
+      Swal.fire({
+        title: "Error!",
+        text: "No batches found. Please add batches before saving.",
+        icon: "error",
+      });
+      return;
+    }
+
+    const response = await axios.post("http://localhost:3000/api/training/saveTraining", {
+      scheduleCode,
+      trainingName,
+      batches,
+    });
+
+    console.log("Save Response:", response.data); 
+    Swal.fire({
+      title: "Saved!",
+      text: "Training data has been saved successfully.",
+      icon: "success",
+    });
+
+    setTrainingData(); 
+  } catch (error) {
+    console.error("Save Error:", error);
+    Swal.fire({
+      title: "Error!",
+      text: "Failed to save training data.",
+      icon: "error",
+    });
+  }
+};
+
+  
+  
+
+  //new
 
   
 
@@ -605,6 +694,12 @@ function Trainingschedule() {
             </div>
           ))}
         </div>
+        <div>
+      {/* Render batches here */}
+      <button className="btn" onClick={handleSave} disabled={batches.length === 0} style={{backgroundColor:"grey",color:'white'}}>
+        Save
+      </button>
+    </div>
       </div>
     </>
   );

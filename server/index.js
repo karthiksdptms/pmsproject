@@ -8,6 +8,8 @@ import FilterModel from "./models/FilterModel.js";
 import QpModel from "./models/QpModel.js";
 import TrainingModel from './models/TrainingModel.js'
 import studentRouter from './routes/students.js'
+import scheduleRoutes from "./routes/scheduleRoutes.js";
+
 
 
 
@@ -18,8 +20,8 @@ app.use(cors());
 app.use (express.static('public/uploads'));
 app.use(express.json());
 app.use('/api/auth',authRouter);
-app.use('/api/student',studentRouter)
-
+app.use('/api/students',studentRouter);
+app.use("/api/training", scheduleRoutes);
 
 
 
