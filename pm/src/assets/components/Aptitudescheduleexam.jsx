@@ -21,7 +21,7 @@ function Aptitudescheduleexam() {
                <div>
                  <button
                    type="button"
-                   class="btn btn-secondary"
+                   className="btn btn-secondary"
                    style={{
                      marginLeft: "20px",
                      border: "none",

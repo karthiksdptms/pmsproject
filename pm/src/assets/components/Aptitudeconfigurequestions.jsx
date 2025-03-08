@@ -194,7 +194,7 @@ function Aptitudeconfigurequestions() {
           <div>
             <button
               type="button"
-              class="btn btn-secondary"
+              className="btn btn-secondary"
               style={{
                 marginLeft: "20px",
                 border: "none",
@@ -228,7 +228,7 @@ function Aptitudeconfigurequestions() {
           {!showQuestionPaper ? (
             <>
               {/* Create Questions Button */}
-              <button className="btn  " onClick={() => setShowModal(true)} style={{ marginRight: "50px", position: "relative", left: "1080px",top:"50px"}}><i class="bi bi-plus-circle-fill" style={{ fontSize: "40px",color:"blue"  }}></i></button>
+              <button className="btn  " onClick={() => setShowModal(true)} style={{ marginRight: "50px", position: "relative", left: "1080px",top:"50px"}}><i className="bi bi-plus-circle-fill" style={{ fontSize: "40px",color:"blue"  }}></i></button>
 
 
               {displayedData.length > 0 && (
@@ -260,7 +260,7 @@ function Aptitudeconfigurequestions() {
                           className="btn"
                           disabled={currentPage === 1}
                         >
-                          <i class="bi bi-chevron-double-left"></i>
+                          <i className="bi bi-chevron-double-left"></i>
                         </button>
 
                         <span className="text-lg">
@@ -276,7 +276,7 @@ function Aptitudeconfigurequestions() {
                           className="btn"
                           disabled={currentPage === totalPages}
                         >
-                          <i class="bi bi-chevron-double-right arr"></i>
+                          <i className="bi bi-chevron-double-right arr"></i>
                         </button>
                       </div>
     <div style={{        
@@ -490,14 +490,14 @@ function Aptitudeconfigurequestions() {
 
       {/* Delete Question Button */}
       <button className="btn" onClick={() => handleDeleteQuestion(index)}>
-      <i class="bi bi-x-circle" style={{fontSize:"30px",color:"red"}}></i>
+      <i className="bi bi-x-circle" style={{fontSize:"30px",color:"red"}}></i>
       </button>
     </div>
   ))}
 </div>
 
 {/* Add Question Button */}
-<button className=" btn"  style={{backgroundColor:"none"}} onClick={handleAddQuestion}><i class="bi bi-plus-circle-fill"style={{fontSize:"40px",color:"grey"}}></i></button>
+<button className=" btn"  style={{backgroundColor:"none"}} onClick={handleAddQuestion}><i className="bi bi-plus-circle-fill"style={{fontSize:"40px",color:"grey"}}></i></button>
 
                         {/* Add Question Button */}
                         

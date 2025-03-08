@@ -439,7 +439,7 @@ function Accountsstudentaccounts() {
         <div >
           <button
             type="button"
-            class="btn btn-secondary"
+            className="btn btn-secondary"
             style={{
               marginLeft: "20px",
               border: "none",
@@ -469,7 +469,7 @@ function Accountsstudentaccounts() {
       </Link>
       <div className="">
         <div style={{ position: 'relative', height: '30px', top: "30px" }}>
-          <button className="btn  " onClick={() => setShow(true)} style={{ marginRight: "50px", position: "relative", left: "1080px", top: "-20px" }}><i class="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "blue" }}></i></button><div className="">
+          <button className="btn  " onClick={() => setShow(true)} style={{ marginRight: "50px", position: "relative", left: "1080px", top: "-20px" }}><i className="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "blue" }}></i></button><div className="">
 
 
 
@@ -536,7 +536,7 @@ function Accountsstudentaccounts() {
                   className="btn"
                   disabled={currentPage === 1}
                 >
-                  <i class="bi bi-chevron-double-left"></i>
+                  <i className="bi bi-chevron-double-left"></i>
                 </button>
 
                 <span className="text-lg">
@@ -552,7 +552,7 @@ function Accountsstudentaccounts() {
                   className="btn"
                   disabled={currentPage === totalPages}
                 >
-                  <i class="bi bi-chevron-double-right arr"></i>
+                  <i className="bi bi-chevron-double-right arr"></i>
                 </button>
               </div>
               <table className="table table-striped table-bordered table-hover" style={{
@@ -828,7 +828,7 @@ function Accountsstudentaccounts() {
                       </div>
                     ))}
 
-                    <button type="button" tyle={{ backgroundColor: "white", border: "none" }} className="btn  mb-3" onClick={addOffer}> <i class="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "grey" }}></i>
+                    <button type="button" tyle={{ backgroundColor: "white", border: "none" }} className="btn  mb-3" onClick={addOffer}> <i className="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "grey" }}></i>
                     </button>
                     <br />
                     <label>Insert the offerletters(pdf,combine all letters as a single pdf):</label>
@@ -1082,7 +1082,7 @@ function Accountsstudentaccounts() {
                       </div>
                     ))}
 
-                    <button type="button" tyle={{ backgroundColor: "white", border: "none" }} className="btn  mb-3" onClick={addOffer}> <i class="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "grey" }}></i>
+                    <button type="button" tyle={{ backgroundColor: "white", border: "none" }} className="btn  mb-3" onClick={addOffer}> <i className="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "grey" }}></i>
                     </button>
                     <br />
                     <div className="mb-3">

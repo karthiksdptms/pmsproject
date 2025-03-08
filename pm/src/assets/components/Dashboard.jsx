@@ -200,7 +200,7 @@ function Dashboard() {
     <>
       <div className="">
         <div className="clr"></div>
-        <div class="container" className="contain">
+        <div className="container" className="contain">
           
 
           <div className="">
@@ -216,7 +216,7 @@ function Dashboard() {
               <Link to="/Maindashboard">
                 <button
                   type="button"
-                  class="btn btn-secondary"
+                  className="btn btn-secondary"
                   style={{
                     marginLeft: "20px",
                     border: "none",
@@ -542,7 +542,7 @@ function Dashboard() {
                   <button
                     onClick={downloadExcel}
                     type="button"
-                    class=" "
+                    className=" "
                     className=" "
                     style={{
                       color: "white",
@@ -560,11 +560,11 @@ function Dashboard() {
                   >
                     {" "}
                     <i
-                      class="bi bi-file-earmark-excel"
+                      className="bi bi-file-earmark-excel"
                       style={{ marginRight: "10px" }}
                     ></i>
                     Excel
-                    <i class="bi bi-download" style={{ marginLeft: "5PX" }}></i>
+                    <i className="bi bi-download" style={{ marginLeft: "5PX" }}></i>
                   </button>
 
                   <div>
@@ -600,7 +600,7 @@ function Dashboard() {
                           className="btn"
                           disabled={currentPage === 1}
                         >
-                          <i class="bi bi-chevron-double-left"></i>
+                          <i className="bi bi-chevron-double-left"></i>
                         </button>
 
                         <span className="text-lg">
@@ -616,13 +616,13 @@ function Dashboard() {
                           className="btn"
                           disabled={currentPage === totalPages}
                         >
-                          <i class="bi bi-chevron-double-right arr"></i>
+                          <i className="bi bi-chevron-double-right arr"></i>
                         </button>
                       </div>
                       <div>
                         <table
                           border="1"
-                          class="table table-striped  table-hover tabl"
+                          className="table table-striped  table-hover tabl"
                           id="my-table"
                           style={{
                             position: "relative",
@@ -705,7 +705,7 @@ function Dashboard() {
                                     aria-controls="offcanvasRight"
                                     onClick={() => handleClick(item)}
                                   >
-                                    <i class="bi bi-info-circle"></i>
+                                    <i className="bi bi-info-circle"></i>
                                   </button>
                                 </td>
                               </tr>
@@ -730,7 +730,7 @@ function Dashboard() {
 
                     {selectedData && (
                       <div
-                        class="offcanvas offcanvas-end"
+                        className="offcanvas offcanvas-end"
                         tabindex="-1"
                         id="offcanvasRight"
                         aria-labelledby="offcanvasRightLabel"
@@ -738,7 +738,7 @@ function Dashboard() {
                         style={{ width: "700px",marginLeft:"1000px" }}
                       >
                         <div
-                          class="offcanvas-header"
+                          className="offcanvas-header"
                           style={{
                             width: "100%",
                             height: "230px",
@@ -746,7 +746,7 @@ function Dashboard() {
                             backgroundColor: "rgb(245, 245, 245)",
                           }}
                         >
-                          <h5 class="offcanvas-title" id="offcanvasRightLabel">
+                          <h5 className="offcanvas-title" id="offcanvasRightLabel">
                             <FaUserCircle
                               style={{
                                 width: "200px",
@@ -776,7 +776,7 @@ function Dashboard() {
                             {selectedData.REGISTRATION_NUMBER}
                           </h5>
                           <div
-                            class="ribbon1"
+                            className="ribbon1"
                             style={{
                               width: "400px",
                               position: "relative",
@@ -789,7 +789,7 @@ function Dashboard() {
                             <h3 style={{ width: "250px" }}>STUDENT PROFILE </h3>
                           </div>
                           <div
-                            class="btn-group"
+                            className="btn-group"
                             role="group"
                             style={{
                               position: "relative",
@@ -800,7 +800,7 @@ function Dashboard() {
                           >
                             <input
                               type="radio"
-                              class="btn-check"
+                              className="btn-check"
                               name="btnradio"
                               id="btnradio1"
                               autocomplete="off"
@@ -810,7 +810,7 @@ function Dashboard() {
                                 backgroundColor: " rgba(57,102,172,255)",
                                 color: "white",
                               }}
-                              class="btn btn-outline-primary"
+                              className="btn btn-outline-primary"
                               onClick={closeDivs}
                               for="btnradio1"
                             >
@@ -820,7 +820,7 @@ function Dashboard() {
 
                             <input
                               type="radio"
-                              class="btn-check bnt"
+                              className="btn-check bnt"
                               name="btnradio"
                               id="btnradio2"
                               autocomplete="off"
@@ -830,7 +830,7 @@ function Dashboard() {
                                 backgroundColor: " rgba(57,102,172,255)",
                                 color: "white",
                               }}
-                              class="btn btn-outline-primary"
+                              className="btn btn-outline-primary"
                               onClick={handleButtonClick}
                               for="btnradio2"
                             >
@@ -840,7 +840,7 @@ function Dashboard() {
 
                             <input
                               type="radio"
-                              class="btn-check bnt"
+                              className="btn-check bnt"
                               name="btnradio"
                               id="btnradio3"
                               autocomplete="off"
@@ -850,7 +850,7 @@ function Dashboard() {
                                 backgroundColor: " rgba(57,102,172,255)",
                                 color: "white",
                               }}
-                              class="btn btn-outline-primary"
+                              className="btn btn-outline-primary"
                               onClick={handleButtonnClick}
                               for="btnradio3"
                             >
@@ -859,7 +859,7 @@ function Dashboard() {
                             </label>
                             <input
                               type="radio"
-                              class="btn-check bnt"
+                              className="btn-check bnt"
                               name="btnradio"
                               id="btnradio3"
                               autocomplete="off"
@@ -869,7 +869,7 @@ function Dashboard() {
                                 backgroundColor: " rgba(57,102,172,255)",
                                 color: "white",
                               }}
-                              class="btn btn-outline-primary"
+                              className="btn btn-outline-primary"
                               onClick={handleButtonnnClick}
                               for="btnradio3"
                             >
@@ -880,7 +880,7 @@ function Dashboard() {
 
                           <button
                             type="button"
-                            class=""
+                            className=""
                             data-bs-dismiss="offcanvas"
                             aria-label="Close"
                             style={{
@@ -895,11 +895,11 @@ function Dashboard() {
                             <IoIosArrowBack />
                           </button>
                         </div>
-                        <div class="offcanvas-body offcanvasbody">
+                        <div className="offcanvas-body offcanvasbody">
                           <div id="canvasbody">
                             <div style={{ position: "relative", left: "40px" }}>
                               <ul
-                                class="nav"
+                                className="nav"
                                 style={{
                                   gap: "70px",
                                   fontSize: "20px",
@@ -907,7 +907,7 @@ function Dashboard() {
                                 }}
                               >
                                 <li
-                                  class="nav-item"
+                                  className="nav-item"
                                   style={{
                                     borderBottom: "2px solid rgb(3, 44, 190)",
                                   }}
@@ -920,7 +920,7 @@ function Dashboard() {
                                     onClick={closeDivs}
                                   >
                                     <a
-                                      class="nav-link active"
+                                      className="nav-link active"
                                       href="#"
                                       className="acolor"
                                     >
@@ -929,7 +929,7 @@ function Dashboard() {
                                   </button>
                                 </li>
                                 <li
-                                  class="nav-item"
+                                  className="nav-item"
                                   style={{
                                     borderBottom: "2px solid rgb(3, 44, 190)",
                                   }}
@@ -942,7 +942,7 @@ function Dashboard() {
                                     onClick={handleButtonClick}
                                   >
                                     <a
-                                      class="nav-link active"
+                                      className="nav-link active"
                                       href="#"
                                       className="acolor"
                                     >
@@ -951,7 +951,7 @@ function Dashboard() {
                                   </button>
                                 </li>
                                 <li
-                                  class="nav-item"
+                                  className="nav-item"
                                   style={{
                                     borderBottom: "2px solid rgb(3, 44, 190)",
                                   }}
@@ -964,7 +964,7 @@ function Dashboard() {
                                     onClick={handleButtonnClick}
                                   >
                                     <a
-                                      class="nav-link active"
+                                      className="nav-link active"
                                       href="#"
                                       className="acolor"
                                     >
@@ -973,7 +973,7 @@ function Dashboard() {
                                   </button>
                                 </li>
                                 <li
-                                  class="nav-item"
+                                  className="nav-item"
                                   style={{
                                     borderBottom: "2px solid rgb(3, 44, 190)",
                                   }}
@@ -986,7 +986,7 @@ function Dashboard() {
                                     onClick={handleButtonnnClick}
                                   >
                                     <a
-                                      class="nav-link active"
+                                      className="nav-link active"
                                       href="#"
                                       className="acolor"
                                     >
@@ -1008,7 +1008,7 @@ function Dashboard() {
                               >
                                 Basic Details
                               </h5>
-                              <button class="btn resume bnt">
+                              <button className="btn resume bnt">
                                 <a
                                   href={selectedData.RESUME}
                                   download="resume.pdf"
@@ -1024,7 +1024,7 @@ function Dashboard() {
                                 >
                                   RESUME :{" "}
                                   <i
-                                    class="bi bi-download resdow"
+                                    className="bi bi-download resdow"
                                     style={{
                                       position: "relative",
                                       right: "-5PX",
@@ -1037,7 +1037,7 @@ function Dashboard() {
                                 <div className="bdemail bdbase mar">
                                   <p>
                                     <i
-                                      class="bi bi-envelope-at"
+                                      className="bi bi-envelope-at"
                                       style={{ marginRight: "10px" }}
                                     ></i>
                                     Email
@@ -1058,7 +1058,7 @@ function Dashboard() {
                                 <div className="bdcgpa bdbase mar">
                                   <p>
                                     <i
-                                      class="bi bi-bookmark-check"
+                                      className="bi bi-bookmark-check"
                                       style={{ marginRight: "10px" }}
                                     ></i>
                                     CGPA
@@ -1070,7 +1070,7 @@ function Dashboard() {
                                 <div className="bdph bdbase mar">
                                   <p>
                                     <i
-                                      class="bi bi-telephone"
+                                      className="bi bi-telephone"
                                       style={{ marginRight: "10px" }}
                                     ></i>
                                     Phone
@@ -1083,7 +1083,7 @@ function Dashboard() {
                                 <div className="bddept bdbase mar">
                                   <p>
                                     <i
-                                      class="bi bi-building-down"
+                                      className="bi bi-building-down"
                                       style={{ marginRight: "10px" }}
                                     ></i>
                                     Department
@@ -1095,7 +1095,7 @@ function Dashboard() {
                                 <div className="bdarrear bdbase mar">
                                   <p>
                                     <i
-                                      class="bi bi-bookmark-dash"
+                                      className="bi bi-bookmark-dash"
                                       style={{ marginRight: "10px" }}
                                     ></i>
                                     Arrear

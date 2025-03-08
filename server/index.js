@@ -22,6 +22,7 @@ app.use(express.json());
 app.use('/api/auth',authRouter);
 app.use('/api/students',studentRouter);
 app.use("/api/training", scheduleRoutes);
+app.use("/api/schedule",scheduleRoutes);
 
 
 

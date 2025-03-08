@@ -154,7 +154,8 @@ function Trainingschedule() {
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, `Batch_${batchIndex + 1}`);
     writeFile(wb, `batch_${batchIndex + 1}.xlsx`);
-  };
+};
+
   //new
   const [trainingData, setTrainingData] = useState([]);
 
@@ -181,6 +182,7 @@ function Trainingschedule() {
         const checkResponse = await axios.get(
           `http://localhost:3000/api/training/check-schedule-code/${scheduleCode}`
         );
+        
 
         console.log("Check Response:", checkResponse.data); 
 

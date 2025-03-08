@@ -189,7 +189,7 @@ function Trainingreports() {
       <Link to="/Maindashboard/Training">
         <button
           type="button"
-          class="btn btn-secondary"
+          className="btn btn-secondary"
           style={{
             marginLeft: "20px",
             border: "none",
@@ -240,9 +240,9 @@ function Trainingreports() {
         zIndex: "1000"
       }}
         onClick={handleExcelDownload}>
-        <i class="bi bi-file-earmark-excel" style={{ marginRight: "10px" }}></i>
+        <i className="bi bi-file-earmark-excel" style={{ marginRight: "10px" }}></i>
         Excel
-        <i class="bi bi-download" style={{ marginLeft: "5PX" }}></i>
+        <i className="bi bi-download" style={{ marginLeft: "5PX" }}></i>
       </button>
 
 
@@ -260,7 +260,7 @@ function Trainingreports() {
           bottom: '50px'
         }}
       >
-        <button className="btn" style={{ backgroundColor: "white", border: "none", color: " #3c6db9",position:"relative",bottom:"30px",zIndex:"1000" }} data-bs-toggle="modal" data-bs-target="#addtrainModal" ><i class="bi bi-plus-circle-fill" style={{ fontSize: "40px", position: "relative", top: "70px", left: "30px",position:"relative",left:"1000px",zIndex:"1000" }}></i></button> <h4 className="mb-4" style={{ position: "relative", left: "100px", top: "30px" }}>
+        <button className="btn" style={{ backgroundColor: "white", border: "none", color: " #3c6db9",position:"relative",bottom:"30px",zIndex:"1000" }} data-bs-toggle="modal" data-bs-target="#addtrainModal" ><i className="bi bi-plus-circle-fill" style={{ fontSize: "40px", position: "relative", top: "70px", left: "30px",position:"relative",left:"1000px",zIndex:"1000" }}></i></button> <h4 className="mb-4" style={{ position: "relative", left: "100px", top: "30px" }}>
           Total Records: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white", position: "relative", lef: "1500px" }}>{filteredTrainings.flat().length}</span>
         </h4>
         <div className="modal fade" id="addtrainModal" tabIndex="-1">
@@ -308,7 +308,7 @@ function Trainingreports() {
             style={{ marginLeft: "20px" }}
             disabled={currentPage === 1}
           >
-            <i class="bi bi-chevron-double-left"></i>
+            <i className="bi bi-chevron-double-left"></i>
           </button>
 
           <span className="text-lg">
@@ -322,7 +322,7 @@ function Trainingreports() {
             className="btn"
             disabled={currentPage === totalPages}
           >
-            <i class="bi bi-chevron-double-right arr"></i>
+            <i className="bi bi-chevron-double-right arr"></i>
           </button>
         </div>
         <table
@@ -335,7 +335,7 @@ function Trainingreports() {
             left: "2%",
             top: "0px",
           }}
-          class="table table-striped  table-hover tabl"
+          className="table table-striped  table-hover tabl"
         >
           <thead>
             <tr>
