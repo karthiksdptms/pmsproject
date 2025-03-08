@@ -119,36 +119,61 @@ router.post("/publish-multiple-results", async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
-
 router.post("/delete-multiple-results", async (req, res) => {
     try {
-        const { results } = req.body; 
+        const { results } = req.body;
 
         if (!results || results.length === 0) {
             return res.status(400).json({ message: "No records provided for deletion" });
         }
 
+        let notFound = [];
+        let deletedCount = 0;
+        let answerNotFound = [];
+        let deletionErrors = [];
+
         for (const result of results) {
             const { registration_number, qpcode } = result;
 
-            const student = await StudentModel.findOne({ registration_number });
+            try {
+               
+                const student = await StudentModel.findOne({ registration_number });
 
-            if (!student) {
-                return res.status(404).json({ message: `Student ${registration_number} not found` });
+                if (!student) {
+                    notFound.push(registration_number);
+                    continue;
+                }
+
+              
+                student.results = student.results.filter(r => r.qpcode !== qpcode);
+                await student.save();
+                deletedCount++;
+
+               
+                const answerRecord = await AnswerModel.findOne({ registration_number: registration_number, qpcode: qpcode });
+
+                if (!answerRecord) {
+                    answerNotFound.push(registration_number);
+                } else {
+                    await AnswerModel.findOneAndDelete({ registration_number: registration_number, qpcode: qpcode });
+                }
+            } catch (err) {
+                deletionErrors.push(`Error processing ${registration_number} - ${err.message}`);
             }
-
-           
-            student.results = student.results.filter(r => r.qpcode !== qpcode);
-
-            await student.save();
         }
 
-        res.status(200).json({ message: "Selected records deleted successfully!" });
+        return res.status(200).json({
+            message: `${deletedCount} records deleted successfully!`,
+            studentsNotFound: notFound.length > 0 ? notFound : null,
+            answersNotFound: answerNotFound.length > 0 ? answerNotFound : null,
+            errors: deletionErrors.length > 0 ? deletionErrors : null
+        });
     } catch (error) {
         console.error("Error deleting multiple results:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
 });
+
 
 router.get("/training-scores/:id", async (req, res) => {
     try {

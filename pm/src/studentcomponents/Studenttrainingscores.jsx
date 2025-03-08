@@ -3,7 +3,7 @@ import axios from "axios";
 import { IoIosArrowBack } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { useAuth } from "../assets/context/authContext";
-import Loading from "../assets/components/Loading"; // Ensure this path is correct
+import Loading from "../assets/components/Loading"; 
 
 function Studenttrainingscores() {
   const { user } = useAuth();
@@ -14,7 +14,7 @@ function Studenttrainingscores() {
 
   useEffect(() => {
     fetchScores();
-  }, []); // Empty dependency array to prevent infinite re-renders
+  }, []); 
 
   const fetchScores = async () => {
     try {
@@ -201,3 +201,5 @@ function Studenttrainingscores() {
 }
 
 export default Studenttrainingscores;
+
+
