@@ -10,6 +10,8 @@ import axios from 'axios';
 function Aptitudeconfigurequestions() {
   const [showModal, setShowModal] = useState(false);
   const [instructions, setInstructions] = useState("");
+  const [qpcode, setqpcode] = useState("");
+  const [department, setdepartment] = useState("");
   const [title, setTitle] = useState("");
   const [academicYear, setAcademicYear] = useState("");
   const [examDate, setExamDate] = useState("");
@@ -35,7 +37,7 @@ function Aptitudeconfigurequestions() {
   const calculateDuration = (start, end) => {
     const startTimeObj = new Date(`2000-01-01T${start}`);
     const endTimeObj = new Date(`2000-01-01T${end}`);
-    return (endTimeObj - startTimeObj) / 1000; // Convert to seconds
+    return (endTimeObj - startTimeObj) / 1000; 
   };
   
   const handleViewPaper = (paper, index) => {
@@ -77,8 +79,11 @@ function Aptitudeconfigurequestions() {
     e.preventDefault();
   
     const questionPaperData = {
+      qpcode,
+      
       title,
       academicYear,
+      department,
       examDate,
       startTime,
       endTime,
@@ -89,7 +94,7 @@ function Aptitudeconfigurequestions() {
     };
   
     if (editIndex !== null) {
-      const paperId = questionPapers[editIndex]?._id; // Ensure _id exists
+      const paperId = questionPapers[editIndex]?._id; 
       if (!paperId) {
         console.error("Error: Paper ID not found!");
         return;
@@ -99,12 +104,12 @@ function Aptitudeconfigurequestions() {
         .then((result) => {
           console.log("Updated successfully", result.data);
   
-          // Update the UI
+         
           const updatedPapers = [...questionPapers];
-          updatedPapers[editIndex] = result.data; // Ensure API returns updated data
+          updatedPapers[editIndex] = result.data; 
           setQuestionPapers(updatedPapers);
   
-          setEditIndex(null); // Reset edit index
+          setEditIndex(null); 
           setShowModal(false);
         })
         .catch((err) => console.error("Error updating:", err));
@@ -177,7 +182,7 @@ function Aptitudeconfigurequestions() {
     );
 
   return (
-    <><Topbar />
+    <>
       <div
         style={{
           position: "relative",
@@ -188,7 +193,7 @@ function Aptitudeconfigurequestions() {
         }}
       >
         <Link
-          to="/Aptitude"
+          to="/Maindashboard/Aptitude"
           style={{ textDecoration: "none", color: "black" }}
         >
           <div>
@@ -234,7 +239,7 @@ function Aptitudeconfigurequestions() {
               {displayedData.length > 0 && (
   <div className="mt-4 " >
   
-    <h4 className="mb-4" style={{position:"relative",top:"50px",left:"50px",width:'300px'}}>
+    <h4 className="mb-4" style={{position:"relative",top:"50px",left:"50px",width:'350px'}}>
   Total Question Papers: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color:"white" }}>{totalRecords}</span>
 </h4>
 
@@ -284,15 +289,17 @@ function Aptitudeconfigurequestions() {
                        top:"20px",
                        left:"-30px",
                         overflowY: "auto",
-                       
-                        Width:"1100px",
+                       minWidth:"1200px",
+                        Width:"100px",
                         maxHeight: "800px",
                       }}>
     <table className="table table-striped  table-hover "style={{position:"relative",right:"0px",left:"25px",top:"20px",marginBottom:'50px'}} >
       <thead>
         <tr>
+          <th>Question paper code</th>
           <th>Title</th>
           <th>Academic year</th>
+          <th>Department</th>
           <th>Exam Date</th>
           <th>Start Time</th>
           <th>End Time</th>
@@ -303,31 +310,36 @@ function Aptitudeconfigurequestions() {
       <tbody>
         {displayedData.map((paper, index) => (
           <tr key={index}>
+             <td>{paper.qpcode}</td>
             <td>{paper.title}</td>
             <td>{paper.academicYear}</td>
+            <td>{paper.department}</td>
+
             <td>{new Date(paper.examDate).toLocaleDateString("en-GB")}</td>
             <td>{paper.startTime}</td>
             <td>{paper.endTime}</td>
             <td>{paper.semesterType}</td>
             <td>
-              {/* View */}
+             
               <button 
   className="btn btn-primary me-2" 
   onClick={() => { 
     setShowQuestionPaper(true);
     setSelectedPaperIndex(index);
 
-    // Set the selected question paper details correctly
+   
     const selectedPaper = questionPapers[index];
+    setqpcode(selectedPaper.qpcode);
     setTitle(selectedPaper.title);
     setAcademicYear(selectedPaper.academicYear);
+    setdepartment(selectedPaper.department);
     setExamDate(selectedPaper.examDate);
     setStartTime(selectedPaper.startTime);
     setEndTime(selectedPaper.endTime);
     setSemesterType(selectedPaper.semesterType);
     setNegativeMarking(selectedPaper.negativeMarking);
     setInstructions(selectedPaper.instructions);
-    setQuestions([...selectedPaper.questions]); // Clone questions
+    setQuestions([...selectedPaper.questions]); 
 
    
   
@@ -336,7 +348,7 @@ function Aptitudeconfigurequestions() {
                     
   const duration = calculateDuration(paper.startTime, paper.endTime);
   setRemainingTime(duration);
-  setProgress(100); // Reset progress
+  setProgress(100); 
 
                 }}>
                 View
@@ -345,10 +357,13 @@ function Aptitudeconfigurequestions() {
               {/* Edit */}
               <button className="btn btn-warning me-2" 
   onClick={() => {
-    console.log("Editing paper index:", index);  // Debugging line
-    setEditIndex(index); // Track the edited paper index
+    console.log("Editing paper index:", index);  
+    setEditIndex(index); 
+    setqpcode(paper.qpcode)
     setTitle(paper.title);
     setAcademicYear(paper.academicYear);
+    setdepartment(paper.department);
+
     setExamDate(paper.examDate);
     setStartTime(paper.startTime);
     setEndTime(paper.endTime);
@@ -397,16 +412,24 @@ function Aptitudeconfigurequestions() {
                       <div className="modal-body">
                         {/* Title Input */}
                         <div className="mb-3">
+                          <label className="form-label">Question Paper Code</label>
+                          <input type="text" className="form-control" value={qpcode} onChange={(e) => setqpcode(e.target.value)} />
+                        </div>
+                        <div className="mb-3">
                           <label className="form-label">Title</label>
                           <input type="text" className="form-control" value={title} onChange={(e) => setTitle(e.target.value)} />
                         </div>
 
-                        {/* Academic Year Input */}
+                    
                         <div className="mb-3">
                           <label className="form-label">Academic Year</label>
                           <input type="text" className="form-control" value={academicYear} onChange={(e) => setAcademicYear(e.target.value)} />
                         </div>
-                        {/* Odd/Even Semester Dropdown */}
+                        <div className="mb-3">
+                          <label className="form-label">Department</label>
+                          <input type="text" className="form-control" value={department} onChange={(e) => setdepartment(e.target.value)} />
+                        </div>
+                      
                         <div className="mb-3">
                           <label className="form-label">Semester</label>
                           <select className="form-select" value={semesterType} onChange={(e) => setSemesterType(e.target.value)}>
@@ -416,21 +439,21 @@ function Aptitudeconfigurequestions() {
                           </select>
                         </div>
 
-                        {/* Exam Date, Start Time, and End Time in the same row */}
+                       
                         <div className="row mb-3">
-                          {/* Exam Date */}
+                       
                           <div className="col">
                             <label className="form-label">Exam Date</label>
                             <input type="date" className="form-control" value={examDate} onChange={(e) => setExamDate(e.target.value)} />
                           </div>
 
-                          {/* Start Time */}
+                    
                           <div className="col">
                             <label className="form-label">Start Time</label>
                             <input type="time" className="form-control" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
                           </div>
 
-                          {/* End Time */}
+                      
                           <div className="col">
                             <label className="form-label">End Time</label>
                             <input type="time" className="form-control" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
@@ -439,13 +462,13 @@ function Aptitudeconfigurequestions() {
 
 
 
-                        {/* Questions Input */}
+                       
                         <div className="mb-3">
                         
                           <label className="form-label">Instructions</label>
                           <textarea className="form-control" rows="3" value={instructions} onChange={(e) => setInstructions(e.target.value)} placeholder="Enter exam instructions here..."></textarea>
                         </div>
-                        {/* Negative Marking Dropdown */}
+                     
                         <div className="mb-3">
                           <label className="form-label">Negative Marking</label>
                           <select className="form-select" value={negativeMarking} onChange={(e) => setNegativeMarking(e.target.value)}>
@@ -564,8 +587,8 @@ function Aptitudeconfigurequestions() {
                   {questions.map((_, index) => (
                     <div
                       key={index}
-                      className={`circle ${answerStatus[index]}`} // Dynamic class for color
-                      onClick={() => setCurrentQuestionIndex(index)} // Click navigates to question
+                      className={`circle ${answerStatus[index]}`} 
+                      onClick={() => setCurrentQuestionIndex(index)} 
                     >
                       {index + 1}
                     </div>

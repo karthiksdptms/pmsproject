@@ -1,17 +1,20 @@
 import React from "react";
 import "./Topbar.css";
-import { Link } from "react-router-dom";
+import { NavLink,Link } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { GrAchievement } from "react-icons/gr";
 import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
+
 
 function Topbar() {
-  const {user} = useAuth();
+  const {user,logout} = useAuth();
+  
   
   return (
     <>
       <div className="topbar">
-        <img src="ritraja.jpg" class="img-fluid" alt="Responsive image" />
+        <img src="/ritraja.jpg" class=""   alt="logo"/>
         <h1 className="placementword">PLACEMENT AND TRAINING</h1>
         <h6
           style={{
@@ -28,8 +31,9 @@ function Topbar() {
         >
           AN AUTONOMOUS INSTITUTION
         </h6>
-        <Link to="/">
+       
           <button
+          onClick={logout}
             type="button"
             class="btn "
             style={{
@@ -48,64 +52,82 @@ function Topbar() {
             <i class="bi bi-box-arrow-left" style={{ marginRight: "10px" }}></i>
             Logout
           </button>
-        </Link>
-        <div className="profile">
-          <h6 className="admin">{user.name}</h6>
-          <FaUser className="user1" />
-        </div>
+       
+          <div className="profile1">
+   <h6 className="admin">{user && user.name}</h6>
+  <FaUser className="user1" />
+</div>
+
       </div>
        
      
       <div className="sidebox">
       <div className="btnn">
       {" "}
-          <Link to="/Maindashboard">
-            <button class="btnn ">
-            <i class="bi bi-speedometer"  style={{ marginRight: "10px",paddingLeft:'5px' }} ></i>
-             
-              Dashboard
-            </button>
-          </Link>
+      <NavLink to="/Maindashboard" end>
+  {({ isActive }) => (
+    <button className={`btnn ${isActive ? "bgg" : ""}`}>
+      <i className="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
+      Dashboard
+    </button>
+  )}
+</NavLink>
         </div>
     
         <div className="btnn">
-        <Link to="/Dashboard">
-            <button class="btnn">
+        <NavLink to="/Maindashboard/Dashboard" end>
+        {({ isActive }) => (
+        <button className={`btnn ${isActive ? "bgg" : ""}`}>
             <i class="bi bi-funnel-fill"   style={{ marginRight: "10px" ,paddingLeft:'5px'}} />
               Student's Filters
             </button>
-          </Link>
+             )}
+          </NavLink>
         </div>
         <div className="btnn">
           {" "}
-          <Link to="/Training">
-            <button class="btnn">
+          <NavLink to="/Maindashboard/Training">
+          {({ isActive }) => (
+          <button className={`btnn ${isActive ? "bgg" : ""}`}>
               <i class="bi bi-bullseye"   style={{ marginRight: "10px",paddingLeft:'5px' }} />
               Training
             </button>
-          </Link>
+             )}
+          </NavLink>
+          
         </div>
         <div className="btnnn">
           {" "}
-          <Link to="/Placementannounce">
-            <button class="btnn ">
-              <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px'}} />
+          <NavLink to="/Maindashboard/Placementannounce">
+          {({ isActive }) => (
+          <button className={`btnn ${isActive ? "bgg" : ""}`}>
+              <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"20px"}} />
               Placement Announcements
             </button>
-          </Link>
+             )}
+          </NavLink>
         </div>
        
         <div className="btnn">
         {" "}
-          <Link to="/Aptitude">
-            <button class="btnn ">
-              <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px'}} />
+          <NavLink to="/Maindashboard/Aptitude">
+          {({ isActive }) => (
+          <button className={`btnn ${isActive ? "bgg" : ""}`}>
+              <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"20px"}} />
               Aptitude
             </button>
-          </Link>
+             )}
+          </NavLink>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+        <NavLink to="/Maindashboard/Accounts">
+          {({ isActive }) => (
+          <button className={`btnn ${isActive ? "bgg" : ""}`}>
+              <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"20px"}} />
+              Accounts
+            </button>
+             )}
+          </NavLink>
         </div>
         <div className="btnn">
           <button class="btnn"></button>

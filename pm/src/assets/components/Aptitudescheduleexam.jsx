@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 function Aptitudescheduleexam() {
     return (
-        <><Topbar/>
+        <>
         <div
              style={{
                position: "relative",
@@ -15,7 +15,7 @@ function Aptitudescheduleexam() {
              }}
            >
              <Link
-               to="/Aptitude"
+               to="/Maindashboard/Aptitude"
                style={{ textDecoration: "none", color: "black" }}
              >
                <div>
@@ -45,7 +45,7 @@ function Aptitudescheduleexam() {
                      width: "450px",
                    }}
                  >
-                Schedule Exam{" "}
+                Schedule Exam
                  </h2>
                </div>
              </Link>
