@@ -33,6 +33,7 @@ import Studenttrainingscores from './studentcomponents/Studenttrainingscores'
 import Aptitudescores from './assets/components/Aptitudescores'
 
 
+
 function App() {
   const { user } = useAuth()
 
@@ -53,7 +54,6 @@ function App() {
               </RoleBaseRoutes>
             </PrivateRoute>
           } >
-
             <Route index element={<Adminsummmary />} />
             <Route path='/Maindashboard/Dashboard' element={<Dashboard />} />
             <Route path='/Maindashboard/Aptitude' element={<Aptitude />} />
@@ -64,7 +64,7 @@ function App() {
             <Route path='/Maindashboard/Trainingschedule' element={<Trainingschedule />} />
 
             <Route path='/Maindashboard/Trainingattendence' element={<Trainingattendance />} />
-
+           
             <Route path='/Maindashboard/Placementannounce' element={<Placementsannounce />} />
             <Route path='/Maindashboard/Aptitudeconfigurequestions' element={<Aptitudeconfigurequestions />} />
             <Route path='/Maindashboard/Aptitudescores' element={<Aptitudescores />} />

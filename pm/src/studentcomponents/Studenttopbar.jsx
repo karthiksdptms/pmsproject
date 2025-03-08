@@ -12,6 +12,7 @@ function Studenttopbar() {
   return (<>
     <div className="topbar">
       <img src="/ritraja.jpg" className="img-fluid" alt="Responsive image" />
+
       <h6 style={{
 
         color: "white",
@@ -22,6 +23,7 @@ function Studenttopbar() {
         height: "15px",
       }}>welcome {user.name}!</h6>
       <h1 className="" style={{ position: "relative", right: "-300px", color: "white", fontFamily: "cambria", top: "10px" }}>PLACEMENT AND TRAINING</h1>
+
       <h6
         style={{
           fontSize: "13px",
@@ -46,6 +48,8 @@ function Studenttopbar() {
           position: "relative",
           left: "270px",
           top: "2px",
+
+
 
         }}>
         <button
@@ -105,17 +109,21 @@ function Studenttopbar() {
       </div>
       <div className="btnn">
         {" "}
+
         <Link to="/Studentdashboard/Studentprofile">
           <button className="btnn ">
             <i className="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: '5px' }} ></i>
             My Profile
+
           </button>
         </Link>
       </div>
 
 
       <div className="btnn">
+
         <Link to="/Studentdashboard/Studenttraining">
+
           <button className="btnn">
             <i className="bi bi-funnel-fill" style={{ marginRight: "10px", paddingLeft: '5px' }} />
             Training
@@ -124,7 +132,9 @@ function Studenttopbar() {
       </div>
       <div className="btnn">
         {" "}
+
         <Link to="/Studentdashboard/Studentplacement">
+
           <button className="btnn">
             <i className="bi bi-bullseye" style={{ marginRight: "10px", paddingLeft: '5px' }} />
             Placement

@@ -9,6 +9,9 @@ import QpModel from "./models/QpModel.js";
 import StudentModel from "./models/StudentModel.js";
 import TrainingModel from './models/TrainingModel.js'
 import studentRouter from './routes/students.js'
+
+import scheduleRoutes from "./routes/scheduleRoutes.js";
+
 import answerkeyRouter from './routes/answerkey.js'
 import { autoPostScheduler } from './autoPostScheduler.js';
 
@@ -22,8 +25,14 @@ app.use(cors());
 app.use (express.static('public/uploads'));
 app.use(express.json());
 app.use('/api/auth',authRouter);
+
+app.use('/api/students',studentRouter);
+app.use("/api/training", scheduleRoutes);
+app.use("/api/schedule",scheduleRoutes);
+
 app.use('/api/student',studentRouter)
 app.use('/api/answerkey',answerkeyRouter)
+
 
 
 

@@ -56,7 +56,8 @@ function Accounts() {
           
                     <div>
                       
-                      <Link to="/Maindashboard/Accountsstudentaccounts" style={{textDecoration:"none",width:"250px"}}> <div className='cq'>
+                      <Link to="/Maindashboard/Accountsstudentaccounts" style={{textDecoration:"none",width:"250px"}}> <div className='cq'
+
                                     <h4 style={{position:"relative",top:"30px",right:"40px"}}>Students</h4>
                                     <i className="bi bi-calendar2-check-fill" style={{fontSize:"50px",position:"relative",left:"110px",bottom:"30px",color:'rgba(11,132,164,255)'}}></i>
                                 </div></Link></div>

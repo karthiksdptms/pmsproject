@@ -54,7 +54,8 @@ function Aptitude() {
         </Link>
         <div className="menu5">
 
-          <div>
+          
+                   
 
             <Link to="/Maindashboard/Aptitudeconfigurequestions" style={{ textDecoration: "none", width: "250px" }}> <div className='cq'>
               <h4 style={{ position: "relative", top: "30px", right: "30px" }}>Configure Questions</h4>

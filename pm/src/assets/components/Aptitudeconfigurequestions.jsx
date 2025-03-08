@@ -253,6 +253,9 @@ function Aptitudeconfigurequestions() {
           {!showQuestionPaper ? (
             <>
 
+            
+
+
               <button className="btn  " onClick={() => setShowModal(true)} style={{ marginRight: "50px", position: "relative", left: "1080px", top: "50px" }}><i className="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "blue" }}></i></button>
 
 
@@ -422,6 +425,9 @@ function Aptitudeconfigurequestions() {
                   </div>
                 </div>
               )}
+
+
+
 
 
 

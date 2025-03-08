@@ -14,7 +14,9 @@ function Topbar() {
   return (
     <>
       <div className="topbar">
+
         <img src="/ritraja.jpg"    alt="logo"/>
+
         <h1 className="placementword">PLACEMENT AND TRAINING</h1>
         <h6
           style={{
