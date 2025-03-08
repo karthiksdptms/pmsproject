@@ -17,11 +17,19 @@ const AnswerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  title: {
+    type: String,
+    required: true,
+  },
   answers: {
     type: Array,
     required: true,
   },
   score: {
+    type: Number,
+    required: true,
+  },
+  totalscore: {
     type: Number,
     required: true,
   },

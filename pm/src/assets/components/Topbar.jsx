@@ -14,7 +14,7 @@ function Topbar() {
   return (
     <>
       <div className="topbar">
-        <img src="/ritraja.jpg" class=""   alt="logo"/>
+        <img src="/ritraja.jpg"    alt="logo"/>
         <h1 className="placementword">PLACEMENT AND TRAINING</h1>
         <h6
           style={{
@@ -35,7 +35,7 @@ function Topbar() {
           <button
           onClick={logout}
             type="button"
-            class="btn "
+            className="btn "
             style={{
               borderRadius: "30px",
               backgroundColor: "white",
@@ -49,7 +49,7 @@ function Topbar() {
             }}
           >
             {" "}
-            <i class="bi bi-box-arrow-left" style={{ marginRight: "10px" }}></i>
+            <i className="bi bi-box-arrow-left" style={{ marginRight: "10px" }}></i>
             Logout
           </button>
        
@@ -78,7 +78,7 @@ function Topbar() {
         <NavLink to="/Maindashboard/Dashboard" end>
         {({ isActive }) => (
         <button className={`btnn ${isActive ? "bgg" : ""}`}>
-            <i class="bi bi-funnel-fill"   style={{ marginRight: "10px" ,paddingLeft:'5px'}} />
+            <i className="bi bi-funnel-fill"   style={{ marginRight: "10px" ,paddingLeft:'5px'}} />
               Student's Filters
             </button>
              )}
@@ -89,7 +89,7 @@ function Topbar() {
           <NavLink to="/Maindashboard/Training">
           {({ isActive }) => (
           <button className={`btnn ${isActive ? "bgg" : ""}`}>
-              <i class="bi bi-bullseye"   style={{ marginRight: "10px",paddingLeft:'5px' }} />
+              <i className="bi bi-bullseye"   style={{ marginRight: "10px",paddingLeft:'5px' }} />
               Training
             </button>
              )}
@@ -130,46 +130,46 @@ function Topbar() {
           </NavLink>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
       </div>
 

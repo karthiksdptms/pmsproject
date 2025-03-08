@@ -495,6 +495,7 @@ export const postQuestionPaper = async (req, res) => {
           academicYear: questionPaper.academicYear,
           department: questionPaper.department,
           batch: questionPaper.batch,
+          negativeMarking:questionPaper.negativeMarking,
           examDate: questionPaper.examDate,
           startTime: questionPaper.startTime,
           endTime: questionPaper.endTime,
@@ -545,7 +546,7 @@ const postSpecificQuestionPaper = async (req, res) => {
     for (const student of students) {
       student.exams = student.exams || [];
 
-      // Check for duplicate Question Paper
+     
       const alreadyPosted = student.exams.some((exam) => exam.qpcode === qpcode);
 
       if (!alreadyPosted) {
@@ -555,6 +556,7 @@ const postSpecificQuestionPaper = async (req, res) => {
           academicYear: questionPaper.academicYear,
           department: questionPaper.department,
           batch: questionPaper.batch,
+          negativeMarking:questionPaper.negativeMarking,
           examDate: questionPaper.examDate,
           startTime: questionPaper.startTime,
           endTime: questionPaper.endTime,
@@ -566,7 +568,7 @@ const postSpecificQuestionPaper = async (req, res) => {
           })),
         });
 
-        await student.save(); // Save student only if new exam is added
+        await student.save();
         console.log(`Posted to: ${student.registration_number}`);
       } else {
         console.log(`Already Posted to: ${student.registration_number}`);

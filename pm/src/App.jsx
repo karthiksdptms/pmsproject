@@ -30,6 +30,7 @@ import Adminsummmary from './assets/components/Adminsummary'
 import Studentsummary from './studentcomponents/Studentsummary'
 import Studenttrainingexams from './studentcomponents/Studenttrainingexams'
 import Studenttrainingscores from './studentcomponents/Studenttrainingscores'
+import Aptitudescores from './assets/components/Aptitudescores'
 
 
 function App() {
@@ -66,7 +67,7 @@ function App() {
 
             <Route path='/Maindashboard/Placementannounce' element={<Placementsannounce />} />
             <Route path='/Maindashboard/Aptitudeconfigurequestions' element={<Aptitudeconfigurequestions />} />
-
+            <Route path='/Maindashboard/Aptitudescores' element={<Aptitudescores />} />
             <Route path='/Maindashboard/Aptitudescheduleexam' element={<Aptitudescheduleexam />} />
           </Route>
 

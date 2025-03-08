@@ -159,7 +159,7 @@ function Aptitudeconfigurequestions() {
         .delete(`http://localhost:3000/delqp/${id}`)
         .then((response) => {
           alert("Record deleted successfully!");
-          setQuestionPapers(questionPapers.filter((paper) => paper._id !== id)); // Remove from UI
+          setQuestionPapers(questionPapers.filter((paper) => paper._id !== id));
         })
         .catch((error) => {
           console.error("Error deleting record:", error);
@@ -219,7 +219,7 @@ function Aptitudeconfigurequestions() {
           <div>
             <button
               type="button"
-              class="btn btn-secondary"
+              className="btn btn-secondary"
               style={{
                 marginLeft: "20px",
                 border: "none",
@@ -253,7 +253,7 @@ function Aptitudeconfigurequestions() {
           {!showQuestionPaper ? (
             <>
 
-              <button className="btn  " onClick={() => setShowModal(true)} style={{ marginRight: "50px", position: "relative", left: "1080px", top: "50px" }}><i class="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "blue" }}></i></button>
+              <button className="btn  " onClick={() => setShowModal(true)} style={{ marginRight: "50px", position: "relative", left: "1080px", top: "50px" }}><i className="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "blue" }}></i></button>
 
 
               {displayedData.length > 0 && (
@@ -285,7 +285,7 @@ function Aptitudeconfigurequestions() {
                       className="btn"
                       disabled={currentPage === 1}
                     >
-                      <i class="bi bi-chevron-double-left"></i>
+                      <i className="bi bi-chevron-double-left"></i>
                     </button>
 
                     <span className="text-lg">
@@ -301,7 +301,7 @@ function Aptitudeconfigurequestions() {
                       className="btn"
                       disabled={currentPage === totalPages}
                     >
-                      <i class="bi bi-chevron-double-right arr"></i>
+                      <i className="bi bi-chevron-double-right arr"></i>
                     </button>
                   </div>
                   <div style={{
@@ -313,7 +313,7 @@ function Aptitudeconfigurequestions() {
                     minWidth: '1290px',
                     maxHeight: "800px",
                   }}>
-                    <table className="table table-striped  table-hover " style={{ position: "relative", right: "0px", left: "25px", top: "20px", marginBottom: '50px', marginRight: '50px' }} >
+                    <table className="table table-striped  table-hover " style={{ position: "relative", right: "0px", left: "25px", top: "20px", marginBottom: '50px', marginRight: '50px', minWidth: "1500px" }} >
                       <thead>
                         <tr>
                           <th>Question paper code</th>
@@ -321,6 +321,7 @@ function Aptitudeconfigurequestions() {
                           <th>Academic year</th>
                           <th>Department</th>
                           <th>Batch</th>
+                          <th>Negative Marking</th>
                           <th>Exam Date</th>
                           <th>Start Time</th>
                           <th>End Time</th>
@@ -336,6 +337,7 @@ function Aptitudeconfigurequestions() {
                             <td>{paper.academicYear}</td>
                             <td>{paper.department}</td>
                             <td>{paper.batch}</td>
+                            <td>{paper.negativeMarking}</td>
                             <td>{new Date(paper.examDate).toLocaleDateString("en-GB")}</td>
                             <td>{paper.startTime}</td>
                             <td>{paper.endTime}</td>
@@ -551,14 +553,14 @@ function Aptitudeconfigurequestions() {
 
 
                               <button className="btn" onClick={() => handleDeleteQuestion(index)}>
-                                <i class="bi bi-x-circle" style={{ fontSize: "30px", color: "red" }}></i>
+                                <i className="bi bi-x-circle" style={{ fontSize: "30px", color: "red" }}></i>
                               </button>
                             </div>
                           ))}
                         </div>
 
 
-                        <button className=" btn" style={{ backgroundColor: "none" }} onClick={handleAddQuestion}><i class="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "grey" }}></i></button>
+                        <button className=" btn" style={{ backgroundColor: "none" }} onClick={handleAddQuestion}><i className="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "grey" }}></i></button>
 
 
 

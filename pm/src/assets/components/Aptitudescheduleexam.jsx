@@ -23,12 +23,12 @@ function Aptitudescheduleexam() {
         const autoPostData = {};
         result.data.forEach((item) => {
           autoPostData[item.qpcode] = item.autoPost;
-          
+
         });
         setAutoPostStatus(autoPostData);
       })
       .catch(err => console.log(err));
-      setstdloading(false)
+    setstdloading(false)
     axios.get("http://localhost:3000/api/answerkey/getuploadedanswerkeys")
       .then((res) => {
         const uploadedData = {};
@@ -39,9 +39,9 @@ function Aptitudescheduleexam() {
       })
       .catch((err) => console.log(err));
 
-   
-       
-      
+
+
+
   }, [])
 
 
@@ -210,7 +210,7 @@ function Aptitudescheduleexam() {
           <div>
             <button
               type="button"
-              class="btn btn-secondary"
+              className="btn btn-secondary"
               style={{
                 marginLeft: "20px",
                 border: "none",
@@ -239,148 +239,150 @@ function Aptitudescheduleexam() {
           </div>
         </Link>
         {stdloading ? (
-          <Loading/>
-          ) : (
-        <div className="">
+          <Loading />
+        ) : (
+          <div className="">
 
-          <div className="mt-4 " >
+            <div className="mt-4 " >
 
-            <h4 className="mb-4" style={{ position: "relative", top: "50px", left: "50px", width: '350px' }}>
-              Total Question Papers: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{totalRecords}</span>
-            </h4>
+              <h4 className="mb-4" style={{ position: "relative", top: "50px", left: "50px", width: '350px' }}>
+                Total Question Papers: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{totalRecords}</span>
+              </h4>
 
 
-            <div
-              className="flex justify-right items-center gap-4 mt-4 "
-              style={{ position: "relative", left: "800px", bottom: "20PX", width: '460px' }}
-            >
-              <label>
-                {" "}
-                No of records per page:{" "}
-                <input
-                  type="number"
-                  value={rowsPerPage}
-                  onChange={handleRowsPerPageChange}
-                  style={{ width: "50px", padding: "5px", marginRight: "20PX" }}
-                />
-              </label>
-              <button
-                onClick={() =>
-                  setCurrentPage((prev) => Math.max(prev - 1, 1))
-                }
-                className="btn"
-                disabled={currentPage === 1}
+              <div
+                className="flex justify-right items-center gap-4 mt-4 "
+                style={{ position: "relative", left: "800px", bottom: "20PX", width: '460px' }}
               >
-                <i class="bi bi-chevron-double-left"></i>
-              </button>
+                <label>
+                  {" "}
+                  No of records per page:{" "}
+                  <input
+                    type="number"
+                    value={rowsPerPage}
+                    onChange={handleRowsPerPageChange}
+                    style={{ width: "50px", padding: "5px", marginRight: "20PX" }}
+                  />
+                </label>
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  className="btn"
+                  disabled={currentPage === 1}
+                >
+                  <i className="bi bi-chevron-double-left"></i>
+                </button>
 
-              <span className="text-lg">
-                Page {currentPage} of {totalPages}
-              </span>
+                <span className="text-lg">
+                  Page {currentPage} of {totalPages}
+                </span>
 
-              <button
-                onClick={() =>
-                  setCurrentPage((prev) =>
-                    Math.min(prev + 1, totalPages)
-                  )
-                }
-                className="btn"
-                disabled={currentPage === totalPages}
-              >
-                <i class="bi bi-chevron-double-right arr"></i>
-              </button>
-            </div>
-            <div style={{
-              position: "relative",
-              top: "20px",
-              left: "-20px",
-              overflowY: "auto",
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      Math.min(prev + 1, totalPages)
+                    )
+                  }
+                  className="btn"
+                  disabled={currentPage === totalPages}
+                >
+                  <i className="bi bi-chevron-double-right arr"></i>
+                </button>
+              </div>
+              <div style={{
+                position: "relative",
+                top: "20px",
+                left: "-20px",
+                overflowY: "auto",
 
 
-              maxHeight: "800px",
-            }}>
-              <table className="table table-striped  table-hover " style={{ position: "relative", right: "0px", left: "25px", top: "20px", marginBottom: '50px', width: '100%', marginRight: "40px", minWidth: '1850px' }} >
-                <thead>
-                  <tr>
-                    <th>Question paper code</th>
-                    <th>Title</th>
-                    <th>Academic year</th>
-                    <th>Department</th>
-                    <th>Batch</th>
-                    <th>Exam Date</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Semester</th>
-                    <th>Answer key</th>
-                    <th>Auto Post</th>
-                    <th>Manual Post</th>
-                 
-                  </tr>
-                </thead>
-                <tbody>
-                  {displayedData.map((paper, index) => (
-                    <tr key={index}>
-                      <td>{paper.qpcode}</td>
-                      <td>{paper.title}</td>
-                      <td>{paper.academicYear}</td>
-                      <td>{paper.department}</td>
-                      <td>{paper.batch}</td>
-                      <td>{new Date(paper.examDate).toLocaleDateString("en-GB")}</td>
-                      <td>{paper.startTime}</td>
-                      <td>{paper.endTime}</td>
-                      <td>{paper.semesterType}</td>
+                maxHeight: "800px",
+              }}>
+                <table className="table table-striped  table-hover " style={{ position: "relative", right: "0px", left: "25px", top: "20px", marginBottom: '50px', width: '100%', marginRight: "40px", minWidth: '1850px' }} >
+                  <thead>
+                    <tr>
+                      <th>Question paper code</th>
+                      <th>Title</th>
+                      <th>Academic year</th>
+                      <th>Department</th>
+                      <th>Batch</th>
+                      <th>Negative Marking</th>
+                      <th>Exam Date</th>
+                      <th>Start Time</th>
+                      <th>End Time</th>
+                      <th>Semester</th>
+                      <th>Answer key</th>
+                      <th>Auto Post</th>
+                      <th>Manual Post</th>
 
-                      <td>
-
-                        <button style={{ marginRight: '20px' }}
-                          className="btn btn-secondary"
-                          onClick={() => document.getElementById(`fileInput_${paper.qpcode}`).click()}
-                          disabled={uploadedKeys[paper.qpcode]}
-                        >
-                          {uploadedKeys[paper.qpcode] ? "Uploaded" : "Add Answer Key"}
-                        </button>
-
-                      <input
-                        type="file"
-                        id={`fileInput_${paper.qpcode}`}
-                        style={{ display: "none" }}
-                        accept=".csv"
-                        onChange={(e) => handleAnswerKey(e, paper.qpcode)}
-                      />
-                      </td><td>
-                        <button
-                          className='btn btn-success'
-                          style={{ marginRight: "20px" }}
-                          onClick={() => handleToggleAutoPost(paper.qpcode, !autoPostStatus[paper.qpcode])}
-                        >
-                          {autoPostStatus[paper.qpcode] ? "On" : "Off"}
-                        </button></td>
-                        <td>
-                        <button
-                          style={{ marginRight: "20px" }}
-                          className="btn btn-primary me-2"
-                          onClick={() => handlePostQuestionPaper(paper.qpcode)}
-                        >
-                          Post
-                        </button>
-                      
-                        <button
-                          className="btn btn-info me-2"
-                          onClick={() => openSpecificModal(paper.qpcode)}
-
-                        >
-                          Post to Specific Students
-                        </button></td>
-
-                      
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                  </thead>
+                  <tbody>
+                    {displayedData.map((paper, index) => (
+                      <tr key={index}>
+                        <td>{paper.qpcode}</td>
+                        <td>{paper.title}</td>
+                        <td>{paper.academicYear}</td>
+                        <td>{paper.department}</td>
+                        <td>{paper.batch}</td>
+                        <td>{paper.negativeMarking}</td>
+                        <td>{new Date(paper.examDate).toLocaleDateString("en-GB")}</td>
+                        <td>{paper.startTime}</td>
+                        <td>{paper.endTime}</td>
+                        <td>{paper.semesterType}</td>
 
-        </div>)}
+                        <td>
+
+                          <button style={{ marginRight: '20px' }}
+                            className="btn btn-secondary"
+                            onClick={() => document.getElementById(`fileInput_${paper.qpcode}`).click()}
+                            disabled={uploadedKeys[paper.qpcode]}
+                          >
+                            {uploadedKeys[paper.qpcode] ? "Uploaded" : "Add Answer Key"}
+                          </button>
+
+                          <input
+                            type="file"
+                            id={`fileInput_${paper.qpcode}`}
+                            style={{ display: "none" }}
+                            accept=".csv"
+                            onChange={(e) => handleAnswerKey(e, paper.qpcode)}
+                          />
+                        </td><td>
+                          <button
+                            className='btn btn-success'
+                            style={{ marginRight: "20px" }}
+                            onClick={() => handleToggleAutoPost(paper.qpcode, !autoPostStatus[paper.qpcode])}
+                          >
+                            {autoPostStatus[paper.qpcode] ? "On" : "Off"}
+                          </button></td>
+                        <td>
+                          <button
+                            style={{ marginRight: "20px" }}
+                            className="btn btn-primary me-2"
+                            onClick={() => handlePostQuestionPaper(paper.qpcode)}
+                          >
+                            Post
+                          </button>
+
+                          <button
+                            className="btn btn-info me-2"
+                            onClick={() => openSpecificModal(paper.qpcode)}
+
+                          >
+                            Post to Specific Students
+                          </button></td>
+
+
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>)}
       </div>
 
       {showModal && (

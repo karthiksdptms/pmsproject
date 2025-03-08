@@ -38,6 +38,7 @@ const autoPostScheduler = async () => {
                 academicYear: paper.academicYear,
                 department: paper.department,
                 batch: paper.batch,
+                negativeMarking:paper.negativeMarking,
                 examDate: paper.examDate,
                 startTime: paper.startTime,
                 endTime: paper.endTime,

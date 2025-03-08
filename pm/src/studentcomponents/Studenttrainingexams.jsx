@@ -128,7 +128,7 @@ function Studenttrainingexams() {
             timer: 3000,
             showConfirmButton: false,
           });
-        } else if (violationCount === 2) {
+        } else if (violationCount === 1) {
           Swal.fire({
             title: "Unauthorized Action Detected ❌",
             text: "Your Exam is Automatically Submitted",
@@ -190,6 +190,8 @@ function Studenttrainingexams() {
       
       { userId: user._id,
         qpcode: qpcode,
+        title:title,
+       
         answers: JSON.parse(JSON.stringify(resultArray)),});
   
       setShowQuestionPaper(false);
@@ -260,8 +262,8 @@ setShowQuestionPaper(false);
             </button>
           </div>
 
-          <div style={{ position: "relative", top: "20px", left: "-30px", overflowY: "auto", minWidth: '1270px', maxHeight: "800px" }}>
-            <table className="table table-striped table-hover" style={{ position: "relative", right: "0px", left: "25px", top: "20px", marginBottom: '50px', marginRight: '50px' }}>
+          <div style={{ position: "relative", top: "20px", left: "-30px", overflowY: "auto", maxHeight: "800px" }}>
+            <table className="table table-striped table-hover" style={{ position: "relative", minWidth: '1370px', right: "0px", left: "25px", top: "20px", marginBottom: '50px', marginRight: '50px' }}>
               <thead>
                 <tr>
                   <th>Question paper code</th>
@@ -269,6 +271,7 @@ setShowQuestionPaper(false);
                   <th>Academic year</th>
                   <th>Department</th>
                   <th>Batch</th>
+                  <th>Negative Marking</th>
                   <th>Exam Date</th>
                   <th>Start Time</th>
                   <th>End Time</th>
@@ -285,6 +288,7 @@ setShowQuestionPaper(false);
         <td>{paper.academicYear}</td>
         <td>{paper.department}</td>
         <td>{paper.batch}</td>
+        <td>{paper.negativeMarking}</td>
         <td>{new Date(paper.examDate).toLocaleDateString("en-GB")}</td>
         <td>{paper.startTime}</td>
         <td>{paper.endTime}</td>
