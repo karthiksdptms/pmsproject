@@ -200,7 +200,7 @@ function Dashboard() {
     <>
       <div className="">
         <div className="clr"></div>
-        <div className="container" className="contain">
+        <div className="container  contain" className="">
 
 
           <div className="">
@@ -548,7 +548,7 @@ function Dashboard() {
                     onClick={downloadExcel}
                     type="button"
                     className=" "
-                    className=" "
+                   
                     style={{
                       color: "white",
                       border: "none",
@@ -947,7 +947,7 @@ function Dashboard() {
                                     onClick={handleButtonClick}
                                   >
                                     <a
-                                      className="nav-link active"
+                                      className="nav-link active  "
                                       href="#"
                                       className="acolor"
                                     >
