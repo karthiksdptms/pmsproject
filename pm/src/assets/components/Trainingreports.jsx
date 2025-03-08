@@ -185,7 +185,7 @@ function Trainingreports() {
   };
   return (
     <>
-      
+
       <Link to="/Maindashboard/Training">
         <button
           type="button"
@@ -217,6 +217,7 @@ function Trainingreports() {
       >
         Report's
       </h2>
+
       <div>
 
         <div className="row mb-3" style={{ position: "relative", left: "320px", top: "70px", zIndex: "100",width:"600px" }}>
@@ -400,6 +401,7 @@ function Trainingreports() {
           </div>
         </div>
       </div>
+
 
 
 

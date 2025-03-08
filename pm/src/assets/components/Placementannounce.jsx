@@ -16,12 +16,12 @@ function Placementsannounce() {
     "MECH",
     "CSE",
     "AIML",
-     "VLSI",
-     "CSBS",
-  "BIO-TECH",
+    "VLSI",
+    "CSBS",
+    "BIO-TECH",
     "Others",
   ];
-  const batchOptions = ["2023-2027", "2022-2026", "2021-2025","2020-2024","2025-2028", "Others"];
+  const batchOptions = ["2023-2027", "2022-2026", "2021-2025", "2020-2024", "2025-2028", "Others"];
   const cgpaOptions = [
     "9.5 and above",
     "9 and above",
@@ -46,7 +46,7 @@ function Placementsannounce() {
     "API Developer",
     "Others",
   ];
- 
+
   const [date, setDate] = useState("");
   const [venue, setVenue] = useState("");
   const [generalReq, setGeneralReq] = useState("");
@@ -181,95 +181,95 @@ function Placementsannounce() {
   };
   //new
   const [filters, setFilters] = useState({
-      department: [],
-      batch: [],
-      cgpa: "",
-      arrears: "",
-      historyOfArrears: "",
-      aoi: [],
-      language: "",
-      otherDepartment: "",
-      otherBatch: "",
-      otherAoi: "",
+    department: [],
+    batch: [],
+    cgpa: "",
+    arrears: "",
+    historyOfArrears: "",
+    aoi: [],
+    language: "",
+    otherDepartment: "",
+    otherBatch: "",
+    otherAoi: "",
+  });
+  const [showOtherDepartment, setShowOtherDepartment] = useState(false);
+  const [showOtherBatch, setShowOtherBatch] = useState(false);
+  const [showOtherAoi, setShowOtherAoi] = useState(false);
+
+  const handleCheckboxChange = (e, key) => {
+    const value = e.target.value;
+    setFilters((prev) => {
+      const updatedValues = prev[key].includes(value)
+        ? prev[key].filter((item) => item !== value)
+        : [...prev[key], value];
+      return { ...prev, [key]: updatedValues };
     });
-    const [showOtherDepartment, setShowOtherDepartment] = useState(false);
-    const [showOtherBatch, setShowOtherBatch] = useState(false);
-    const [showOtherAoi, setShowOtherAoi] = useState(false);
-  
-    const handleCheckboxChange = (e, key) => {
-      const value = e.target.value;
-      setFilters((prev) => {
-        const updatedValues = prev[key].includes(value)
-          ? prev[key].filter((item) => item !== value)
-          : [...prev[key], value];
-        return { ...prev, [key]: updatedValues };
-      });
-      if (value === "Others") {
-        if (key === "department") setShowOtherDepartment(true);
-        if (key === "batch") setShowOtherBatch(true);
-        if (key === "aoi") setShowOtherAoi(true);
-      }
-    };
-  
-    const handleSelectChange = (e, key) => {
-      setFilters((prev) => ({ ...prev, [key]: e.target.value }));
-    };
-  
-    const handleInputChange = (e, key) => {
-      setFilters((prev) => ({ ...prev, [key]: e.target.value }));
-    };
-    const [students,setstudents]=useState([])
+    if (value === "Others") {
+      if (key === "department") setShowOtherDepartment(true);
+      if (key === "batch") setShowOtherBatch(true);
+      if (key === "aoi") setShowOtherAoi(true);
+    }
+  };
+
+  const handleSelectChange = (e, key) => {
+    setFilters((prev) => ({ ...prev, [key]: e.target.value }));
+  };
+
+  const handleInputChange = (e, key) => {
+    setFilters((prev) => ({ ...prev, [key]: e.target.value }));
+  };
+  const [students, setstudents] = useState([])
   useEffect(() => {
     axios.get("http://localhost:3000/getstudents")
       .then(response => setstudents(response.data))
       .catch(error => console.error("Error fetching students:", error));
-    }, []);
-    
+  }, []);
 
-    const filteredStudents = students.filter((student) => {
-      return (
-        (filters.department.length === 0 ||
-          filters.department.includes(student.DEPARTMENT) ||
-          (showOtherDepartment &&
-            student.DEPARTMENT.includes(filters.otherDepartment))) &&
-        (filters.batch.length === 0 ||
-          filters.batch.includes(student.BATCH) ||
-          (showOtherBatch && student.BATCH.includes(filters.otherBatch))) &&
-        (filters.cgpa === "" ||
-          parseFloat(student.CPGA) >= parseFloat(filters.cgpa)) &&
-        (filters.arrears === "" ||
-          student.ARREARS.toString() === filters.arrears) &&
-        (filters.historyOfArrears === "" ||
-          student.HOA.toString() === filters.historyOfArrears) &&
-        (filters.aoi.length === 0 ||
-          filters.aoi.includes(student.AOI) ||
-          (showOtherAoi && student.AOI.includes(filters.otherAoi))) &&
-        (filters.language === "" ||
-          student.LANGUAGE.toLowerCase().includes(filters.language.toLowerCase()))
-      );
-    });
-    const handleAllCheckboxChange = (e, key) => {
-      const isChecked = e.target.checked;
-      if (isChecked) {
-        setFilters((prev) => ({ ...prev, [key]: [] }));
-      }
-    };
-    const [hoverVisible, setHoverVisible] = useState(false);
-    const [hoverVisiblee, setHoverVisiblee] = useState(false);
-    const [hoverVisibleee, setHoverVisibleee] = useState(false);
-    ///
-    const [selectedRecords, setSelectedRecords] = useState([]);
-    const [selectedDepartments, setSelectedDepartments] = useState([]);
-    const [batchSize, setBatchSize] = useState(3);
-    const [batches, setBatches] = useState([]);
-  
-    const handleDepartmentChange = (event) => {
-      const value = event.target.value;
-      setSelectedDepartments((prev) =>
-        prev.includes(value) ? prev.filter((d) => d !== value) : [...prev, value]
-      );
-    };
-  
+
+  const filteredStudents = students.filter((student) => {
+    return (
+      (filters.department.length === 0 ||
+        filters.department.includes(student.DEPARTMENT) ||
+        (showOtherDepartment &&
+          student.DEPARTMENT.includes(filters.otherDepartment))) &&
+      (filters.batch.length === 0 ||
+        filters.batch.includes(student.BATCH) ||
+        (showOtherBatch && student.BATCH.includes(filters.otherBatch))) &&
+      (filters.cgpa === "" ||
+        parseFloat(student.CPGA) >= parseFloat(filters.cgpa)) &&
+      (filters.arrears === "" ||
+        student.ARREARS.toString() === filters.arrears) &&
+      (filters.historyOfArrears === "" ||
+        student.HOA.toString() === filters.historyOfArrears) &&
+      (filters.aoi.length === 0 ||
+        filters.aoi.includes(student.AOI) ||
+        (showOtherAoi && student.AOI.includes(filters.otherAoi))) &&
+      (filters.language === "" ||
+        student.LANGUAGE.toLowerCase().includes(filters.language.toLowerCase()))
+    );
+  });
+  const handleAllCheckboxChange = (e, key) => {
+    const isChecked = e.target.checked;
+    if (isChecked) {
+      setFilters((prev) => ({ ...prev, [key]: [] }));
+    }
+  };
+  const [hoverVisible, setHoverVisible] = useState(false);
+  const [hoverVisiblee, setHoverVisiblee] = useState(false);
+  const [hoverVisibleee, setHoverVisibleee] = useState(false);
+  ///
+  const [selectedRecords, setSelectedRecords] = useState([]);
+  const [selectedDepartments, setSelectedDepartments] = useState([]);
+  const [batchSize, setBatchSize] = useState(3);
+  const [batches, setBatches] = useState([]);
+
+  const handleDepartmentChange = (event) => {
+    const value = event.target.value;
+    setSelectedDepartments((prev) =>
+      prev.includes(value) ? prev.filter((d) => d !== value) : [...prev, value]
+    );
+  };
+
   //old
   const handleSelectAll = () => {
     const allEmails = filteredStudents.map((item) => item.EMAIL);
@@ -294,7 +294,7 @@ function Placementsannounce() {
     const existingContentLines = emailContent.split("\n");
     let newContent = emailContent;
 
-    
+
     const dateLineIndex = existingContentLines.findIndex((line) =>
       line.startsWith("Date:")
     );
@@ -304,26 +304,24 @@ function Placementsannounce() {
       existingContentLines.push("Date: ${date}");
     }
 
-   
+
     const venueLineIndex = existingContentLines.findIndex((line) =>
       line.startsWith("Venue:")
     );
     if (venueLineIndex !== -1) {
-      existingContentLines[venueLineIndex] = `Venue: ${
-        venue || "Not Specified"
-      }`;
+      existingContentLines[venueLineIndex] = `Venue: ${venue || "Not Specified"
+        }`;
     } else if (venue) {
       existingContentLines.push("Venue: ${venue}");
     }
 
-   
+
     const generalReqLineIndex = existingContentLines.findIndex((line) =>
       line.startsWith("General Requirements:")
     );
     if (generalReqLineIndex !== -1) {
-      existingContentLines[generalReqLineIndex] = `General Requirements: ${
-        generalReq || "Not Specified"
-      }`;
+      existingContentLines[generalReqLineIndex] = `General Requirements: ${generalReq || "Not Specified"
+        }`;
     } else if (generalReq) {
       existingContentLines.push("General Requirements: ${generalReq}");
     }
@@ -332,9 +330,8 @@ function Placementsannounce() {
       line.startsWith("Skillset Requirements:")
     );
     if (skillsetReqLineIndex !== -1) {
-      existingContentLines[skillsetReqLineIndex] = `Skillset Requirements: ${
-        skillsetReq || "Not Specified"
-      }`;
+      existingContentLines[skillsetReqLineIndex] = `Skillset Requirements: ${skillsetReq || "Not Specified"
+        }`;
     } else if (skillsetReq) {
       existingContentLines.push("Skillset Requirements: {skillsetReq}");
     }
@@ -386,7 +383,7 @@ function Placementsannounce() {
   return (
     <>
       <div>
-       
+
       </div>
 
       <div className="trcontainer">
@@ -413,35 +410,8 @@ function Placementsannounce() {
         <h1 style={{ position: "relative", left: "30px", width: "100px", }}>
           Companies
         </h1>
-        <div className="trainingflex" style={{ gap: "-20px 30px" }}>
-          {jsonData.map((item) => (
-            <div key={item.ID}>
-              <button
-                style={{ border: "none", backgroundColor: "#eaf1fe" }}
-                type="button"
-                 data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop"
-                onClick={() => handleButtonClick(item)}
-              >
-                <div className="compdimen">
-                  <div className="compdes">
-                    <div className="compdesign2">
-                      <div className="compdesign3"></div>
-                    </div>
-                  </div>
-                  <div className="compdes1">
-                    <div className="compdesign21">
-                      <div className="compdesign31"></div>
-                    </div>
-                  </div>
-                  <div className="cname">
-                  <img src={`/images/${item.COMPANYIMG}`} alt={item.COMPANYNAME} style={{ width: "100px", height: "100px" }} />
-
-                  </div>
-                </div>
-              </button>
-            </div>
-          ))}
         </div>
+
       </div>
       <div
        className="offcanvas offcanvas-start" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel"
@@ -1276,6 +1246,8 @@ function Placementsannounce() {
           </div>
         )}
       </div>
+
+
     </>
   );
 }

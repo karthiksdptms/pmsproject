@@ -11,9 +11,10 @@ function Trainingattendance() {
  
   //new
   return (
-    <>    
-    <div className="had">
+    <>
+      <div className="had">
         <Link
+
             to="/Maindashboard/Training"
             style={{ textDecoration: "none", color: "black" }}
           >
@@ -51,6 +52,7 @@ function Trainingattendance() {
     </div>
 
   
+
     </>
   )
 }

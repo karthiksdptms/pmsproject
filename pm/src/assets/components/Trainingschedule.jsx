@@ -3,7 +3,7 @@ import Topbar from "./Topbar";
 import "./Trainingschedule.css";
 import { Link } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -18,12 +18,12 @@ function Trainingschedule() {
     "MECH",
     "CSE",
     "AIML",
-     "VLSI",
-     "CSBS",
-  "BIO-TECH",
+    "VLSI",
+    "CSBS",
+    "BIO-TECH",
     "Others",
   ];
-  const batchOptions = ["2023-2027", "2022-2026", "2021-2025","2020-2024","2025-2028", "Others"];
+  const batchOptions = ["2023-2027", "2022-2026", "2021-2025", "2020-2024", "2025-2028", "Others"];
   const cgpaOptions = [
     "9.5 and above",
     "9 and above",
@@ -49,12 +49,12 @@ function Trainingschedule() {
     "Others",
   ];
 
-  const [students,setstudents]=useState([])
+  const [students, setstudents] = useState([])
   useEffect(() => {
     axios.get("http://localhost:3000/getstudents")
       .then(response => setstudents(response.data))
       .catch(error => console.error("Error fetching students:", error));
-    }, []);
+  }, []);
   const [filters, setFilters] = useState({
     department: [],
     batch: [],
@@ -105,10 +105,10 @@ function Trainingschedule() {
         (showOtherBatch && student.BATCH.includes(filters.otherBatch))) &&
       (filters.cgpa === "" ||
         parseFloat(student.CPGA) >= parseFloat(filters.cgpa)) &&
-        (filters.arrears === "" ||
-          (parseFloat(filters.arrears) >= parseFloat(student.ARREARS))) &&
-          (filters.historyOfArrears === "" ||
-            (parseFloat(filters.historyOfArrears) >= parseFloat(student.HOA))) &&
+      (filters.arrears === "" ||
+        (parseFloat(filters.arrears) >= parseFloat(student.ARREARS))) &&
+      (filters.historyOfArrears === "" ||
+        (parseFloat(filters.historyOfArrears) >= parseFloat(student.HOA))) &&
       (filters.aoi.length === 0 ||
         filters.aoi.includes(student.AOI) ||
         (showOtherAoi && student.AOI.includes(filters.otherAoi))) &&
@@ -244,11 +244,11 @@ function Trainingschedule() {
 
   //new
 
-  
+
 
   return (
     <>
-    
+
       <div>
         <div className="hea">
           {" "}
@@ -259,7 +259,7 @@ function Trainingschedule() {
             <div>
               <button
                 type="button"
-                class="btn btn-secondary"
+                className="btn btn-secondary"
                 style={{
                   marginLeft: "20px",
                   border: "none",
@@ -291,9 +291,9 @@ function Trainingschedule() {
       </div>
 
       <div
-      className=""
+        className=""
         style={{
-          width:"1250px",
+          width: "1250px",
           padding: "20px",
           fontFamily: "Arial",
           position: "relative",
@@ -302,8 +302,8 @@ function Trainingschedule() {
           marginTop: "50px",
         }}
       >
-         <div
-        className="filterboxess"
+        <div
+          className="filterboxess"
         >
           <div>
             <div className="lable1">
@@ -629,8 +629,8 @@ function Trainingschedule() {
             </div>
           </div>
         </div>
-        <div className=" " style={{position:"relative",bottom:"80px"}}>
-          
+        <div className=" " style={{ position: "relative", bottom: "80px" }}>
+
           <div className="mb-3">
             <h5>Batch Size</h5>
             <input
@@ -639,60 +639,60 @@ function Trainingschedule() {
               value={batchSize}
               onChange={(e) => setBatchSize(Number(e.target.value))}
               min="1"
-              style={{width:"100px"}}
+              style={{ width: "100px" }}
             />
           </div>
-          <button  style={{position:"relative",left:"1000px",bottom:"100px"}} className="btn btn-primary mb-3" onClick={applyFilters}>
+          <button style={{ position: "relative", left: "1000px", bottom: "100px" }} className="btn btn-primary mb-3" onClick={applyFilters}>
             Apply Filters
           </button>
           <h4 className="mb-4">
-  Total Records: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color:"white" }}>{batches.flat().length}</span>
-</h4>
+            Total Records: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{batches.flat().length}</span>
+          </h4>
 
           {batches.map((batch, index) => (
-            <div key={index}  className="mb-4">
-              <h5 className="mb-4" style={{position:"relative",left:"40px",fontSize:"25px"}}>Batch {index + 1} :</h5> <button
+            <div key={index} className="mb-4">
+              <h5 className="mb-4" style={{ position: "relative", left: "40px", fontSize: "25px" }}>Batch {index + 1} :</h5> <button
                 className="btn btn-success me-2 "
-                style={{position:"relative",left:"1000px",bottom:"40px"}}
+                style={{ position: "relative", left: "1000px", bottom: "40px" }}
                 onClick={() => downloadExcel(batch, index)}
               >
-               <i
-                      class="bi bi-file-earmark-excel"
-                      style={{ marginRight: "10px" }}
-                    ></i>
-                    Excel
-                    <i class="bi bi-download" style={{ marginLeft: "5PX" }}></i>
+                <i
+                  className="bi bi-file-earmark-excel"
+                  style={{ marginRight: "10px" }}
+                ></i>
+                Excel
+                <i className="bi bi-download" style={{ marginLeft: "5PX" }}></i>
               </button>
-              <div className="mb-4" style={{position:"relative",right:"230px"}}>
-              <table  class="table table-striped  table-hover tabl"  >
-                <thead>
-                  <tr>
-                    <th>REGISTRATION_NUMBER</th>
-                    <th>NAME</th>
-                    <th>DEPARTMENT</th>
-                    <th>BATCH</th>
-                    <th>CGPA</th>
-                    <th>ARREARS</th>
-                    <th>HOA</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {batch.map((student) => (
-                    <tr key={student.REGISTRATION_NUMBER}>
-                      <td>{student.REGISTRATION_NUMBER}</td>
-                      <td>{student.NAME}</td>
-                      <td>{student.DEPARTMENT}</td>
-                      <td>{student.BATCH}</td>
-                      <td>{student.CPGA}</td>
-                      <td>{student.ARREARS}</td>
-                      <td>{student.HOA}</td>
+              <div className="mb-4" style={{ position: "relative", right: "230px" }}>
+                <table className="table table-striped  table-hover tabl"  >
+                  <thead>
+                    <tr>
+                      <th>REGISTRATION_NUMBER</th>
+                      <th>NAME</th>
+                      <th>DEPARTMENT</th>
+                      <th>BATCH</th>
+                      <th>CGPA</th>
+                      <th>ARREARS</th>
+                      <th>HOA</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {batch.map((student) => (
+                      <tr key={student.REGISTRATION_NUMBER}>
+                        <td>{student.REGISTRATION_NUMBER}</td>
+                        <td>{student.NAME}</td>
+                        <td>{student.DEPARTMENT}</td>
+                        <td>{student.BATCH}</td>
+                        <td>{student.CPGA}</td>
+                        <td>{student.ARREARS}</td>
+                        <td>{student.HOA}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-             
-             
+
+
             </div>
           ))}
         </div>

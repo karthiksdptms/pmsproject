@@ -8,8 +8,9 @@ import { IoIosArrowBack } from "react-icons/io";
 function Training() {
   return (
     <>
-    <div >
-        <div className='hea'> <Link to="/Maindashboard" style={{textDecoration:'none',color:
+      <div >
+        <div className='hea'> <Link to="/Maindashboard" style={{
+          textDecoration: 'none', color:
             "black"
         }}>
           <div>
@@ -21,7 +22,7 @@ function Training() {
                 border: "none",
                 position: "relative",
                 top: "95px",
-              right:'40px',
+                right: '40px',
                 fontSize: "35px",
                 color: "black",
                 backgroundColor: "transparent",
@@ -29,7 +30,7 @@ function Training() {
             >
               <IoIosArrowBack />
             </button>
-            <h2 style={{position:"relative",top:'45px',left:"30px",fontFamily:'poppins',fontSize:"35px",width:'100px'}}>Training's</h2>
+            <h2 style={{ position: "relative", top: '45px', left: "30px", fontFamily: 'poppins', fontSize: "35px", width: '100px' }}>Training's</h2>
           </div>
         </Link></div>
         <div className="menu">
@@ -47,8 +48,9 @@ function Training() {
                 <h4 style={{position:"relative",top:"30px",right:"40px"}}>Reports</h4>
                 <i className="bi bi-bar-chart-line-fill" style={{fontSize:"60px",position:"relative",left:"70px",bottom:"30px",color:"rgb(158, 64, 48)"}}></i>
             </div></Link>
+
         </div>
-    </div>
+      </div>
     </>
   )
 }
