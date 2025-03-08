@@ -11,17 +11,17 @@ function Studenttopbar() {
 
   return (<>
     <div className="topbar">
-      <img src="/ritraja.jpg" class="img-fluid" alt="Responsive image" />
-      <h6  style={{
-          
-          color: "white",
-          position: "fixed",
-          top:"45px",
-          left:"250px",
-         
-          height: "15px",
-        }}>welcome {user.name}!</h6>
-      <h1 className="" style={{position:"relative",right:"-300px",color:"white",fontFamily:"cambria",top:"10px"}}>PLACEMENT AND TRAINING</h1>
+      <img src="/ritraja.jpg" className="img-fluid" alt="Responsive image" />
+      <h6 style={{
+
+        color: "white",
+        position: "fixed",
+        top: "49px",
+        left: "250px",
+
+        height: "15px",
+      }}>welcome {user.name}!</h6>
+      <h1 className="" style={{ position: "relative", right: "-300px", color: "white", fontFamily: "cambria", top: "10px" }}>PLACEMENT AND TRAINING</h1>
       <h6
         style={{
           fontSize: "13px",
@@ -37,54 +37,54 @@ function Studenttopbar() {
       >
         AN AUTONOMOUS INSTITUTION
       </h6>
-        <div
+      <div
         style={{
-         display:"flex",
-         flexDirection:"row",
+          display: "flex",
+          flexDirection: "row",
           width: "410px",
           height: "40px",
           position: "relative",
           left: "270px",
           top: "2px",
-          
-        }}>     
-         <button
-        onClick={logout}
-        type="button"
-        class="btn "
-        style={{
-          borderRadius: "30px",
-          backgroundColor: "white",
-          width: "110px",
-          height: "40px",
-          position: "relative",
-          left: "330px",
-          top: "13px",
-          marginRight: "20px",
-          boxShadow: "none !important",
-        }}
-      >
-        <i class="bi bi-box-arrow-left" style={{ marginRight: "10px" }}></i>
-        Logout
-      </button>
+
+        }}>
+        <button
+          onClick={logout}
+          type="button"
+          className="btn "
+          style={{
+            borderRadius: "30px",
+            backgroundColor: "white",
+            width: "110px",
+            height: "40px",
+            position: "relative",
+            left: "330px",
+            top: "13px",
+            marginRight: "20px",
+            boxShadow: "none !important",
+          }}
+        >
+          <i className="bi bi-box-arrow-left" style={{ marginRight: "10px" }}></i>
+          Logout
+        </button>
 
 
-      <div style={{position:"fixed",right:'20px',top:"10px"}}>
-       
-      {user.profileImage ? (
-        <img
-          src={`http://localhost:3000/${user.profileImage}`}
-          alt="Profile"
-          className="rounded-circle"
-          style={{ width: "50px", height: "50px", objectFit: "cover" }}
-        />
-      ) : (
-        <FaUser
-          size={50}
-          style={{ color: "#999", borderRadius: "50%", padding: "10px", background: "#f4f4f4" }}
-        />
-      )}
-      </div>
+        <div style={{ position: "fixed", right: '20px', top: "10px" }}>
+
+          {user.profileImage ? (
+            <img
+              src={`http://localhost:3000/${user.profileImage}`}
+              alt="Profile"
+              className="rounded-circle"
+              style={{ width: "50px", height: "50px", objectFit: "cover" }}
+            />
+          ) : (
+            <FaUser
+              size={50}
+              style={{ color: "#999", borderRadius: "50%", padding: "10px", background: "#f4f4f4" }}
+            />
+          )}
+        </div>
       </div>
 
 
@@ -96,8 +96,8 @@ function Studenttopbar() {
       <div className="btnn">
         {" "}
         <Link to="/Studentdashboard">
-          <button class="btnn ">
-            <i class="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: '5px' }} ></i>
+          <button className="btnn ">
+            <i className="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: '5px' }} ></i>
 
             Dashboard
           </button>
@@ -105,28 +105,28 @@ function Studenttopbar() {
       </div>
       <div className="btnn">
         {" "}
-        <Link to="/Studentprofile">
-          <button class="btnn ">
-            <i class="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: '5px' }} ></i>
-                My Profile
+        <Link to="/Studentdashboard/Studentprofile">
+          <button className="btnn ">
+            <i className="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: '5px' }} ></i>
+            My Profile
           </button>
         </Link>
       </div>
 
 
       <div className="btnn">
-        <Link to="/Studenttraining">
-          <button class="btnn">
-            <i class="bi bi-funnel-fill" style={{ marginRight: "10px", paddingLeft: '5px' }} />
+        <Link to="/Studentdashboard/Studenttraining">
+          <button className="btnn">
+            <i className="bi bi-funnel-fill" style={{ marginRight: "10px", paddingLeft: '5px' }} />
             Training
           </button>
         </Link>
       </div>
       <div className="btnn">
         {" "}
-        <Link to="/Studentplacement">
-          <button class="btnn">
-            <i class="bi bi-bullseye" style={{ marginRight: "10px", paddingLeft: '5px' }} />
+        <Link to="/Studentdashboard/Studentplacement">
+          <button className="btnn">
+            <i className="bi bi-bullseye" style={{ marginRight: "10px", paddingLeft: '5px' }} />
             Placement
           </button>
         </Link>
@@ -136,56 +136,56 @@ function Studenttopbar() {
       <div className="btnn">
         {" "}
 
-        <button class="btnn ">
+        <button className="btnn ">
 
 
         </button>
 
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
       <div className="btnn">
-        <button class="btnn"></button>
+        <button className="btnn"></button>
       </div>
     </div>
 

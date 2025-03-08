@@ -185,11 +185,11 @@ function Trainingreports() {
   };
   return (
     <>
-      
+
       <Link to="/Maindashboard/Training">
         <button
           type="button"
-          class="btn btn-secondary"
+          className="btn btn-secondary"
           style={{
             marginLeft: "20px",
             border: "none",
@@ -217,189 +217,8 @@ function Trainingreports() {
       >
         Report's
       </h2>
-      <div>
-
-        <div className="row mb-3" style={{ position: "relative", left: "320px", top: "70px", zIndex: "100",width:"600px" }}>
-          <div className="col-md-3">
-            <label>From Date:</label>
-            <input type="date" className="form-control" value={fromDate} onChange={(e) => setFromDate(e.target.value)}  style={{width:"250px"}}/>
-          </div>
-          <div className="col-md-3" style={{position:"relative",right:"-150px"}}>
-            <label>To Date:</label>
-            <input type="date" className="form-control" value={toDate} onChange={(e) => setToDate(e.target.value)} style={{width:"250px"}} />
-          </div>
-        </div></div>
-      <button className="btn btn-success mb-3" style={{
-        color: "white",
-        backgroundcolor: "green",
-        margin: "20px",
-        width: "120px",
-        position: "relative",
-        left: "1280px",
-        borderRadius: "30px",
-        zIndex: "1000"
-      }}
-        onClick={handleExcelDownload}>
-        <i class="bi bi-file-earmark-excel" style={{ marginRight: "10px" }}></i>
-        Excel
-        <i class="bi bi-download" style={{ marginLeft: "5PX" }}></i>
-      </button>
-
-
-
-      <div
-        className="table"
-        style={{
-
-          overflowX: "auto",
-          overflowY: "auto",
-          maxHeight: "700px",
-          minHeight: "400px",
-          maxWidth: "1200px",
-          position: "relative",
-          bottom: '50px'
-        }}
-      >
-        <button className="btn" style={{ backgroundColor: "white", border: "none", color: " #3c6db9",position:"relative",bottom:"30px",zIndex:"1000" }} data-bs-toggle="modal" data-bs-target="#addtrainModal" ><i class="bi bi-plus-circle-fill" style={{ fontSize: "40px", position: "relative", top: "70px", left: "30px",position:"relative",left:"1000px",zIndex:"1000" }}></i></button> <h4 className="mb-4" style={{ position: "relative", left: "100px", top: "30px" }}>
-          Total Records: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white", position: "relative", lef: "1500px" }}>{filteredTrainings.flat().length}</span>
-        </h4>
-        <div className="modal fade" id="addtrainModal" tabIndex="-1">
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title"> Add New Training</h5>
-                <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
-              </div>
-              <div className="modal-body">
-                <input type="text" className="form-control mb-2" placeholder="Type" name="type" onChange={(e) => settrtype(e.target.value)} required />
-                <input type="text" className="form-control mb-2" placeholder="Trainee" name="trainee" onChange={(e) => settrainee(e.target.value)} required />
-                <input type="date" className="form-control mb-2" name="fromDate" onChange={(e) => setfromdate(e.target.value)} required />
-                <input type="date" className="form-control mb-2" name="toDate" onChange={(e) => settodate(e.target.value)} required />
-                <input type="text" className="form-control mb-2" placeholder="Duration" name="duration" onChange={(e) => setduration(e.target.value)} required />
-                <input type="text" className="form-control mb-2" placeholder="Batch" name="batch" onChange={(e) => setbatch(e.target.value)} required />
-                <input type="text" className="form-control mb-2" placeholder="Department" name="department" onChange={(e) => setdepartment(e.target.value)} required />
-                <input type="number" className="form-control mb-2" placeholder="Participated" name="participated" onChange={(e) => setparticipated(e.target.value)} required />
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-success" data-bs-dismiss="modal" onClick={Submit}>Save</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          className="flex justify-right items-center gap-4 mt-4 "
-          style={{ position: "relative", left: "730px", bottom: "20px", marginRight: "30px" }}
-        >
-          <label>
-            {" "}
-            No of records per page:{" "}
-            <input
-              type="number"
-              value={rowsPerPage}
-              onChange={handleRowsPerPageChange}
-              style={{ width: "50px", padding: "5px" }}
-            />
-          </label>
-          <button
-            onClick={() =>
-              setCurrentPage((prev) => Math.max(prev - 1, 1))
-            }
-            className="btn "
-            style={{ marginLeft: "20px" }}
-            disabled={currentPage === 1}
-          >
-            <i class="bi bi-chevron-double-left"></i>
-          </button>
-
-          <span className="text-lg">
-            Page {currentPage} of {totalPages}
-          </span>
-
-          <button
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
-            className="btn"
-            disabled={currentPage === totalPages}
-          >
-            <i class="bi bi-chevron-double-right arr"></i>
-          </button>
-        </div>
-        <table
-          border="1"
-          id="my-table"
-          style={{
-            marginTop: "20px",
-            width: "98%",
-            position: "relative",
-            left: "2%",
-            top: "0px",
-          }}
-          class="table table-striped  table-hover tabl"
-        >
-          <thead>
-            <tr>
-              <th>TYPE</th>
-              <th>TRAINEE</th>
-              <th>FROM </th>
-              <th>TO </th>
-              <th>DURATION</th>
-              <th>BATCH</th>
-              <th>DEPARTMENT</th>
-              <th>PARTICIPATED</th>
-              <th>ACTIONS</th>
-            </tr>
-          </thead>
-          <tbody>
-
-            {displayedData.length > 0 ? (
-              displayedData.map((training) => (
-                <tr key={training.id}>
-                  <td>{training.trtype}</td>
-                  <td>{training.trainee}</td>
-                  <td>{new Date(training.fromdate).toLocaleDateString("en-GB")}</td>
-                  <td>{new Date(training.todate).toLocaleDateString("en-GB")}</td>
-                  <td>{training.duration}</td>
-                  <td>{training.batch}</td>
-                  <td>{training.department}</td>
-                  <td>{training.participated}</td>
-                  <td>
-                    <button className="btn btn-warning btn-sm mx-3 " data-bs-toggle="modal" data-bs-target="#addEditModal" onClick={() => handleEditClick(training)}>Edit</button>
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(training._id)} >Delete</button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr><td colSpan="9" className="text-center">No records found</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      <div className="modal fade" id="addEditModal" tabIndex="-1">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title"> Edit Training</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div className="modal-body">
-              <input type="text" className="form-control mb-2" placeholder="Type" name="type" value={editData.trtype} onChange={(e) => setEditData({ ...editData, trtype: e.target.value })} />
-              <input type="text" className="form-control mb-2" placeholder="Trainee" name="trainee" value={editData.trainee} onChange={(e) => setEditData({ ...editData, trainee: e.target.value })} />
-              <input type="date" className="form-control mb-2" name="fromDate" value={editData.fromdate}
-                onChange={(e) => setEditData({ ...editData, fromdate: e.target.value })} />
-              <input type="date" className="form-control mb-2" name="toDate" value={editData.todate}
-                onChange={(e) => setEditData({ ...editData, todate: e.target.value })} />
-              <input type="text" className="form-control mb-2" placeholder="Duration" name="duration" value={editData.duration} onChange={(e) => setEditData({ ...editData, duration: e.target.value })} />
-              <input type="text" className="form-control mb-2" placeholder="Batch" name="batch" value={editData.batch} onChange={(e) => setEditData({ ...editData, batch: e.target.value })} />
-              <input type="text" className="form-control mb-2" placeholder="Department" name="department" value={editData.department} onChange={(e) => setEditData({ ...editData, department: e.target.value })} />
-              <input type="number" className="form-control mb-2" placeholder="Participated" name="participated" value={editData.participated} onChange={(e) => setEditData({ ...editData, participated: e.target.value })} />
-            </div>
-            <div className="modal-footer">
-              <button className="btn btn-success" data-bs-dismiss="modal" onClick={handleUpdate}>Save</button>
-            </div>
-          </div>
-        </div>
-      </div>
+      
+      
 
 
 
