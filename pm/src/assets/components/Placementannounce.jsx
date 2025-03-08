@@ -16,12 +16,12 @@ function Placementsannounce() {
     "MECH",
     "CSE",
     "AIML",
-    "VLSI",
-    "CSBS",
-    "BIO-TECH",
+     "VLSI",
+     "CSBS",
+  "BIO-TECH",
     "Others",
   ];
-  const batchOptions = ["2023-2027", "2022-2026", "2021-2025", "2020-2024", "2025-2028", "Others"];
+  const batchOptions = ["2023-2027", "2022-2026", "2021-2025","2020-2024","2025-2028", "Others"];
   const cgpaOptions = [
     "9.5 and above",
     "9 and above",
@@ -46,7 +46,7 @@ function Placementsannounce() {
     "API Developer",
     "Others",
   ];
-
+  //old version
   const [date, setDate] = useState("");
   const [venue, setVenue] = useState("");
   const [generalReq, setGeneralReq] = useState("");
@@ -181,95 +181,95 @@ function Placementsannounce() {
   };
   //new
   const [filters, setFilters] = useState({
-    department: [],
-    batch: [],
-    cgpa: "",
-    arrears: "",
-    historyOfArrears: "",
-    aoi: [],
-    language: "",
-    otherDepartment: "",
-    otherBatch: "",
-    otherAoi: "",
-  });
-  const [showOtherDepartment, setShowOtherDepartment] = useState(false);
-  const [showOtherBatch, setShowOtherBatch] = useState(false);
-  const [showOtherAoi, setShowOtherAoi] = useState(false);
-
-  const handleCheckboxChange = (e, key) => {
-    const value = e.target.value;
-    setFilters((prev) => {
-      const updatedValues = prev[key].includes(value)
-        ? prev[key].filter((item) => item !== value)
-        : [...prev[key], value];
-      return { ...prev, [key]: updatedValues };
+      department: [],
+      batch: [],
+      cgpa: "",
+      arrears: "",
+      historyOfArrears: "",
+      aoi: [],
+      language: "",
+      otherDepartment: "",
+      otherBatch: "",
+      otherAoi: "",
     });
-    if (value === "Others") {
-      if (key === "department") setShowOtherDepartment(true);
-      if (key === "batch") setShowOtherBatch(true);
-      if (key === "aoi") setShowOtherAoi(true);
-    }
-  };
-
-  const handleSelectChange = (e, key) => {
-    setFilters((prev) => ({ ...prev, [key]: e.target.value }));
-  };
-
-  const handleInputChange = (e, key) => {
-    setFilters((prev) => ({ ...prev, [key]: e.target.value }));
-  };
-  const [students, setstudents] = useState([])
+    const [showOtherDepartment, setShowOtherDepartment] = useState(false);
+    const [showOtherBatch, setShowOtherBatch] = useState(false);
+    const [showOtherAoi, setShowOtherAoi] = useState(false);
+  
+    const handleCheckboxChange = (e, key) => {
+      const value = e.target.value;
+      setFilters((prev) => {
+        const updatedValues = prev[key].includes(value)
+          ? prev[key].filter((item) => item !== value)
+          : [...prev[key], value];
+        return { ...prev, [key]: updatedValues };
+      });
+      if (value === "Others") {
+        if (key === "department") setShowOtherDepartment(true);
+        if (key === "batch") setShowOtherBatch(true);
+        if (key === "aoi") setShowOtherAoi(true);
+      }
+    };
+  
+    const handleSelectChange = (e, key) => {
+      setFilters((prev) => ({ ...prev, [key]: e.target.value }));
+    };
+  
+    const handleInputChange = (e, key) => {
+      setFilters((prev) => ({ ...prev, [key]: e.target.value }));
+    };
+    const [students,setstudents]=useState([])
   useEffect(() => {
     axios.get("http://localhost:3000/getstudents")
       .then(response => setstudents(response.data))
       .catch(error => console.error("Error fetching students:", error));
-  }, []);
+    }, []);
+    
 
-
-  const filteredStudents = students.filter((student) => {
-    return (
-      (filters.department.length === 0 ||
-        filters.department.includes(student.DEPARTMENT) ||
-        (showOtherDepartment &&
-          student.DEPARTMENT.includes(filters.otherDepartment))) &&
-      (filters.batch.length === 0 ||
-        filters.batch.includes(student.BATCH) ||
-        (showOtherBatch && student.BATCH.includes(filters.otherBatch))) &&
-      (filters.cgpa === "" ||
-        parseFloat(student.CPGA) >= parseFloat(filters.cgpa)) &&
-      (filters.arrears === "" ||
-        student.ARREARS.toString() === filters.arrears) &&
-      (filters.historyOfArrears === "" ||
-        student.HOA.toString() === filters.historyOfArrears) &&
-      (filters.aoi.length === 0 ||
-        filters.aoi.includes(student.AOI) ||
-        (showOtherAoi && student.AOI.includes(filters.otherAoi))) &&
-      (filters.language === "" ||
-        student.LANGUAGE.toLowerCase().includes(filters.language.toLowerCase()))
-    );
-  });
-  const handleAllCheckboxChange = (e, key) => {
-    const isChecked = e.target.checked;
-    if (isChecked) {
-      setFilters((prev) => ({ ...prev, [key]: [] }));
-    }
-  };
-  const [hoverVisible, setHoverVisible] = useState(false);
-  const [hoverVisiblee, setHoverVisiblee] = useState(false);
-  const [hoverVisibleee, setHoverVisibleee] = useState(false);
-  ///
-  const [selectedRecords, setSelectedRecords] = useState([]);
-  const [selectedDepartments, setSelectedDepartments] = useState([]);
-  const [batchSize, setBatchSize] = useState(3);
-  const [batches, setBatches] = useState([]);
-
-  const handleDepartmentChange = (event) => {
-    const value = event.target.value;
-    setSelectedDepartments((prev) =>
-      prev.includes(value) ? prev.filter((d) => d !== value) : [...prev, value]
-    );
-  };
-
+    const filteredStudents = students.filter((student) => {
+      return (
+        (filters.department.length === 0 ||
+          filters.department.includes(student.DEPARTMENT) ||
+          (showOtherDepartment &&
+            student.DEPARTMENT.includes(filters.otherDepartment))) &&
+        (filters.batch.length === 0 ||
+          filters.batch.includes(student.BATCH) ||
+          (showOtherBatch && student.BATCH.includes(filters.otherBatch))) &&
+        (filters.cgpa === "" ||
+          parseFloat(student.CPGA) >= parseFloat(filters.cgpa)) &&
+        (filters.arrears === "" ||
+          student.ARREARS.toString() === filters.arrears) &&
+        (filters.historyOfArrears === "" ||
+          student.HOA.toString() === filters.historyOfArrears) &&
+        (filters.aoi.length === 0 ||
+          filters.aoi.includes(student.AOI) ||
+          (showOtherAoi && student.AOI.includes(filters.otherAoi))) &&
+        (filters.language === "" ||
+          student.LANGUAGE.toLowerCase().includes(filters.language.toLowerCase()))
+      );
+    });
+    const handleAllCheckboxChange = (e, key) => {
+      const isChecked = e.target.checked;
+      if (isChecked) {
+        setFilters((prev) => ({ ...prev, [key]: [] }));
+      }
+    };
+    const [hoverVisible, setHoverVisible] = useState(false);
+    const [hoverVisiblee, setHoverVisiblee] = useState(false);
+    const [hoverVisibleee, setHoverVisibleee] = useState(false);
+    ///
+    const [selectedRecords, setSelectedRecords] = useState([]);
+    const [selectedDepartments, setSelectedDepartments] = useState([]);
+    const [batchSize, setBatchSize] = useState(3);
+    const [batches, setBatches] = useState([]);
+  
+    const handleDepartmentChange = (event) => {
+      const value = event.target.value;
+      setSelectedDepartments((prev) =>
+        prev.includes(value) ? prev.filter((d) => d !== value) : [...prev, value]
+      );
+    };
+  
   //old
   const handleSelectAll = () => {
     const allEmails = filteredStudents.map((item) => item.EMAIL);
@@ -294,7 +294,7 @@ function Placementsannounce() {
     const existingContentLines = emailContent.split("\n");
     let newContent = emailContent;
 
-
+    
     const dateLineIndex = existingContentLines.findIndex((line) =>
       line.startsWith("Date:")
     );
@@ -304,24 +304,26 @@ function Placementsannounce() {
       existingContentLines.push("Date: ${date}");
     }
 
-
+   
     const venueLineIndex = existingContentLines.findIndex((line) =>
       line.startsWith("Venue:")
     );
     if (venueLineIndex !== -1) {
-      existingContentLines[venueLineIndex] = `Venue: ${venue || "Not Specified"
-        }`;
+      existingContentLines[venueLineIndex] = `Venue: ${
+        venue || "Not Specified"
+      }`;
     } else if (venue) {
       existingContentLines.push("Venue: ${venue}");
     }
 
-
+   
     const generalReqLineIndex = existingContentLines.findIndex((line) =>
       line.startsWith("General Requirements:")
     );
     if (generalReqLineIndex !== -1) {
-      existingContentLines[generalReqLineIndex] = `General Requirements: ${generalReq || "Not Specified"
-        }`;
+      existingContentLines[generalReqLineIndex] = `General Requirements: ${
+        generalReq || "Not Specified"
+      }`;
     } else if (generalReq) {
       existingContentLines.push("General Requirements: ${generalReq}");
     }
@@ -330,8 +332,9 @@ function Placementsannounce() {
       line.startsWith("Skillset Requirements:")
     );
     if (skillsetReqLineIndex !== -1) {
-      existingContentLines[skillsetReqLineIndex] = `Skillset Requirements: ${skillsetReq || "Not Specified"
-        }`;
+      existingContentLines[skillsetReqLineIndex] = `Skillset Requirements: ${
+        skillsetReq || "Not Specified"
+      }`;
     } else if (skillsetReq) {
       existingContentLines.push("Skillset Requirements: {skillsetReq}");
     }
@@ -383,7 +386,7 @@ function Placementsannounce() {
   return (
     <>
       <div>
-
+        <Topbar />
       </div>
 
       <div className="trcontainer">
@@ -391,7 +394,7 @@ function Placementsannounce() {
           <div>
             <button
               type="button"
-              className="btn btn-secondary"
+              class="btn btn-secondary"
               style={{
                 marginLeft: "20px",
                 border: "none",
@@ -410,14 +413,40 @@ function Placementsannounce() {
         <h1 style={{ position: "relative", left: "30px", width: "100px", }}>
           Companies
         </h1>
+        <div className="trainingflex" style={{ gap: "-20px 30px" }}>
+          {jsonData.map((item) => (
+            <div key={item.ID}>
+              <button
+                style={{ border: "none", backgroundColor: "#eaf1fe" }}
+                type="button"
+                 data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop"
+                onClick={() => handleButtonClick(item)}
+              >
+                <div className="compdimen">
+                  <div className="compdes">
+                    <div className="compdesign2">
+                      <div className="compdesign3"></div>
+                    </div>
+                  </div>
+                  <div className="compdes1">
+                    <div className="compdesign21">
+                      <div className="compdesign31"></div>
+                    </div>
+                  </div>
+                  <div className="cname">
+                    <img src={item.COMPANYIMG} alt="" />
+                  </div>
+                </div>
+              </button>
+            </div>
+          ))}
         </div>
-
       </div>
       <div
-       className="offcanvas offcanvas-start" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel"
+       class="offcanvas offcanvas-start" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel"
         style={{ width: "88%", height: "5000px",marginRight:"300px" }}
       >
-        <div className="offcanvas-header" style={{ padding: "0px", width: "100%" }}>
+        <div class="offcanvas-header" style={{ padding: "0px", width: "100%" }}>
           <div className="wavfil" style={{ width: "100%" }}>
             <h1
               style={{
@@ -449,7 +478,7 @@ function Placementsannounce() {
           </div>
         </div>
         <div
-          className="offcanvas-body"
+          class="offcanvas-body"
           style={{ padding: "0px", height: "150%" }}
         ></div>
         <div style={{ position: "FIXED", top: "100PX", left: "-100px" }}>
@@ -461,7 +490,7 @@ function Placementsannounce() {
             }}
           >
             Requirements{" "}
-            <i className="bi bi-info-circle" style={{ fontSize: "30px" }}></i>
+            <i class="bi bi-info-circle" style={{ fontSize: "30px" }}></i>
           </h1>
 
           <div
@@ -497,7 +526,7 @@ function Placementsannounce() {
           <form action="">
             <div className="container">
               <textarea
-                className=" form-control"
+                class=" form-control"
                 id="exampleFormControlTextarea1"
                 rows={4}
                 className="text-area"
@@ -536,7 +565,7 @@ function Placementsannounce() {
           </form>
           <button
             type="button"
-            className="btn btn-primary  bnt"
+            class="btn btn-primary  bnt"
             onClick={() => setIsOffcanvasOpen(true)}
             className=" btn btnma bnt"
             style={{
@@ -552,19 +581,19 @@ function Placementsannounce() {
             }}
           >
             {" "}
-            <i className="bi bi-funnel-fill" style={{ marginRight: "10px" }}></i>
+            <i class="bi bi-funnel-fill" style={{ marginRight: "10px" }}></i>
             filter
           </button>
           <div
-            className="modal fade"
+            class="modal fade"
             id="exampleModal"
             tabindex="-1"
             aria-labelledby="exampleModalLabel"
             aria-hidden="true"
           >
-            <div className="modal-dialog">
+            <div class="modal-dialog">
               <div
-                className="modal-content"
+                class="modal-content"
                 style={{
                   width: "900px",
                   position: "relative",
@@ -572,9 +601,9 @@ function Placementsannounce() {
                   height: "440px",
                 }}
               >
-                <div className="modal-header ">
+                <div class="modal-header ">
                   <h3
-                    className="modal-title"
+                    class="modal-title"
                     id="exampleModalLabel"
                     style={{
                       position: "relative",
@@ -582,20 +611,20 @@ function Placementsannounce() {
                       color: " rgba(57,102,172,255)",
                     }}
                   >
-                    <div className="ribbon">Search:</div>
+                    <div class="ribbon">Search:</div>
                   </h3>
                   <button
                     type="button"
-                    className="btn-close"
+                    class="btn-close"
                     data-bs-dismiss="modal"
                     aria-label="Close"
                   ></button>
                 </div>
-                <div className="modal-body"> </div>
-                <div className="modal-footer">
+                <div class="modal-body"> </div>
+                <div class="modal-footer">
                   <button
                     type="button"
-                    className="btn "
+                    class="btn "
                     style={{
                       backgroundColor: " rgba(57,102,172,255)",
                       color: "white",
@@ -640,7 +669,7 @@ function Placementsannounce() {
                   border: "none",
                 }}
               >
-                <i className="bi bi-chevron-left" style={{ fontSize: "27px",fontWeight:"100rem" }}></i>
+                <i class="bi bi-chevron-left" style={{ fontSize: "27px",fontWeight:"100rem" }}></i>
               </button>
               <div className="filterboxes1">
               <div>
@@ -1006,7 +1035,7 @@ function Placementsannounce() {
                       style={{marginLeft:"20px"}}
                       disabled={currentPage === 1}
                     >
-                      <i className="bi bi-chevron-double-left"></i>
+                      <i class="bi bi-chevron-double-left"></i>
                     </button>
 
                     <span className="text-lg">
@@ -1020,7 +1049,7 @@ function Placementsannounce() {
                       className="btn"
                       disabled={currentPage === totalPages}
                     >
-                      <i className="bi bi-chevron-double-right arr"></i>
+                      <i class="bi bi-chevron-double-right arr"></i>
                     </button>
                   </div>
                   <table
@@ -1030,7 +1059,7 @@ function Placementsannounce() {
                       textAlign: "center",
                       position: "relative",
                     }}
-                    className="table table-striped  table-hover tabl"
+                    class="table table-striped  table-hover tabl"
                   >
                     <thead>
                       <tr>
@@ -1152,7 +1181,7 @@ function Placementsannounce() {
                   />
                   {emailContent.trim() && (
                     <button
-                      className="btn"
+                      class="btn"
                       onClick={sendEmails}
                       style={{
                         padding: "10px 20px",
@@ -1170,7 +1199,7 @@ function Placementsannounce() {
                   )}
                   <button
                     onClick={() => setIsOffcanvasOpen(false)}
-                    className="btn"
+                    class="btn"
                     style={{
                       padding: "10px 20px",
                       backgroundColor: "#6C757D",
@@ -1246,8 +1275,6 @@ function Placementsannounce() {
           </div>
         )}
       </div>
-
-
     </>
   );
 }

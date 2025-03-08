@@ -58,8 +58,5 @@ export const checkScheduleCode = async (req, res) => {
     res.status(500).json({ error: "Failed to check schedule code" });
   }
 };
-//new
 
-
-//new
 
