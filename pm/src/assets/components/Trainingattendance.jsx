@@ -1,21 +1,27 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
 import Topbar from './Topbar'
 import './Trainingattendance.css'
 import { IoIosArrowBack } from "react-icons/io";
 import { Link } from 'react-router-dom';
+import axios from "axios";
+import Swal from "sweetalert2";
 
 function Trainingattendance() {
+  //new
+ 
+  //new
   return (
-    <><Topbar/>    
-    <div className="had">
+    <>
+      <div className="had">
         <Link
-            to="/Training"
+
+            to="/Maindashboard/Training"
             style={{ textDecoration: "none", color: "black" }}
           >
             <div>
               <button
                 type="button"
-                class="btn btn-secondary"
+                className="btn btn-secondary"
                 style={{
                   marginLeft: "20px",
                   border: "none",
@@ -39,12 +45,14 @@ function Trainingattendance() {
                   width: "100px",
                 }}
               >
-               Attendence              </h2>
+               Attendence</h2>
               </div>
               </Link>
+              
     </div>
-    
-             
+
+  
+
     </>
   )
 }

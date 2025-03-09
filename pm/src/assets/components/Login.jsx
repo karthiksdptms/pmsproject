@@ -17,12 +17,10 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null); 
-
+    
     try {
-      const response = await axios.post("http://localhost:3000/api/auth/login", {
-        email,
-        password,
-      });
+      const response = await axios.post("http://localhost:3000/api/auth/login", 
+      {email,password})
 
       console.log("Login Response:", response.data); 
 
@@ -32,8 +30,10 @@ function Login() {
 
         if (response.data.user.role === "admin") {
           navigate("/MainDashboard");
-        } else {
+        } else if(response.data.user.role === "student") {
           navigate("/Studentdashboard");
+        }else{
+          navigate("/");
         }
       } else {
         setError("Login failed. Please check credentials.");
@@ -68,7 +68,7 @@ function Login() {
                 className="reg1"
                 onChange={(e) => setEmail(e.target.value)}
                 
-                placeholder="Enter Admin email"
+                placeholder="Enter email"
                 required
               />
               <div style={{ position: "relative", display: "inline-block" }}>
