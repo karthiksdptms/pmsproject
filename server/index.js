@@ -1,63 +1,36 @@
 import express from "express";
 import cors from "cors";
-import authRouter from "./routes/auth.js"
 import dotenv from "dotenv";
-dotenv.config();
 import connectDatabase from "./db/db.js";
-import FilterModel from "./models/FilterModel.js";
-import QpModel from "./models/QpModel.js";
-import StudentModel from "./models/StudentModel.js";
-import TrainingModel from './models/TrainingModel.js'
-import studentRouter from './routes/students.js'
-
+import authRouter from "./routes/auth.js";
+import studentRouter from "./routes/students.js";
 import scheduleRoutes from "./routes/scheduleRoutes.js";
 
-import answerkeyRouter from './routes/answerkey.js'
-import { autoPostScheduler } from './autoPostScheduler.js';
+import FilterModel from "./models/FilterModel.js";
+import QpModel from "./models/QpModel.js";
+import attendanceStudentRoutes from "./routes/attendanceStudentRoutes.js";
+import attendanceRoutes from "./routes/attendanceRoutes.js";
 
-
-connectDatabase().then(() => {
-  autoPostScheduler();
-});
+dotenv.config();
+connectDatabase();
 
 const app = express();
+
 app.use(cors());
-app.use (express.static('public/uploads'));
+app.use(express.static('public/uploads'));
 app.use(express.json());
-app.use('/api/auth',authRouter);
 
-app.use('/api/students',studentRouter);
+// API Routes
+app.use('/api/auth', authRouter);
+app.use('/api/students', studentRouter);
+app.use('/api/schedule', scheduleRoutes);
 app.use("/api/training", scheduleRoutes);
-app.use("/api/schedule",scheduleRoutes);
+app.use("/api/attendance", attendanceRoutes);
+app.use("/api/attendancestudent", attendanceStudentRoutes);
 
-app.use('/api/student',studentRouter)
-app.use('/api/answerkey',answerkeyRouter)
+// ✅ Removed direct `/api/schedule` GET request since it's inside `scheduleRoutes.js`
 
-
-
-
-
-
-
-app.get('/getstudent/:id', async (req, res) => {
-  try {
-    const student = await StudentModel.findOne({ userId: req.params.id }).populate("userId");
-
-    if (!student) {
-      return res.status(404).json({ message: "Student not found" });
-    }
-
-    console.log("Student Exams:", student.exams);
-
-    res.json({ exams: student.exams });
-  } catch (err) {
-    console.error("API Error:", err);
-    res.status(500).json({ message: err.message });
-  }
-});
-
-
-//filtertable
+// Filter table
 app.get("/getstudents", async (req, res) => {
   try {
     const students = await FilterModel.find();
@@ -67,83 +40,48 @@ app.get("/getstudents", async (req, res) => {
   }
 });
 
-//aptitudeqpaper
-app.put('/updateqp/:id', async (req, res) => {
+// Aptitude Question Papers CRUD
+app.post("/addqp", async (req, res) => {
   try {
-      const { id } = req.params;
-      const updatedPaper = await QpModel.findByIdAndUpdate(id, req.body, { new: true });
-      if (!updatedPaper) {
-          return res.status(404).json({ message: "Paper not found" });
-      }
-      res.json(updatedPaper);
+    const qpaper = await QpModel.create(req.body);
+    res.json(qpaper);
   } catch (error) {
-      console.error("Update error:", error);
-      res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Error adding question paper" });
   }
 });
 
-app.post("/addqp", (req, res) => {
-  QpModel.create(req.body)
-  .then(qpapers =>res.json(qpapers) )
-  .catch(err => res.json(err));
-})
+app.get("/getqp", async (req, res) => {
+  try {
+    const qpapers = await QpModel.find({});
+    res.json(qpapers);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching question papers" });
+  }
+});
 
-app.get("/getqp",(req,res)=>{
-  QpModel.find({})
-  .then(qpapers => res.json(qpapers))
-  .catch(err => res.json(err));
-
-})
-
+app.put('/updateqp/:id', async (req, res) => {
+  try {
+    const updatedPaper = await QpModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updatedPaper) return res.status(404).json({ message: "Paper not found" });
+    res.json(updatedPaper);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 app.delete("/delqp/:id", async (req, res) => {
   try {
-    const { id } = req.params;
-    await QpModel.findByIdAndDelete(id);
+    await QpModel.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Record deleted successfully!" });
   } catch (error) {
-    res.status(500).json({ error: "Error deleting record" });
+    res.status(500).json({ message: "Error deleting record" });
   }
-});
-
-//training
-
-app.get('/',(req,res) =>{
-  TrainingModel.find({})
-  .then(trainingdatatables => res.json(trainingdatatables))
-  .catch(err => res.json(err));
-})
-
-
-app.post("/createUser", (req, res) => {
-  TrainingModel.create(req.body)
-      .then(trainingdatatables => res.json(trainingdatatables))
-      .catch(err => res.json(err));
-});
-
-app.delete("/deleteUser/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    await TrainingModel.findByIdAndDelete(id);
-    res.status(200).json({ message: "Record deleted successfully!" });
-  } catch (error) {
-    res.status(500).json({ error: "Error deleting record" });
-  }
-});
-
-
-app.put("/updateUser/:id", async (req, res) => {
-try {
-  const updatedTraining = await TrainingModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(updatedTraining);
-} catch (error) {
-  res.status(500).json({ error: "Update failed" });
-}
-});
+});  
 
 
 
 
+// Start Server
 app.listen(process.env.PORT, () => {
-  console.log("server is running ");
+  console.log(`Server is running on port ${process.env.PORT}`);
 });

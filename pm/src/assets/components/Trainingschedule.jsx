@@ -160,83 +160,124 @@ function Trainingschedule() {
   const [trainingData, setTrainingData] = useState([]);
 
 
+  const [showModal, setShowModal] = useState(false);
+  const [scheduleCode, setScheduleCode] = useState("");
+  const [trainingName, setTrainingName] = useState("");
+  const[type,setType]=useState("");
+  const [trainee,setTrainee]=useState("");
+  const [fromdate,setFromdate]=useState("");
+  const [todate,setTodate]=useState("");
+  const[duration,setDuration]=useState("");
+  const [batch, setBatch] = useState("");
+  const [department,setDepartment]=useState("")
+
+  const [error, setError] = useState("");
   const handleSave = async () => {
-  const { value: formValues } = await Swal.fire({
-    title: "Enter Details",
-    html:
-      '<input id="scheduleCode" class="swal2-input" placeholder="Enter Schedule Code">' +
-      '<input id="trainingName" class="swal2-input" placeholder="Enter Training Name">',
-    focusConfirm: false,
-    showCancelButton: true,
-    preConfirm: async () => {
-      const scheduleCode = document.getElementById("scheduleCode").value;
-      const trainingName = document.getElementById("trainingName").value;
-
-      if (!scheduleCode || !trainingName) {
-        Swal.showValidationMessage("Both fields are required");
-        return false;
-      }
-
-      try {
-        
-        const checkResponse = await axios.get(
-          `http://localhost:3000/api/training/check-schedule-code/${scheduleCode}`
-        );
-        
-
-        console.log("Check Response:", checkResponse.data); 
-
-        if (checkResponse.data.exists) {
-          Swal.showValidationMessage("Schedule Code Already Taken");
-          return false;
-        }
-
-        return { scheduleCode, trainingName };
-      } catch (error) {
-        console.error("API Error:", error);
-        Swal.showValidationMessage("Failed to check Schedule Code");
-        return false;
-      }
-    },
-  });
-
-  if (!formValues) return;
-
-  const { scheduleCode, trainingName } = formValues;
-
-  try {
-   
-    if (!batches || batches.length === 0) {
-      Swal.fire({
-        title: "Error!",
-        text: "No batches found. Please add batches before saving.",
-        icon: "error",
-      });
-      return;
+    if (!scheduleCode || !trainingName) {
+        setError("Both Schedule Code and Training Name are required.");
+        return;
     }
 
-    const response = await axios.post("http://localhost:3000/api/training/saveTraining", {
-      scheduleCode,
-      trainingName,
-      batches,
-    });
+    try {
+        // ✅ Check if Schedule Code Exists
+        console.log("Checking schedule code:", scheduleCode);
 
-    console.log("Save Response:", response.data); 
-    Swal.fire({
-      title: "Saved!",
-      text: "Training data has been saved successfully.",
-      icon: "success",
-    });
+        const checkScheduleCode = async (code) => {
+            try {
+                const response = await axios.get(`http://localhost:3000/api/training/check-schedule-code/${code}`);
+                return response.data; // ✅ Return response data
+            } catch (error) {
+                console.error("Error checking schedule code:", error);
+                return { exists: false }; // ✅ Fail-safe: Assume it doesn't exist
+            }
+        };
 
-    setTrainingData(); 
-  } catch (error) {
-    console.error("Save Error:", error);
-    Swal.fire({
-      title: "Error!",
-      text: "Failed to save training data.",
-      icon: "error",
-    });
-  }
+        // ✅ Await the check and store result
+        const checkResponse = await checkScheduleCode(scheduleCode);
+        console.log("Check Response:", checkResponse);
+
+        if (checkResponse.exists) {
+            Swal.fire({
+                title: "Error!",
+                text: "Schedule Code Already Taken. Please use a different one.",
+                icon: "error",
+            });
+            return;
+        }
+
+        // ✅ Ensure Batches Exist
+        if (!batches || batches.length === 0) {
+            Swal.fire({
+                title: "Error!",
+                text: "No batches found. Please add batches before saving.",
+                icon: "error",
+            });
+            return;
+        }
+
+        // ✅ Save Training Data
+        const trainingData = {
+            scheduleCode,
+            trainingName,
+            type,
+            trainee,
+            fromdate,
+            todate,
+            duration,
+            batch,
+            department,
+            batches,
+        };
+
+        console.log("Saving Training Data:", trainingData);
+
+        const saveResponse = await axios.post("http://localhost:3000/api/training/saveTraining", trainingData);
+
+        if (saveResponse.status === 201) {
+            Swal.fire({
+                title: "Saved!",
+                text: "Training data has been saved successfully.",
+                icon: "success",
+            });
+
+            // ✅ Reset Fields After Saving
+            setScheduleCode("");
+            setTrainingName("");
+            setType("");
+            setTrainee("");
+            setFromdate("");
+            setTodate("");
+            setDuration("");
+            setBatch("");
+            setDepartment("");
+            setBatches([]); // Reset batches array
+            setError("");
+            setShowModal(false);
+        }
+    } catch (error) {
+        console.error("Error saving training:", error);
+
+        if (error.response) {
+            console.log("Response Error Data:", error.response.data);
+            Swal.fire({
+                title: "Error!",
+                text: error.response.data.message || "Failed to save training data.",
+                icon: "error",
+            });
+        } else if (error.request) {
+            Swal.fire({
+                title: "Error!",
+                text: "No response from server. Please check your backend.",
+                icon: "error",
+            });
+        } else {
+            Swal.fire({
+                title: "Error!",
+                text: "Something went wrong. Please try again.",
+                icon: "error",
+            });
+        }
+    }
 };
 
   
@@ -697,10 +738,131 @@ function Trainingschedule() {
           ))}
         </div>
         <div>
-      {/* Render batches here */}
-      <button className="btn" onClick={handleSave} disabled={batches.length === 0} style={{backgroundColor:"grey",color:'white'}}>
+        <div>
+      <button className="btn" onClick={() => setShowModal(true)} disabled={batches.length === 0} style={{backgroundColor:"grey",color:'white'}}>
         Save
       </button>
+
+      {/* Bootstrap Modal */}
+      <div className={`modal fade ${showModal ? "show d-block" : "d-none"}`} tabIndex="-1">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Enter Training Details</h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setShowModal(false)}
+              ></button>
+            </div>
+            <div className="modal-body">
+              {error && <div className="alert alert-danger">{error}</div>}
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter Schedule Code"
+                  value={scheduleCode}
+                  onChange={(e) => setScheduleCode(e.target.value)}
+                  required
+                />
+              </div>
+             
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter Training Name"
+                  value={trainingName}
+                  onChange={(e) => setTrainingName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter Type Name"
+                  value={type}
+                  required
+                  onChange={(e) => setType(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter Trainee Name"
+                  required
+                  value={trainee}
+                  onChange={(e) => setTrainee(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="date"
+                  className="form-control"
+                  placeholder="Fromdate"
+                  required
+                  value={fromdate}
+                  onChange={(e) =>setFromdate(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="date"
+                  className="form-control"
+                  placeholder="Todate"
+                  required
+                  value={todate}
+                  onChange={(e) => setTodate(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  required
+                  placeholder="Duration"
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Batch"
+                  required
+                  
+                  value={batch}
+                  onChange={(e) => setBatch(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  required
+                  className="form-control"
+                  placeholder=" Department "
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                />
+              </div>
+              
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                Cancel
+              </button>
+              <button type="button" className="btn btn-primary" onClick={handleSave}>
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     </div>
       </div>
     </>

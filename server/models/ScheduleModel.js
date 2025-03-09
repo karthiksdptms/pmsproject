@@ -1,21 +1,60 @@
 import mongoose from "mongoose";
 
 const scheduleSchema = new mongoose.Schema({
- scheduleCode: {
+  scheduleCode: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   trainingName: {
     type: String,
     required: true,
   },
+  type: {
+    type: String,
+    required: true,
+  },
+  trainee: {
+    type: String,
+    required: true,
+  },
+  fromdate: {
+    type: Date,
+    required: true,
+  },
+  todate: {
+    type: Date,
+    required: true,
+  },
+  duration: {
+    type: String,
+    required: true,
+  },
+  department: {
+    type: String,
+    required: true,
+  },
+  participated: {
+    type: Number,
+    required: true,
+  },
   batches: {
-    type: Array,
+    type: [
+      {
+        batchNumber: String,
+        students: [
+          {
+            registerNumber: String,
+            name: String,
+          },
+        ], // Structure for student details
+      },
+    ],
     required: true,
   },
 });
 
-const scheduleModel = mongoose.model("Batchschedules", scheduleSchema);
+// Ensure the model name matches the import in the controller
+const ScheduleModel = mongoose.model("BatchSchedules", scheduleSchema);
 
-export default scheduleModel;
+export default ScheduleModel;

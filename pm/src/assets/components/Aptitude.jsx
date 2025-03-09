@@ -56,7 +56,7 @@ function Aptitude() {
 
           
                    
-
+                <div>
             <Link to="/Maindashboard/Aptitudeconfigurequestions" style={{ textDecoration: "none", width: "250px" }}> <div className='cq'>
               <h4 style={{ position: "relative", top: "30px", right: "30px" }}>Configure Questions</h4>
               <i className="bi bi-calendar2-check-fill" style={{ fontSize: "50px", position: "relative", left: "120px", bottom: "30px", color: 'rgba(11,132,164,255)' }}></i>
