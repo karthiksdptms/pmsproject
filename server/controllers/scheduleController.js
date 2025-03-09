@@ -76,7 +76,10 @@ export const checkScheduleCode = async (req, res) => {
 };
 
 
+<<<<<<< HEAD
 //new
 
 
 //new
+=======
+>>>>>>> 34b03431091a1fe7623fba9b040cfa86afe09db9

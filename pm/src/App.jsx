@@ -24,6 +24,10 @@ import PrivateRoute from './assets/components/pages/utils/PrivateRoute'
 import RoleBaseRoutes from './assets/components/pages/utils/RoleBaseRoutes'
 import Studentprofile from './studentcomponents/Studentprofile'
 import Adminsummmary from './assets/components/Adminsummary'
+import Studentsummary from './studentcomponents/Studentsummary'
+import Studenttrainingexams from './studentcomponents/Studenttrainingexams'
+import Studenttrainingscores from './studentcomponents/Studenttrainingscores'
+import Aptitudescores from './assets/components/Aptitudescores'
 
 
 
@@ -60,7 +64,7 @@ function App() {
            
             <Route path='/Maindashboard/Placementannounce' element={<Placementsannounce />} />
             <Route path='/Maindashboard/Aptitudeconfigurequestions' element={<Aptitudeconfigurequestions />} />
-
+            <Route path='/Maindashboard/Aptitudescores' element={<Aptitudescores />} />
             <Route path='/Maindashboard/Aptitudescheduleexam' element={<Aptitudescheduleexam />} />
           </Route>
 
@@ -77,31 +81,22 @@ function App() {
                 <Studentdashboard />
               </RoleBaseRoutes>
             </PrivateRoute>
-          } />
+          } >
 
-          <Route path='/Studenttraining' element={
-            <PrivateRoute>
-              <RoleBaseRoutes requiredRole={["admin","student"]}>
-                <Studenttraining />
-              </RoleBaseRoutes>
-            </PrivateRoute>
-          } />
+            <Route index element={<Studentsummary/>}/>
+            <Route path='/Studentdashboard/Studenttraining' element={<Studenttraining />} />
+            <Route path='/Studentdashboard/Studenttrainingexams' element={<Studenttrainingexams />} />
+            <Route path='/Studentdashboard/Studenttrainingscores' element={<Studenttrainingscores />} />
 
-          <Route path='/Studentplacement' element={
-            <PrivateRoute>
-              <RoleBaseRoutes requiredRole={["admin","student"]}>
-                <Studentplacement />
-              </RoleBaseRoutes>
-            </PrivateRoute>
-          } />
+            <Route path='/Studentdashboard/Studentplacement' element={<Studentplacement />} />
+            <Route path='/Studentdashboard/Studentprofile' element={<Studentprofile />} />
 
-          <Route path='/Studentprofile' element={
-            <PrivateRoute>
-              <RoleBaseRoutes requiredRole={["admin","student"]}>
-                <Studentprofile />
-              </RoleBaseRoutes>
-            </PrivateRoute>
-          } />
+
+          </Route>
+
+         
+
+
 
           <Route path='/unauthorized' element={<h1>Unauthorized Access 🚫</h1>} />
         </Routes>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Topbar from "./Topbar";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import './Aptitude.css';
 import { IoIosArrowBack } from "react-icons/io";
@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 function Accounts() {
   return (
     <>
-     
+
       <div
         style={{
           position: "relative",
@@ -53,20 +53,18 @@ function Accounts() {
           </div>
         </Link>
         <div className="menu5">
-          
-                    <div>
-                      
-                      <Link to="/Maindashboard/Accountsstudentaccounts" style={{textDecoration:"none",width:"250px"}}> <div className='cq'>
-                                    <h4 style={{position:"relative",top:"30px",right:"40px"}}>Student Accounts</h4>
-                                    <i className="bi bi-calendar2-check-fill" style={{fontSize:"50px",position:"relative",left:"110px",bottom:"30px",color:'rgba(11,132,164,255)'}}></i>
-                                </div></Link></div>
-                                <div> <Link to="/Maindashboard" style={{textDecoration:"none",width:"250px"}}> <div className='sc'>
-                                    <h4 style={{position:"relative",top:"30px",right:"40px"}}>Approval</h4>
-                                    <i className="bi bi-calendar2-check-fill" style={{fontSize:"50px",position:"relative",left:"110px",bottom:"30px",color:'rgba(11,132,164,255)'}}></i>
-                                </div></Link></div>
-         
-        </div>
+
+        <div style={{marginRight:"20px"}}> <Link to="/Maindashboard/Accountsstudentaccounts" style={{ textDecoration: "none", width: "250px" }}> <div className='sc'>
+        <h4 style={{ position: "relative", top: "30px", right: "40px" }}>Students</h4>
+        <i className="bi bi-calendar2-check-fill" style={{ fontSize: "50px", position: "relative", left: "110px", bottom: "30px", color: 'rgba(11,132,164,255)' }}></i>
+      </div></Link></div>
+      <div> <Link to="/Maindashboard" style={{ textDecoration: "none", width: "250px" }}> <div className='sc'>
+        <h4 style={{ position: "relative", top: "30px", right: "40px" }}>Approvals</h4>
+        <i className="bi bi-calendar2-check-fill" style={{ fontSize: "50px", position: "relative", left: "110px", bottom: "30px", color: 'rgba(11,132,164,255)' }}></i>
+      </div></Link></div>
       </div>
+    </div >
+      
     </>
   );
 }

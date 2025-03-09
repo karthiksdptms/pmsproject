@@ -46,7 +46,7 @@ function Placementsannounce() {
     "API Developer",
     "Others",
   ];
- 
+  //old version
   const [date, setDate] = useState("");
   const [venue, setVenue] = useState("");
   const [generalReq, setGeneralReq] = useState("");
@@ -386,7 +386,7 @@ function Placementsannounce() {
   return (
     <>
       <div>
-       
+        <Topbar />
       </div>
 
       <div className="trcontainer">
@@ -394,7 +394,7 @@ function Placementsannounce() {
           <div>
             <button
               type="button"
-              className="btn btn-secondary"
+              class="btn btn-secondary"
               style={{
                 marginLeft: "20px",
                 border: "none",
@@ -434,8 +434,7 @@ function Placementsannounce() {
                     </div>
                   </div>
                   <div className="cname">
-                  <img src={`/images/${item.COMPANYIMG}`} alt={item.COMPANYNAME} style={{ width: "100px", height: "100px" }} />
-
+                    <img src={item.COMPANYIMG} alt="" />
                   </div>
                 </div>
               </button>
@@ -444,10 +443,10 @@ function Placementsannounce() {
         </div>
       </div>
       <div
-       className="offcanvas offcanvas-start" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel"
+       class="offcanvas offcanvas-start" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel"
         style={{ width: "88%", height: "5000px",marginRight:"300px" }}
       >
-        <div className="offcanvas-header" style={{ padding: "0px", width: "100%" }}>
+        <div class="offcanvas-header" style={{ padding: "0px", width: "100%" }}>
           <div className="wavfil" style={{ width: "100%" }}>
             <h1
               style={{
@@ -479,7 +478,7 @@ function Placementsannounce() {
           </div>
         </div>
         <div
-          className="offcanvas-body"
+          class="offcanvas-body"
           style={{ padding: "0px", height: "150%" }}
         ></div>
         <div style={{ position: "FIXED", top: "100PX", left: "-100px" }}>
@@ -491,7 +490,7 @@ function Placementsannounce() {
             }}
           >
             Requirements{" "}
-            <i className="bi bi-info-circle" style={{ fontSize: "30px" }}></i>
+            <i class="bi bi-info-circle" style={{ fontSize: "30px" }}></i>
           </h1>
 
           <div
@@ -527,7 +526,7 @@ function Placementsannounce() {
           <form action="">
             <div className="container">
               <textarea
-                className=" form-control"
+                class=" form-control"
                 id="exampleFormControlTextarea1"
                 rows={4}
                 className="text-area"
@@ -566,7 +565,7 @@ function Placementsannounce() {
           </form>
           <button
             type="button"
-            className="btn btn-primary  bnt"
+            class="btn btn-primary  bnt"
             onClick={() => setIsOffcanvasOpen(true)}
             className=" btn btnma bnt"
             style={{
@@ -582,19 +581,19 @@ function Placementsannounce() {
             }}
           >
             {" "}
-            <i className="bi bi-funnel-fill" style={{ marginRight: "10px" }}></i>
+            <i class="bi bi-funnel-fill" style={{ marginRight: "10px" }}></i>
             filter
           </button>
           <div
-            className="modal fade"
+            class="modal fade"
             id="exampleModal"
             tabindex="-1"
             aria-labelledby="exampleModalLabel"
             aria-hidden="true"
           >
-            <div className="modal-dialog">
+            <div class="modal-dialog">
               <div
-                className="modal-content"
+                class="modal-content"
                 style={{
                   width: "900px",
                   position: "relative",
@@ -602,9 +601,9 @@ function Placementsannounce() {
                   height: "440px",
                 }}
               >
-                <div className="modal-header ">
+                <div class="modal-header ">
                   <h3
-                    className="modal-title"
+                    class="modal-title"
                     id="exampleModalLabel"
                     style={{
                       position: "relative",
@@ -612,20 +611,20 @@ function Placementsannounce() {
                       color: " rgba(57,102,172,255)",
                     }}
                   >
-                    <div className="ribbon">Search:</div>
+                    <div class="ribbon">Search:</div>
                   </h3>
                   <button
                     type="button"
-                    className="btn-close"
+                    class="btn-close"
                     data-bs-dismiss="modal"
                     aria-label="Close"
                   ></button>
                 </div>
-                <div className="modal-body"> </div>
-                <div className="modal-footer">
+                <div class="modal-body"> </div>
+                <div class="modal-footer">
                   <button
                     type="button"
-                    className="btn "
+                    class="btn "
                     style={{
                       backgroundColor: " rgba(57,102,172,255)",
                       color: "white",
@@ -670,7 +669,7 @@ function Placementsannounce() {
                   border: "none",
                 }}
               >
-                <i className="bi bi-chevron-left" style={{ fontSize: "27px",fontWeight:"100rem" }}></i>
+                <i class="bi bi-chevron-left" style={{ fontSize: "27px",fontWeight:"100rem" }}></i>
               </button>
               <div className="filterboxes1">
               <div>
@@ -1036,7 +1035,7 @@ function Placementsannounce() {
                       style={{marginLeft:"20px"}}
                       disabled={currentPage === 1}
                     >
-                      <i className="bi bi-chevron-double-left"></i>
+                      <i class="bi bi-chevron-double-left"></i>
                     </button>
 
                     <span className="text-lg">
@@ -1050,7 +1049,7 @@ function Placementsannounce() {
                       className="btn"
                       disabled={currentPage === totalPages}
                     >
-                      <i className="bi bi-chevron-double-right arr"></i>
+                      <i class="bi bi-chevron-double-right arr"></i>
                     </button>
                   </div>
                   <table
@@ -1060,7 +1059,7 @@ function Placementsannounce() {
                       textAlign: "center",
                       position: "relative",
                     }}
-                    className="table table-striped  table-hover tabl"
+                    class="table table-striped  table-hover tabl"
                   >
                     <thead>
                       <tr>
@@ -1182,7 +1181,7 @@ function Placementsannounce() {
                   />
                   {emailContent.trim() && (
                     <button
-                      className="btn"
+                      class="btn"
                       onClick={sendEmails}
                       style={{
                         padding: "10px 20px",
@@ -1200,7 +1199,7 @@ function Placementsannounce() {
                   )}
                   <button
                     onClick={() => setIsOffcanvasOpen(false)}
-                    className="btn"
+                    class="btn"
                     style={{
                       padding: "10px 20px",
                       backgroundColor: "#6C757D",

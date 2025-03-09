@@ -35,7 +35,7 @@ function Accountsstudentaccounts() {
           },
         }
         )
-        console.log(responnse.data)
+
         if (responnse.data.success) {
 
           const data = await responnse.data.students.map((std, index) => ({
@@ -128,7 +128,7 @@ function Accountsstudentaccounts() {
     offers: [],
   });
 
-  // Add Offer
+
   const addOffer = () => {
     setStudent({
       ...student,
@@ -136,16 +136,15 @@ function Accountsstudentaccounts() {
     });
   };
 
-  // Delete Offer
+
   const deleteOffer = (index) => {
     const updatedOffers = student.offers.filter((_, i) => i !== index);
     setStudent({ ...student, offers: updatedOffers });
   };
 
-  // Handle Input Change
 
 
-  // Handle Offer Input Change
+
   const handleOfferChange = (index, e) => {
     const { name, value } = e.target;
     const updatedOffers = [...student.offers];
@@ -250,7 +249,7 @@ function Accountsstudentaccounts() {
           image: null,
           offerpdf: null,
           placement: "",
-          offers: [], // Reset Offers to Empty Array
+          offers: [],
         });
         window.location.reload();
 
@@ -265,7 +264,7 @@ function Accountsstudentaccounts() {
   };
 
 
-  //delete operation
+
 
   const handleDelete = async (id) => {
     const confirm = window.confirm("Are you sure you want to delete this student?");
@@ -288,7 +287,6 @@ function Accountsstudentaccounts() {
     }
   };
 
-  ///editfun
   const handleEdit = (id) => {
     const selectedStudent = displayedData.find((student) => student._id === id);
     if (selectedStudent) {
@@ -296,7 +294,7 @@ function Accountsstudentaccounts() {
         ...selectedStudent,
         offers: selectedStudent.offers || [],
       });
-      setShoww(true); // Show modal
+      setShoww(true);
     }
   };
 
@@ -352,25 +350,25 @@ function Accountsstudentaccounts() {
     console.log("Sending FormData:", Object.fromEntries(formData.entries()));
     console.log(formData)
     try {
-      const token = localStorage.getItem("token"); 
-    
+      const token = localStorage.getItem("token");
+
       const response = await axios.put(
         `http://localhost:3000/api/student/edit/${student._id}`,
         formData,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, 
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );
-    
+
       if (response.data.success) {
         alert("Student Updated Successfully");
-      
+
         setStudent(response.data);
         setShoww(false);
         window.location.reload();
-        
+
       } else {
         alert(response.data.message);
       }
@@ -378,7 +376,7 @@ function Accountsstudentaccounts() {
       console.error("Edit Error:", error);
       alert("Failed to Edit Student");
     }
-    
+
 
   };
 
@@ -405,7 +403,7 @@ function Accountsstudentaccounts() {
   };
 
   const uploadCsv = async () => {
-     setShowInput(false)
+    setShowInput(false)
     const formData = new FormData();
     formData.append("csvfile", csvFile);
 
@@ -413,7 +411,7 @@ function Accountsstudentaccounts() {
       const response = await axios.post("http://localhost:3000/api/student/uploadcsv", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, 
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       alert(response.data.message);
@@ -423,7 +421,7 @@ function Accountsstudentaccounts() {
     }
   };
   return (<>
-   
+
     <div
       style={{
         position: "relative",
@@ -474,7 +472,7 @@ function Accountsstudentaccounts() {
 
 
             {!showInput && (
-              <button className="btn btn-primary " style={{ position: "relative", bottom: "72.5px", zIndex: "100", left: "1000px" }} onClick={() => setShowInput(true)}>
+              <button className="btn btn-primary " style={{ position: "relative", bottom: "78.5px", zIndex: "100", left: "1000px" }} onClick={() => setShowInput(true)}>
                 Upload
               </button>
             )}
@@ -483,7 +481,7 @@ function Accountsstudentaccounts() {
             {showInput && (
 
               <>
-                <div  className="  p-1" style={{ position: "relative", bottom: "100px", zIndex: "100", backgroundColor: "rgb(235, 235, 235)", width: "420px", left: "600px",borderRadius:"10px" }}>
+                <div className="  p-1" style={{ position: "relative", bottom: "100px", zIndex: "100", backgroundColor: "rgb(235, 235, 235)", width: "420px", left: "600px", borderRadius: "10px" }}>
                   <p onClick={() => setShowInput(false)} style={{ position: "relative", zIndex: "100", backgroundColor: "", left: "400px", width: "10px", fontSize: "20px" }}>x</p>
                   <input
                     type="file"
@@ -506,14 +504,14 @@ function Accountsstudentaccounts() {
 
 
           {stdloading ? (
-          <Loading/>
+            <Loading />
           ) : (
 
             <div className="table-responsive" style={{ position: "relative", top: '60px' }}>
 
 
-              <h4 className="" style={{ width: "250px" ,position:"relative",top:"20px"}}>
-                Total Students: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 4px', borderRadius: '4px', color: "white",zIndex:"100" }}>{getstudents.flat().length}</span>
+              <h4 className="" style={{ width: "250px", position: "relative", top: "20px" }}>
+                Total Students: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 4px', borderRadius: '4px', color: "white", zIndex: "100" }}>{getstudents.flat().length}</span>
               </h4>
               <div
                 className="flex justify-right items-center gap-4 mt-4 "
@@ -567,7 +565,7 @@ function Accountsstudentaccounts() {
                     <th>Registration Number</th>
                     <th>Name</th>
                     <th>Department</th>
-
+                    <th>Batch</th>
                     <th>Email</th>
                     <th>Actions</th>
                   </tr>
@@ -605,14 +603,14 @@ function Accountsstudentaccounts() {
                           className="btn btn-primary btn-sm me-2"
                           onClick={() => handleEdit(student._id)}
                         >
-                          <i className="bi bi-pencil"></i> Edit
+                          Edit
                         </button>
 
                         <button
                           className="btn btn-danger btn-sm"
                           onClick={() => handleDelete(student._id)}
                         >
-                          <i className="bi bi-trash"></i> Delete
+                          Delete
                         </button>
                       </td>
                     </tr>
@@ -620,7 +618,7 @@ function Accountsstudentaccounts() {
                 </tbody>
               </table>
 
-              {/* Pagination */}
+            
 
             </div>
           )}
@@ -630,16 +628,16 @@ function Accountsstudentaccounts() {
 
 
         {show && (
-          <div className="modal d-block" tabIndex="-1">
+          <div className="modal d-block" tabIndex="-1"> style={{ minWidth: "100%" }}
             <div className="modal-dialog modal-lg">
-              <div className="modal-content">
+              <div className="modal-content" style={{ minWidth: "100%" }}>
                 <div className="modal-header">
                   <h5 className="modal-title">Add Student Details To Create Account</h5>
                   <button type="button" className="btn-close" onClick={() => setShow(false)}></button>
                 </div>
                 <div className="modal-body">
                   <form onSubmit={handleSubmit} encType="multipart/form-data" method="post">
-                    {/* Registration Number & Name */}
+                   
                     <Row>
                       <Col md={6}>
                         <label>Registration Number:<span style={{ color: "red" }}>*</span></label>
@@ -651,7 +649,7 @@ function Accountsstudentaccounts() {
                       </Col>
                     </Row>
 
-                    {/* Department & Batch */}
+                   
                     <Row>
                       <Col md={6}>
                         <label>Department:<span style={{ color: "red" }}>*</span></label>
@@ -663,7 +661,7 @@ function Accountsstudentaccounts() {
                       </Col>
                     </Row>
 
-                    {/* SSLC, HSC & Diploma */}
+                   
                     <Row>
                       <Col md={4}>
                         <label>SSLC(%):<span style={{ color: "red" }}>*</span></label>
@@ -689,7 +687,7 @@ function Accountsstudentaccounts() {
                       ))}
                     </Row>
 
-                    {/* Sem5 to Sem8 */}
+                    
                     <Row>
                       {["sem5", "sem6", "sem7", "sem8"].map((sem, index) => (
                         <Col md={3} key={index}>
@@ -699,7 +697,7 @@ function Accountsstudentaccounts() {
                       ))}
                     </Row>
 
-                    {/* CGPA, Arrears & HOA */}
+                   
                     <Row>
                       <Col md={4}>
                         <label>CGPA:</label>
@@ -715,7 +713,7 @@ function Accountsstudentaccounts() {
                       </Col>
                     </Row>
 
-                    {/* Internships & Certifications */}
+                   
                     <Row>
                       <Col md={6}>
                         <label>Internships Attended:</label>
@@ -727,7 +725,7 @@ function Accountsstudentaccounts() {
                       </Col>
                     </Row>
 
-                    {/* Patents/Publications & Achievements */}
+                    
                     <Row>
                       <Col md={6}>
                         <label>Patents/Publications Filed:</label>
@@ -739,7 +737,7 @@ function Accountsstudentaccounts() {
                       </Col>
                     </Row>
 
-                    {/* Language & AOI */}
+                   
                     <Row>
                       <Col md={6}>
                         <label>Enter Additional Languages Known:</label>
@@ -751,7 +749,7 @@ function Accountsstudentaccounts() {
                       </Col>
                     </Row>
 
-                    {/* Email, Address, Phone Number */}
+                   
                     <div className="mb-3">
                       <label>Email:<span style={{ color: "red" }}>*</span></label>
                       <input type="email" className="form-control" name="email" onChange={handleChange} required />
@@ -791,7 +789,7 @@ function Accountsstudentaccounts() {
                       </Row>
                     </div>
 
-                    {/* Placement & Resume */}
+                   
                     <div className="mb-3">
                       <Row>
                         <Col md={6}>
@@ -862,7 +860,7 @@ function Accountsstudentaccounts() {
                 </div>
                 <div className="modal-body">
                   <form encType="multipart/form-data" method="post" onSubmit={handleSubmitt}>
-                    {/* Registration Number & Name */}
+                    
                     <Row>
                       <Col md={6}>
                         <label>Registration Number:<span style={{ color: "red" }}>*</span></label>
@@ -874,7 +872,7 @@ function Accountsstudentaccounts() {
                       </Col>
                     </Row>
 
-                    {/* Department & Batch */}
+                  
                     <Row>
                       <Col md={6}>
                         <label>Department:<span style={{ color: "red" }}>*</span></label>
@@ -886,7 +884,7 @@ function Accountsstudentaccounts() {
                       </Col>
                     </Row>
 
-                    {/* SSLC, HSC & Diploma */}
+                   
                     <Row>
                       <Col md={4}>
                         <label>SSLC(%):<span style={{ color: "red" }}>*</span></label>
@@ -904,7 +902,7 @@ function Accountsstudentaccounts() {
 
                     <h6>Enter Semester wise CGPA:</h6>
 
-                    {/* Sem1 to Sem4 */}
+                    
                     <Row>
                       {["sem1", "sem2", "sem3", "sem4"].map((sem, index) => (
                         <Col md={3} key={index}>
@@ -920,7 +918,7 @@ function Accountsstudentaccounts() {
                       ))}
                     </Row>
 
-                    {/* Sem5 to Sem8 */}
+                   
                     <Row>
                       {["sem5", "sem6", "sem7", "sem8"].map((sem, index) => (
                         <Col md={3} key={index}>
@@ -936,7 +934,7 @@ function Accountsstudentaccounts() {
                       ))}
                     </Row>
 
-                    {/* CGPA, Arrears & HOA */}
+                   
                     <Row>
                       <Col md={4}>
                         <label>CGPA:</label>
@@ -952,7 +950,7 @@ function Accountsstudentaccounts() {
                       </Col>
                     </Row>
 
-                    {/* Internships & Certifications */}
+                 
                     <Row>
                       <Col md={6}>
                         <label>Internships Attended:</label>
@@ -964,7 +962,7 @@ function Accountsstudentaccounts() {
                       </Col>
                     </Row>
 
-                    {/* Patents/Publications & Achievements */}
+                  
                     <Row>
                       <Col md={6}>
                         <label>Patents/Publications Filed:</label>
@@ -976,7 +974,7 @@ function Accountsstudentaccounts() {
                       </Col>
                     </Row>
 
-                    {/* Language & AOI */}
+                   
                     <Row>
                       <Col md={6}>
                         <label>Enter Additional Languages Known:</label>
@@ -988,7 +986,7 @@ function Accountsstudentaccounts() {
                       </Col>
                     </Row>
 
-                    {/* Email, Address, Phone Number */}
+                   
                     <div className="mb-3">
                       <label>Email:<span style={{ color: "red" }}>*</span></label>
                       <input type="email" className="form-control" name="email" onChange={handleChange} required value={student.email} readOnly />
@@ -1036,7 +1034,7 @@ function Accountsstudentaccounts() {
                       </Row>
                     </div>
 
-                    {/* Placement & Resume */}
+                   
                     <div className="mb-3">
                       <Row>
                         <Col md={6}>

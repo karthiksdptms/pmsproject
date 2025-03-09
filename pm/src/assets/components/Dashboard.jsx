@@ -105,12 +105,12 @@ function Dashboard() {
     setFilters((prev) => ({ ...prev, [key]: e.target.value }));
   };
 
-  const [students,setstudents]=useState([])
+  const [students, setstudents] = useState([])
   useEffect(() => {
     axios.get("http://localhost:3000/getstudents")
       .then(response => setstudents(response.data))
       .catch(error => console.error("Error fetching students:", error));
-    }, []);
+  }, []);
 
   const filteredStudents = students.filter((student) => {
     return (
@@ -134,7 +134,7 @@ function Dashboard() {
         student.LANGUAGE.toLowerCase().includes(filters.language.toLowerCase()))
     );
   });
-  
+
 
   const [showDiv, setShowDiv] = useState(false);
 
@@ -194,14 +194,14 @@ function Dashboard() {
     startIdx + rowsPerPage
   );
   //new
-  
+
 
   return (
     <>
       <div className="">
         <div className="clr"></div>
-        <div className="container" className="contain">
-          
+        <div className="container  contain" className="">
+
 
           <div className="">
             <div
@@ -249,25 +249,26 @@ function Dashboard() {
                 <div>
                   <div className="lable1">
                     <div>
-                    <label style={{ fontSize: "23px" }}>Department:</label>
+                      <label style={{ fontSize: "23px" }}>Department:</label>
                       <div >
                         <div
-                          
+
                           onMouseEnter={() => setHoverVisible(true)}
                           onMouseLeave={() => setHoverVisible(false)}
                         >
                           <div className="par">
-                           <div style={{border:"gray 1px solid",padding:"9px",width:"200px",color:"grey"}}> <label style={{ fontSize: "15.5px" }}>
-                             Select Department:
+                            <div style={{ border: "gray 1px solid", padding: "9px", width: "200px", color: "grey" }}> <label style={{ fontSize: "15.5px" }}>
+                              Select Department:
                             </label></div>
                           </div>
                           {hoverVisible && (
-                            <div className="absolute top-full mt-2 w-48 p-4 bg-gray-100 shadow-md rounded-lg" style={{border:" 1px solid rgb(184, 180, 180)",width:"170px",position:"relative"
-                              ,bottom:"2px",boxShadow:"0 0 5px rgb(177, 177, 177)"
+                            <div className="absolute top-full mt-2 w-48 p-4 bg-gray-100 shadow-md rounded-lg" style={{
+                              border: " 1px solid rgb(184, 180, 180)", width: "170px", position: "relative"
+                              , bottom: "2px", boxShadow: "0 0 5px rgb(177, 177, 177)"
                             }}>
                               <label>
                                 <input
-                                className="form-check-input"
+                                  className="form-check-input"
                                   type="checkbox"
                                   checked={filters.department.length === 0}
                                   onChange={(e) =>
@@ -293,12 +294,12 @@ function Dashboard() {
                               {showOtherDepartment && (
                                 <div>
                                   <input
-                                                        style={{
-                                                          marginBottom: "10px",
-                                                          padding: "8px",
-                                                          width: "100%",
-                                                          maxWidth: "300px",
-                                                        }}
+                                    style={{
+                                      marginBottom: "10px",
+                                      padding: "8px",
+                                      width: "100%",
+                                      maxWidth: "300px",
+                                    }}
                                     type="text"
                                     className="form-check-input"
                                     placeholder="Enter Department"
@@ -317,24 +318,26 @@ function Dashboard() {
                 </div>
                 <div className="lable1">
                   <div>
-                  <label style={{ fontSize: "23px" }}>Batch:</label>
+                    <label style={{ fontSize: "23px" }}>Batch:</label>
                     <div >
-                    
+
                       <div
                         className="relative w-40 h-40 bg-blue-300 rounded-lg flex items-center justify-center cursor-pointer"
                         onMouseEnter={() => setHoverVisiblee(true)}
                         onMouseLeave={() => setHoverVisiblee(false)}
                       >
-                       <div style={{border:"gray 1px solid",padding:"9px",width:"200px",color:"grey"}}> <label style={{ fontSize: "15.5px" }}>
-                             Select Batch:
-                            </label></div>
+                        <div style={{ border: "gray 1px solid", padding: "9px", width: "200px", color: "grey" }}> <label style={{ fontSize: "15.5px" }}>
+                          Select Batch:
+                        </label></div>
                         <br />
                         {hoverVisiblee && (
-                          <div className="absolute top-full mt-2 w-48 p-4 bg-gray-100 shadow-md rounded-lg" style={{border:" rgb(184, 180, 180) 1px solid",width:"180px",position:"relative"
-                            ,bottom:"26px",boxShadow:"0 0 5px rgb(177, 177, 177)"}}>
+                          <div className="absolute top-full mt-2 w-48 p-4 bg-gray-100 shadow-md rounded-lg" style={{
+                            border: " rgb(184, 180, 180) 1px solid", width: "180px", position: "relative"
+                            , bottom: "26px", boxShadow: "0 0 5px rgb(177, 177, 177)"
+                          }}>
                             <label>
                               <input
-                              className="form-check-input"
+                                className="form-check-input"
                                 type="checkbox"
                                 checked={filters.batch.length === 0}
                                 onChange={(e) =>
@@ -359,13 +362,13 @@ function Dashboard() {
                             ))}
                             {showOtherBatch && (
                               <input
-                              style={{
-                                marginBottom: "10px",
-                                padding: "8px",
-                                width: "100%",
-                                maxWidth: "300px",
-                              }}
-                              className="form-check-input"
+                                style={{
+                                  marginBottom: "10px",
+                                  padding: "8px",
+                                  width: "100%",
+                                  maxWidth: "300px",
+                                }}
+                                className="form-check-input"
                                 type="text"
                                 placeholder="Enter Batch"
                                 onChange={(e) =>
@@ -383,14 +386,14 @@ function Dashboard() {
                   <div>
                     <label style={{ fontSize: "23px" }}>CGPA:</label><br />
                     <select onChange={(e) => handleSelectChange(e, "cgpa")} style={{
-                        marginBottom: "10px",
-                        padding: "8px",
-                        width: "100%",
-                        maxWidth: "300px",
-                      }}>
-                         <option value="" disabled>
-                    select CGPA:
-                  </option>
+                      marginBottom: "10px",
+                      padding: "8px",
+                      width: "100%",
+                      maxWidth: "300px",
+                    }}>
+                      <option value="" disabled>
+                        select CGPA:
+                      </option>
                       <option value="" >ANY</option>
                       {cgpaOptions.map((cgpa) => (
                         <option key={cgpa} value={cgpa.split(" ")[0]}>
@@ -404,14 +407,14 @@ function Dashboard() {
                   <div>
                     <label style={{ fontSize: "23px" }}>Arrears:</label><br />
                     <select onChange={(e) => handleSelectChange(e, "arrears")} style={{
-                        marginBottom: "10px",
-                        padding: "8px",
-                        width: "100%",
-                        maxWidth: "300px",
-                      }}>
-                    <option value="" disabled>
-                    select Arrears:
-                  </option>
+                      marginBottom: "10px",
+                      padding: "8px",
+                      width: "100%",
+                      maxWidth: "300px",
+                    }}>
+                      <option value="" disabled>
+                        select Arrears:
+                      </option>
                       <option value="">ANY</option>
                       {arrearsOptions.map((arr) => (
                         <option key={arr} value={arr}>
@@ -427,7 +430,7 @@ function Dashboard() {
                       History of Arrears:
                     </label>
                     <select
-                    
+
                       onChange={(e) =>
                         handleSelectChange(e, "historyOfArrears")
                       }
@@ -438,8 +441,8 @@ function Dashboard() {
                         maxWidth: "300px",
                       }}
                     >  <option value="" disabled>
-                    select HOA:
-                  </option>
+                        select HOA:
+                      </option>
                       <option value="">ANY</option>
                       {historyOfArrearsOptions.map((hoa) => (
                         <option key={hoa} value={hoa}>
@@ -454,59 +457,61 @@ function Dashboard() {
                   style={{ left: "550px", bottom: "575px" }}
                 >
                   <div>
-                  <label style={{ fontSize: "23px" }}>Area Of Intrest:</label>
-                  <div >
-      <div
-        className="relative w-40 h-40 bg-blue-300 rounded-lg flex items-center justify-center cursor-pointer"
-        onMouseEnter={() => setHoverVisibleee(true)}
-        onMouseLeave={() => setHoverVisibleee(false)}
-      ><div style={{border:"gray 1px solid",padding:"9px",width:"200px",color:"grey"}}> <label style={{ fontSize: "15.5px" }}>
-      Select Area of Interest:
-     </label></div>
-                    <br />
-                    {hoverVisibleee && (
-          <div className="absolute top-full mt-2 w-48 p-4 bg-gray-100 shadow-md rounded-lg" style={{border:" rgb(184, 180, 180) 1px solid",width:"270px",position:"relative"
-            ,bottom:"26px",boxShadow:"0 0 5px rgb(177, 177, 177)"}}>
-            <label>
-                      <input
-                      className="form-check-input"
-                        type="checkbox"
-                        checked={filters.aoi.length === 0}
-                        onChange={(e) => handleAllCheckboxChange(e, "aoi")}
-                      />
-                      All
-                    </label>
-                    {aoiOptions.map((aoi) => (
-                      <div key={aoi}>
-                        <input
-                        className="form-check-input"
-                          type="checkbox"
-                          value={aoi}
-                          checked={filters.aoi.includes(aoi)}
-                          onChange={(e) => handleCheckboxChange(e, "aoi")}
-                        />{" "}
-                        {aoi}
+                    <label style={{ fontSize: "23px" }}>Area Of Intrest:</label>
+                    <div >
+                      <div
+                        className="relative w-40 h-40 bg-blue-300 rounded-lg flex items-center justify-center cursor-pointer"
+                        onMouseEnter={() => setHoverVisibleee(true)}
+                        onMouseLeave={() => setHoverVisibleee(false)}
+                      ><div style={{ border: "gray 1px solid", padding: "9px", width: "200px", color: "grey" }}> <label style={{ fontSize: "15.5px" }}>
+                        Select Area of Interest:
+                      </label></div>
+                        <br />
+                        {hoverVisibleee && (
+                          <div className="absolute top-full mt-2 w-48 p-4 bg-gray-100 shadow-md rounded-lg" style={{
+                            border: " rgb(184, 180, 180) 1px solid", width: "270px", position: "relative"
+                            , bottom: "26px", boxShadow: "0 0 5px rgb(177, 177, 177)"
+                          }}>
+                            <label>
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                checked={filters.aoi.length === 0}
+                                onChange={(e) => handleAllCheckboxChange(e, "aoi")}
+                              />
+                              All
+                            </label>
+                            {aoiOptions.map((aoi) => (
+                              <div key={aoi}>
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  value={aoi}
+                                  checked={filters.aoi.includes(aoi)}
+                                  onChange={(e) => handleCheckboxChange(e, "aoi")}
+                                />{" "}
+                                {aoi}
+                              </div>
+                            ))}
+                            {showOtherAoi && (
+                              <input
+                                style={{
+                                  marginBottom: "10px",
+                                  padding: "8px",
+                                  width: "100%",
+                                  maxWidth: "300px",
+                                }}
+
+                                type="text"
+                                placeholder="Enter Area of Interest"
+                                onChange={(e) => handleInputChange(e, "otherAoi")}
+                              />
+                            )}
+                          </div>
+                        )}
                       </div>
-                    ))}
-                    {showOtherAoi && (
-                      <input
-                      style={{
-                        marginBottom: "10px",
-                        padding: "8px",
-                        width: "100%",
-                        maxWidth: "300px",
-                      }}
-                      
-                        type="text"
-                        placeholder="Enter Area of Interest"
-                        onChange={(e) => handleInputChange(e, "otherAoi")}
-                      />
-                    )}
-          </div>
-        )}
-      </div>
-    </div>
-                   
+                    </div>
+
                   </div>
                 </div>
                 <div
@@ -543,19 +548,19 @@ function Dashboard() {
                     onClick={downloadExcel}
                     type="button"
                     className=" "
-                    className=" "
+                   
                     style={{
                       color: "white",
-                      border:"none",
+                      border: "none",
                       margin: "20px",
                       width: "120px",
-                      height:"40px",
-                      
+                      height: "40px",
+
                       position: "relative",
                       left: "1080px",
                       borderRadius: "30px",
                       bottom: "50px",
-                      backgroundColor:"green"
+                      backgroundColor: "green"
                     }}
                   >
                     {" "}
@@ -568,9 +573,9 @@ function Dashboard() {
                   </button>
 
                   <div>
-                  <h4 className="mb-4">
-  Total Records: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color:"white" }}>{filteredStudents.flat().length}</span>
-</h4>
+                    <h4 className="mb-4">
+                      Total Records: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{filteredStudents.flat().length}</span>
+                    </h4>
                     <div
                       style={{
                         position: "relative",
@@ -579,9 +584,9 @@ function Dashboard() {
                         maxHeight: "800px",
                       }}
                     >
-                         <div
+                      <div
                         className="flex justify-right items-center gap-4 mt-4 "
-                        style={{ position: "relative", left: "800px",bottom:"20PX" }}
+                        style={{ position: "relative", left: "800px", bottom: "20PX" }}
                       >
                         <label>
                           {" "}
@@ -590,7 +595,7 @@ function Dashboard() {
                             type="number"
                             value={rowsPerPage}
                             onChange={handleRowsPerPageChange}
-                            style={{ width: "50px", padding: "5px",marginRight:"20PX" }}
+                            style={{ width: "50px", padding: "5px", marginRight: "20PX" }}
                           />
                         </label>
                         <button
@@ -725,17 +730,20 @@ function Dashboard() {
                           </tfoot>
                         </table>
                       </div>
-                   
+
                     </div>
 
                     {selectedData && (
                       <div
                         className="offcanvas offcanvas-end"
-                        tabindex="-1"
+
+
+                        tabIndex="-1"
+
                         id="offcanvasRight"
                         aria-labelledby="offcanvasRightLabel"
                         data-bs-backdrop="static"
-                        style={{ width: "700px",marginLeft:"1000px" }}
+                        style={{ width: "700px", marginLeft: "1000px" }}
                       >
                         <div
                           className="offcanvas-header"
@@ -942,7 +950,7 @@ function Dashboard() {
                                     onClick={handleButtonClick}
                                   >
                                     <a
-                                      className="nav-link active"
+                                      className="nav-link active  "
                                       href="#"
                                       className="acolor"
                                     >
@@ -1234,79 +1242,79 @@ function Dashboard() {
                                 </ul>
                               </div>
                             )}
-                      {showDivii && selectedData && (
-  <div
-    className="projectdata p-3"
-    style={{
-      backgroundColor: "#f9f9f9",
-      borderRadius: "10px",
-      overflowY: "auto", 
-      maxHeight: "80vh",
-      transition: "max-height 0.3s ease-in-out",
-    }}
-  >
-   
-    <div
-      className="projectitle d-flex justify-content-between align-items-center p-2"
-      style={{ backgroundColor: "#f5f5f5", borderRadius: "8px",width:"101%",position:"relative",bottom:"20px",right:"10px" }}
-    >
-      <h5 className="m-0">Placement Details</h5>
-      <button className="btn btn-sm " onClick={closeDivii}>
-        X
-      </button>
-    </div>
-    <br />
-    
-    <div style={{position:"relative",bottom:"30px"}}>
-    <h5 className="mx-3">Placement Status: {selectedData.PLACEMENT}</h5>
-    
+                            {showDivii && selectedData && (
+                              <div
+                                className="projectdata p-3"
+                                style={{
+                                  backgroundColor: "#f9f9f9",
+                                  borderRadius: "10px",
+                                  overflowY: "auto",
+                                  maxHeight: "80vh",
+                                  transition: "max-height 0.3s ease-in-out",
+                                }}
+                              >
 
-    {/* Transform the Offers Data */}
-    {(() => {
-      const offers = [];
-      Object.keys(selectedData).forEach((key) => {
-        if (key.startsWith("OFFERS/")) {
-          const index = key.split("/")[1]; // Extract offer index
-          const field = key.split("/")[2]; // Extract field name
+                                <div
+                                  className="projectitle d-flex justify-content-between align-items-center p-2"
+                                  style={{ backgroundColor: "#f5f5f5", borderRadius: "8px", width: "101%", position: "relative", bottom: "20px", right: "10px" }}
+                                >
+                                  <h5 className="m-0">Placement Details</h5>
+                                  <button className="btn btn-sm " onClick={closeDivii}>
+                                    X
+                                  </button>
+                                </div>
+                                <br />
 
-          if (!offers[index]) {
-            offers[index] = {}; // Initialize empty object
-          }
-          offers[index][field] = selectedData[key]; // Assign value
-        }
-      });
-      
-
-      return (
-        <>
-          {offers.length > 0 ? (
-            <div className="row mx-2 d-flex justify-content-center">
-              {offers.map((offer, index) => (
-                <div key={index} className="col-lg-4 col-md-6 mb-3">
-                  <div className="offer-details card p-2 border rounded shadow-sm ">
-                    <h5 className="card-title p-1 " style={{backgroundColor:"rgb(218, 216, 216)" ,width:"112.5%",position:"relative",bottom:"8px",right:"10px",borderTopLeftRadius:"5px",borderTopRightRadius:"5px"}}> {offer.OFFERNO}</h5>
-                    <h6><strong>Company:</strong> {offer.COMPDETAIL}</h6>
-                    <p><strong>Designation:</strong> {offer.DESIGNATION}</p>
-                    <p><strong>Package:</strong> {offer.PACKAGE}</p>
-                  <a href={offer.OFFER} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-sm">
-                      📄  Offer Letter
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="mx-3">No offers available.</p>
-          )}
-        </>
-      );
-    })()}
-   </div>
-  </div>
-)}
+                                <div style={{ position: "relative", bottom: "30px" }}>
+                                  <h5 className="mx-3">Placement Status: {selectedData.PLACEMENT}</h5>
 
 
-                           
+                                  {/* Transform the Offers Data */}
+                                  {(() => {
+                                    const offers = [];
+                                    Object.keys(selectedData).forEach((key) => {
+                                      if (key.startsWith("OFFERS/")) {
+                                        const index = key.split("/")[1]; // Extract offer index
+                                        const field = key.split("/")[2]; // Extract field name
+
+                                        if (!offers[index]) {
+                                          offers[index] = {}; // Initialize empty object
+                                        }
+                                        offers[index][field] = selectedData[key]; // Assign value
+                                      }
+                                    });
+
+
+                                    return (
+                                      <>
+                                        {offers.length > 0 ? (
+                                          <div className="row mx-2 d-flex justify-content-center">
+                                            {offers.map((offer, index) => (
+                                              <div key={index} className="col-lg-4 col-md-6 mb-3">
+                                                <div className="offer-details card p-2 border rounded shadow-sm ">
+                                                  <h5 className="card-title p-1 " style={{ backgroundColor: "rgb(218, 216, 216)", width: "112.5%", position: "relative", bottom: "8px", right: "10px", borderTopLeftRadius: "5px", borderTopRightRadius: "5px" }}> {offer.OFFERNO}</h5>
+                                                  <h6><strong>Company:</strong> {offer.COMPDETAIL}</h6>
+                                                  <p><strong>Designation:</strong> {offer.DESIGNATION}</p>
+                                                  <p><strong>Package:</strong> {offer.PACKAGE}</p>
+                                                  <a href={offer.OFFER} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-sm">
+                                                    📄  Offer Letter
+                                                  </a>
+                                                </div>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        ) : (
+                                          <p className="mx-3">No offers available.</p>
+                                        )}
+                                      </>
+                                    );
+                                  })()}
+                                </div>
+                              </div>
+                            )}
+
+
+
                           </div>
                         </div>
                       </div>
