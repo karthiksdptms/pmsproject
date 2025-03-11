@@ -7,6 +7,6 @@ const AttendanceStudentSchema = new mongoose.Schema({
   batch: { type: String, required: true },
 });
 
-const AttendanceStudentModel = mongoose.model("AttendanceStudent", AttendanceStudentSchema);
+const AttendanceStudentModel = mongoose.model("AttendanceStudents", AttendanceStudentSchema);
 
 export default AttendanceStudentModel;

@@ -19,9 +19,6 @@ function Trainingattendance() {
   useEffect(() => {
     fetchSchedule();
   }, []);
-  useEffect(() => {
-    console.log("Updated Schedules:", Schedule);
-  }, [Schedule]);
 
   const fetchSchedule = async () => {
     try {
@@ -31,44 +28,42 @@ function Trainingattendance() {
       console.error("Error fetching schedules:", error);
     }
   };
+
   const handleTakeAttendance = (scheduleCode, batches) => {
-    console.log("Batches Received:", batches); // Debugging
+    console.log("Batches Received:", batches);
   
-    // Ensure we correctly extract batchNumber from each batch object
     const batchNames = batches.map(batch => {
       if (typeof batch === "object" && batch.batchNumber) {
         return batch.batchNumber;
       } else if (typeof batch === "string") {
-        return batch; // If it's already a string, return it
+        return batch;
       } else {
-        return `Unknown Batch`; // Fallback if batch structure is incorrect
+        return `Unknown Batch`;
       }
     });
   
-    console.log("Extracted Batch Names:", batchNames); // Debugging
+    console.log("Extracted Batch Names:", batchNames);
   
     setSelectedBatches(batchNames);
     setSelectedScheduleCode(scheduleCode);
     setShowBatchModal(true);
   };
-  
-
 
   const handleBatchClick = async (batch) => {
-    console.log("Selected Batch:", batch); // ✅ Debugging log
-  
+    console.log(`[INFO] Selected Batch: ${batch}`);
+
     try {
       const response = await axios.get("http://localhost:3000/api/attendancestudent/attendance-students", {
-        params: { batch: decodeURIComponent(batch) }, // ✅ Ensure proper encoding
+        params: { batch }, 
       });
-  
-      console.log("Fetched Students:", response.data); // ✅ Debugging log
+
+      console.log(`[SUCCESS] Fetched ${response.data.length} students`, response.data);
       setStudents(response.data);
+      setSelectedBatch(batch);
       setShowBatchModal(false);
       setShowStudentModal(true);
     } catch (error) {
-      console.error("Error fetching students:", error);
-  
+      console.error("[ERROR] Fetching students failed:", error);
       Swal.fire({
         icon: "error",
         title: "Failed to load students",
@@ -76,7 +71,6 @@ function Trainingattendance() {
       });
     }
   };
-  
 
   const handleAttendance = async (studentId, status) => {
     try {
@@ -176,23 +170,22 @@ function Trainingattendance() {
       </div>
 
       {/* Batch Selection Modal */}
-<Modal show={showBatchModal} onHide={() => setShowBatchModal(false)} centered>
-  <Modal.Header closeButton>
-    <Modal.Title>Select Batch</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    {selectedBatches.length > 0 ? (
-      selectedBatches.map((batch, index) => (
-        <Button key={index} variant="outline-primary" className="m-2" onClick={() => handleBatchClick(batch)}>
-          {batch} {/* Display batch name directly */}
-        </Button>
-      ))
-    ) : (
-      <p>No batches available</p>
-    )}
-  </Modal.Body>
-</Modal>
-
+      <Modal show={showBatchModal} onHide={() => setShowBatchModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Select Batch</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedBatches.length > 0 ? (
+            selectedBatches.map((batch, index) => (
+              <Button key={index} variant="outline-primary" className="m-2" onClick={() => handleBatchClick(batch)}>
+                {batch}
+              </Button>
+            ))
+          ) : (
+            <p>No batches available</p>
+          )}
+        </Modal.Body>
+      </Modal>
 
       {/* Student List Modal */}
       <Modal show={showStudentModal} onHide={() => setShowStudentModal(false)} centered size="lg">
@@ -213,29 +206,17 @@ function Trainingattendance() {
               {students.length > 0 ? (
                 students.map((student, index) => (
                   <tr key={index}>
-                    <td>{student.registerNumber}</td>
-                    <td>{student.name}</td>
-                    <td>{student.department}</td>
+                    <td>{student.REGISTRATION_NUMBER}</td>
+                    <td>{student.NAME}</td>
+                    <td>{student.DEPARTMENT}</td>
                     <td>
-                      <Button
-                        variant="success"
-                        className="m-1"
-                        onClick={() => handleAttendance(student._id, "Present")}
-                      >
+                      <Button variant="success" className="m-1" onClick={() => handleAttendance(student._id, "Present")}>
                         Present
                       </Button>
-                      <Button
-                        variant="danger"
-                        className="m-1"
-                        onClick={() => handleAttendance(student._id, "Absent")}
-                      >
+                      <Button variant="danger" className="m-1" onClick={() => handleAttendance(student._id, "Absent")}>
                         Absent
                       </Button>
-                      <Button
-                        variant="warning"
-                        className="m-1"
-                        onClick={() => handleAttendance(student._id, "On Duty")}
-                      >
+                      <Button variant="warning" className="m-1" onClick={() => handleAttendance(student._id, "On Duty")}>
                         On Duty
                       </Button>
                     </td>

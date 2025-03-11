@@ -46,7 +46,7 @@ export const saveTraining = async (req, res) => {
       batches: formattedBatches,
     });
 
-    // Save to database
+    
     await newTraining.save();
 
     res.status(201).json({ message: "Training schedule saved successfully", data: newTraining });
