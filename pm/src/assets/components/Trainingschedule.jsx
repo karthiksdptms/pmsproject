@@ -157,7 +157,7 @@ function Trainingschedule() {
 };
 
   //new
-  const [trainingData, setTrainingData] = useState([]);
+
 
 
   const [showModal, setShowModal] = useState(false);
