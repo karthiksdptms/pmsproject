@@ -28,7 +28,7 @@ function Studenttrainingexams() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answerStatus, setAnswerStatus] = useState([]);
   const [remainingTime, setRemainingTime] = useState(0);
-  
+
   useEffect(() => {
     if (user?._id) {
       setstdloading(true);
@@ -50,15 +50,15 @@ function Studenttrainingexams() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const totalPages = Math.ceil(questionPapers.length / rowsPerPage);
-  
+
   const startIdx = (currentPage - 1) * rowsPerPage;
   const displayedData = questionPapers.slice(startIdx, startIdx + rowsPerPage);
 
- 
+
   const calculateDuration = (startTime, endTime) => {
     const start = new Date(`2000-01-01T${startTime}`);
     const end = new Date(`2000-01-01T${endTime}`);
-    return Math.floor((end - start) / 1000); 
+    return Math.floor((end - start) / 1000);
   };
 
   const [examStarted, setExamStarted] = useState(false);
@@ -88,36 +88,37 @@ function Studenttrainingexams() {
       const timer = setInterval(() => {
         setRemainingTime((prev) => prev - 1);
       }, 1000);
-  
+
       return () => {
         if (timer) {
           clearInterval(timer);
         }
       };
     }
-  if (examStarted && remainingTime === 0) {
-    if (remainingTime === 0) {
-      Swal.fire({
-        title: "Time Over ⏰",
-        text: "Your Exam is Automatically Submitted",
-        icon: "info",
-        showConfirmButton: false,
-        timer: 3000,
-      }).then(() => {
-        handleSubmit(); 
-        setShowQuestionPaper(false); 
-      });
-    }}
-  }, [remainingTime, displayedData,examStarted]);
-  
+    if (examStarted && remainingTime === 0) {
+      if (remainingTime === 0) {
+        Swal.fire({
+          title: "Time Over ⏰",
+          text: "Your Exam is Automatically Submitted",
+          icon: "info",
+          showConfirmButton: false,
+          timer: 3000,
+        }).then(() => {
+          handleSubmit();
+          setShowQuestionPaper(false);
+        });
+      }
+    }
+  }, [remainingTime, displayedData, examStarted]);
+
   useEffect(() => {
-    let violationCount = 0; 
-  
+    let violationCount = 0;
+
     if (examStarted) {
-    
+
       window.addEventListener("contextmenu", (e) => e.preventDefault());
-  
-     
+
+
       const handleViolation = () => {
         violationCount++;
         if (violationCount === 1) {
@@ -136,13 +137,13 @@ function Studenttrainingexams() {
             timer: 3000,
             showConfirmButton: false,
           }).then(() => {
-            handleSubmit(); 
+            handleSubmit();
             setShowQuestionPaper(false);
           });
         }
       };
-  
-      
+
+
       window.addEventListener("keydown", (e) => {
         if (
           e.ctrlKey && (e.key === "c" || e.key === "u" || e.key === "I") ||
@@ -154,64 +155,57 @@ function Studenttrainingexams() {
           handleViolation();
         }
       });
-  
+
       return () => {
         window.removeEventListener("contextmenu", (e) => e.preventDefault());
         window.removeEventListener("keydown", (e) => e.preventDefault());
       };
     }
   }, [examStarted]);
-  
+
 
 
   const handleSubmit = async () => {
     const resultArray = [];
+
     questions.forEach((q, index) => {
-      if (selectedAnswers[index]) {
-       
-        const selectedOptionIndex = q.options.indexOf(selectedAnswers[index]);
-        if (selectedOptionIndex !== -1) {
-          
-          const optionAlphabet = String.fromCharCode(65 + selectedOptionIndex);
-          resultArray.push({
-            question: index + 1, 
-            answer: optionAlphabet, 
-            marks: q.marks, 
-          });
-        }
+      if (selectedAnswers[index] !== undefined) {
+        const selectedOptionIndex = selectedAnswers[index];
+        const optionAlphabet = String.fromCharCode(65 + selectedOptionIndex);
+
+        resultArray.push({
+          question: index + 1,
+          answer: optionAlphabet,
+          marks: q.marks,
+        });
       }
     });
-  
+
     console.log("Submitted Answers:", resultArray);
-    
-  
+
     try {
-      const response = await axios.post('http://localhost:3000/api/answerkey/submitans', 
-      
-      { userId: user._id,
+      const response = await axios.post('http://localhost:3000/api/answerkey/submitans', {
+        userId: user._id,
         qpcode: qpcode,
-        title:title,
-       
-        answers: JSON.parse(JSON.stringify(resultArray)),});
-  
+        title: title,
+        answers: resultArray,
+      });
+
       setShowQuestionPaper(false);
-  
+
       Swal.fire({
         icon: "success",
-        title: `Answers Submitted Successfully 🎯`,
-      
+        title: "Answers Submitted Successfully 🎯",
         showConfirmButton: true,
         timer: 3000,
       }).then(() => {
-        window.location.reload(); 
+        window.location.reload();
       });
 
-setSelectedAnswers({}); 
-setShowQuestionPaper(false); 
-
+      setSelectedAnswers({});
+      setShowQuestionPaper(false);
     } catch (err) {
       console.error("Submit Error", err);
-  
       Swal.fire({
         icon: "error",
         title: "Submission Failed ❌",
@@ -219,6 +213,7 @@ setShowQuestionPaper(false);
       });
     }
   };
+
 
   return (
     <>
@@ -235,8 +230,8 @@ setShowQuestionPaper(false);
       </div>
 
       {stdloading ? (
-          <Loading/>
-          ) : (
+        <Loading />
+      ) : (
         <div className="mt-4" style={{ position: "relative", left: "270px" }}>
           <h4 className="mb-4" style={{ position: "relative", top: "50px", left: "50px", width: '350px' }}>
             Total exams to attend: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{totalRecords}</span>
@@ -280,165 +275,171 @@ setShowQuestionPaper(false);
                 </tr>
               </thead>
               <tbody>
-  {displayedData.length > 0 ? (
-    displayedData.map((paper, index) => (
-      <tr key={index}>
-        <td>{paper.qpcode}</td>
-        <td>{paper.title}</td>
-        <td>{paper.academicYear}</td>
-        <td>{paper.department}</td>
-        <td>{paper.batch}</td>
-        <td>{paper.negativeMarking}</td>
-        <td>{new Date(paper.examDate).toLocaleDateString("en-GB")}</td>
-        <td>{paper.startTime}</td>
-        <td>{paper.endTime}</td>
-        <td>{paper.semesterType}</td>
-        <td>
-          <button className="btn btn-primary me-2" onClick={() => handleStartTest(index)}>
-            Take Test
-          </button>
-        </td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan="10" style={{ textAlign: "center", fontWeight: "bold", color: "red", fontSize: "20px" }}>
-        No Exams Left 
-      </td>
-    </tr>
-  )}
-</tbody>
+                {displayedData.length > 0 ? (
+                  displayedData.map((paper, index) => (
+                    <tr key={index}>
+                      <td>{paper.qpcode}</td>
+                      <td>{paper.title}</td>
+                      <td>{paper.academicYear}</td>
+                      <td>{paper.department}</td>
+                      <td>{paper.batch}</td>
+                      <td>{paper.negativeMarking}</td>
+                      <td>{new Date(paper.examDate).toLocaleDateString("en-GB")}</td>
+                      <td>{paper.startTime}</td>
+                      <td>{paper.endTime}</td>
+                      <td>{paper.semesterType}</td>
+                      <td>
+                        <button className="btn btn-primary me-2" onClick={() => handleStartTest(index)}>
+                          Take Test
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="10" style={{ textAlign: "center", fontWeight: "bold", color: "red", fontSize: "20px" }}>
+                      No Exams Left
+                    </td>
+                  </tr>
+                )}
+              </tbody>
 
             </table>
           </div>
         </div>)}
-      
 
-    
+
+
       {showQuestionPaper && selectedPaperIndex !== null && (
         <div>
-        <div className="border p-4 mt-3 " style={{position:"relative",bottom:"310px",left:"240px",backgroundColor:"rgb(177, 177, 177)",width:"1275px",height:'650px'}}>
-             
-             
-        <div className="title"style={{width:"104.5%",height:"55px",backgroundColor:"rgb(216, 216, 216)",position:"relative",right:"25px",bottom:'30px '}}>  <h3 className="text-center">{title}</h3> 
-       
-</div>
-        <p className="text-center">
-          Academic Year: {academicYear} |Department:{department}|Batch:{batch}<br/> Semester: {semesterType} | Exam Date: {new Date(examDate).toLocaleDateString("en-GB")}
-
-        </p>
-        
-
-        <div 
-className="timer-box" 
-style={{ backgroundColor: remainingTime <= 600 ? "red" : "#222" ,width:"100px"}}
->
-<h4 className="timer-text">
-{Math.floor(remainingTime / 60)}:{String(remainingTime % 60).padStart(2, "0")}
-</h4>
-</div>
+          <div className="border p-4 mt-3 " style={{ position: "relative", bottom: "310px", left: "240px", backgroundColor: "rgb(177, 177, 177)", width: "1275px", height: '650px' }}>
 
 
+            <div className="title" style={{ width: "104.5%", height: "55px", backgroundColor: "rgb(216, 216, 216)", position: "relative", right: "25px", bottom: '30px ' }}>  <h3 className="text-center">{title}</h3>
 
-        <div className="instructions-container ic">
-        
-          <div className="instructions-content">
-         
-            <div className="int"><h5>Instructions:</h5></div>
-            
-            
-            <p className="text-left">Start Time: {startTime} | End Time: {endTime}</p>
-            <p>{instructions}</p>
-          </div>
+            </div>
+            <p className="text-center">
+              Academic Year: {academicYear} |Department:{department}|Batch:{batch}<br /> Semester: {semesterType} | Exam Date: {new Date(examDate).toLocaleDateString("en-GB")}
 
-        
-          <div className="divider"></div>
+            </p>
 
-       
-          <div className="question-circles">
-            {questions.map((_, index) => (
-              <div
-                key={index}
-                className={`circle ${answerStatus[index]}`} 
-                onClick={() => setCurrentQuestionIndex(index)} 
-              >
-                {index + 1}
+
+            <div
+              className="timer-box"
+              style={{ backgroundColor: remainingTime <= 600 ? "red" : "#222", width: "100px" }}
+            >
+              <h4 className="timer-text">
+                {Math.floor(remainingTime / 60)}:{String(remainingTime % 60).padStart(2, "0")}
+              </h4>
+            </div>
+
+
+
+            <div className="instructions-container ic">
+
+              <div className="instructions-content">
+
+                <div className="int"><h5>Instructions:</h5></div>
+
+
+                <p className="text-left">Start Time: {startTime} | End Time: {endTime}</p>
+                <p>{instructions}</p>
               </div>
-            ))}
-          </div>
-          
-        </div>
-        <button className="btn btn-primary" style={{position:"relative",left:"1000px"}} onClick={handleSubmit}> Submit</button>
+
+
+              <div className="divider"></div>
+
+
+              <div className="question-circles">
+                {questions.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`circle ${answerStatus[index]}`}
+                    onClick={() => setCurrentQuestionIndex(index)}
+                  >
+                    {index + 1}
+                  </div>
+                ))}
+              </div>
+
+            </div>
+            <button className="btn btn-primary" style={{ position: "relative", left: "1000px" }} onClick={handleSubmit}> Submit</button>
 
 
 
-        <div className="iic qq" >
-          <div style={{ position: "relative", bottom: "50px" }} className="">
-            <div className="mb-3 ">
-            {questions.length > 0 && questions[currentQuestionIndex] && (
-<h5 className="text-wrap">
-Q{currentQuestionIndex + 1}: {questions[currentQuestionIndex].question} ({questions[currentQuestionIndex].marks} Marks)
-</h5>
-)}
-              <br />
+            <div className="iic qq" >
+              <div style={{ position: "relative", bottom: "50px" }} className="">
+                <div className="mb-3 ">
+                  {questions.length > 0 && questions[currentQuestionIndex] && (
+                    <h5 className="text-wrap">
+                      Q{currentQuestionIndex + 1}: {questions[currentQuestionIndex].question} ({questions[currentQuestionIndex].marks} Marks)
+                    </h5>
+                  )}
+                  <br />
 
 
-            
-              {questions[currentQuestionIndex].options.map((opt, i) => (
-                <div key={i} className="form-check">
-                  <input
-                    type="radio"
-                    className="form-check-input"
-                    name={`question-${currentQuestionIndex}`}
-                    value={opt}
-                    checked={selectedAnswers[currentQuestionIndex] === opt}
-                    onChange={() => {
-                      setSelectedAnswers({ ...selectedAnswers, [currentQuestionIndex]: opt });
 
-                  
-                      const newStatus = [...answerStatus];
-                      newStatus[currentQuestionIndex] = "answered";
-                      setAnswerStatus(newStatus);
-                    }}
-                  />
-                  <label className="form-check-label qq">
-                    <strong>{["A", "B", "C", "D"][i]}.</strong> {opt}
-                  </label>
+                  {questions[currentQuestionIndex].options.map((opt, i) => (
+                    <div key={i} className="form-check">
+                      <input
+                        type="radio"
+                        className="form-check-input"
+                        name={`question-${currentQuestionIndex}`}
+                        value={i}
+                        checked={selectedAnswers[currentQuestionIndex] === i}
+                        onChange={() => {
+                          setSelectedAnswers(prev => ({
+                            ...prev,
+                            [currentQuestionIndex]: i
+                          }));
+
+
+                          const newStatus = [...answerStatus];
+                          newStatus[currentQuestionIndex] = "answered";
+                          setAnswerStatus(newStatus);
+                        }}
+                      />
+
+                      <label className="form-check-label">
+                        <strong>{String.fromCharCode(65 + i)}.</strong> {opt}
+                      </label>
+                    </div>
+                  ))}
+
+
+
                 </div>
-              ))}
+
+
+                <button
+                  className="btn btn-secondary me-2"
+                  disabled={currentQuestionIndex === 0}
+                  onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
+                >
+                  Previous
+                </button>
+
+                <button
+                  className="btn btn-primary"
+                  disabled={currentQuestionIndex === questions.length - 1}
+                  onClick={() => {
+                    if (!selectedAnswers[currentQuestionIndex]) {
+                      const newStatus = [...answerStatus];
+                      newStatus[currentQuestionIndex] = "skipped";
+                      setAnswerStatus(newStatus);
+                    }
+                    setCurrentQuestionIndex(currentQuestionIndex + 1);
+                  }}
+                >
+                  Next
+                </button>
+
+              </div>
 
             </div>
 
-           
-            <button
-              className="btn btn-secondary me-2"
-              disabled={currentQuestionIndex === 0}
-              onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
-            >
-              Previous
-            </button>
-
-            <button
-              className="btn btn-primary"
-              disabled={currentQuestionIndex === questions.length - 1}
-              onClick={() => {
-                if (!selectedAnswers[currentQuestionIndex]) {
-                  const newStatus = [...answerStatus];
-                  newStatus[currentQuestionIndex] = "skipped";
-                  setAnswerStatus(newStatus);
-                }
-                setCurrentQuestionIndex(currentQuestionIndex + 1);
-              }}
-            >
-              Next
-            </button>
-
           </div>
-       
         </div>
-       
-      </div>
-      </div>
       )}
     </>
   );

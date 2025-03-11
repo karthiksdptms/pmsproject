@@ -57,7 +57,7 @@ function Aptitudescores() {
             registration_number: answer.registration_number,
             batch: answer.batch,
             qpcode: answer.qpcode,
-            title:answer.title,
+            title: answer.title,
             score: answer.score,
             totalscore: answer.totalscore,
         };
@@ -82,25 +82,25 @@ function Aptitudescores() {
             alert("No students selected.");
             return;
         }
-    
+
         const selectedResults = answers.filter(answer => selectedRows.includes(answer.registration_number))
             .map(answer => ({
                 registration_number: answer.registration_number,
                 batch: answer.batch,
                 qpcode: answer.qpcode,
-                title:answer.title,
+                title: answer.title,
                 score: answer.score,
                 totalscore: answer.totalscore,
             }));
-    
+
         try {
             const response = await axios.post("http://localhost:3000/api/student/publish-multiple-results", {
                 results: selectedResults,
             });
-    
+
             if (response.status === 200) {
                 alert("Selected results have been published successfully!");
-                setSelectedRows([]); 
+                setSelectedRows([]);
             }
         } catch (error) {
             if (error.response && error.response.status === 409) {
@@ -110,33 +110,61 @@ function Aptitudescores() {
             }
         }
     };
-    
+
     const handleDeleteSelected = async () => {
         if (selectedRows.length === 0) {
             alert("No students selected.");
             return;
         }
-    
+
         const selectedResults = answers.filter(answer => selectedRows.includes(answer.registration_number))
             .map(answer => ({
                 registration_number: answer.registration_number,
                 qpcode: answer.qpcode,
             }));
-    
+
         try {
             const response = await axios.post("http://localhost:3000/api/student/delete-multiple-results", {
                 results: selectedResults,
             });
-    
+
             if (response.status === 200) {
                 alert("Selected records have been deleted successfully!");
-                setAnswers(prev => prev.filter(answer => !selectedRows.includes(answer.registration_number))); 
-                setSelectedRows([]); 
+                setAnswers(prev => prev.filter(answer => !selectedRows.includes(answer.registration_number)));
+                setSelectedRows([]);
             }
         } catch (error) {
             alert("Could not delete records. Try again.");
         }
     };
+
+
+    const [selectedAnswerPaper, setSelectedAnswerPaper] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const fetchAnswerPaper = async (registration_number, qpcode) => {
+        try {
+            
+            const response = await axios.get("http://localhost:3000/api/student/view-answer-paper", {
+                params: { registration_number, qpcode },
+            });
+    
+           
+    
+            if (!response.data || !response.data.answers) {
+                console.error("Error: No answers found in the response.");
+                alert("No answers available.");
+                return;
+            }
+    
+            setSelectedAnswerPaper(response.data);
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error("Error fetching answer paper:", error);
+            alert(error.response?.data?.message || "Could not fetch answer paper.");
+        }
+    };
+    
     
 
 
@@ -165,21 +193,21 @@ function Aptitudescores() {
                 Scores
             </h2>
             <button
-            style={{position:'relative',left:"1080px"}}
-    className="btn btn-danger"
-    onClick={handleDeleteSelected}
-    disabled={selectedRows.length === 0} 
->
-    Delete(selected)
-</button>
+                style={{ position: 'relative', left: "1080px" }}
+                className="btn btn-danger"
+                onClick={handleDeleteSelected}
+                disabled={selectedRows.length === 0}
+            >
+                Delete(selected)
+            </button>
             <button
-            style={{position:'relative',left:"1100px"}}
-    className="btn btn-success"
-    onClick={handlePublishSelected}
-    disabled={selectedRows.length === 0}
->
-    Publish(selected)
-</button>
+                style={{ position: 'relative', left: "1100px" }}
+                className="btn btn-success"
+                onClick={handlePublishSelected}
+                disabled={selectedRows.length === 0}
+            >
+                Publish(selected)
+            </button>
 
 
             <div className="" style={{ position: "relative", left: '250px' }}>
@@ -256,6 +284,7 @@ function Aptitudescores() {
                                     <th>Score</th>
                                     <th>Percentage</th>
                                     <th>Actions</th>
+                                    <th>View AnswerPaper</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -270,7 +299,7 @@ function Aptitudescores() {
                                         </td>
                                         <td>{answer.registration_number}</td>
                                         <td>{answer.batch}</td>
-                                        
+
                                         <td>{answer.department}</td>
                                         <td>{answer.qpcode}</td>
                                         <td>{answer.title}</td>
@@ -281,13 +310,19 @@ function Aptitudescores() {
                                                 : "N/A"}
                                         </td>
                                         <td>
-                                            <td>
+                                            <td style={{}}>
                                                 <button className="btn btn-primary" onClick={() => handlePublish(answer)}>
                                                     Publish
                                                 </button>
-                                            </td>
-
+                                            </td> </td>
+                                        <td>
+                                            <button className="btn btn-primary" onClick={() => fetchAnswerPaper(answer.registration_number, answer.qpcode)}>
+                                                View
+                                            </button>
                                         </td>
+
+
+
                                     </tr>
                                 ))}
                             </tbody>
@@ -295,6 +330,92 @@ function Aptitudescores() {
                     </div>
                 </div>
             </div>
+            {isModalOpen && selectedAnswerPaper && (
+    <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+        <div className="modal-dialog modal-xl modal-dialog-centered">
+            <div className="modal-content" style={{ width: "100%" }}>
+                
+              
+                <div className="modal-header">
+                    <h4 className="modal-title">Answer Sheet - {selectedAnswerPaper.qpcode}</h4>
+                    <button type="button" className="btn-close" onClick={() => setIsModalOpen(false)}></button>
+                </div>
+                <div className="px-4 pt-2">
+                    <h6><strong>Student Registration Number:</strong> {selectedAnswerPaper.registration_number || "N/A"}</h6>
+                    <h6><strong>Question Paper Title:</strong> {selectedAnswerPaper.title || "N/A"}</h6>
+                </div>
+
+               
+                <div className="modal-body" style={{ maxHeight: "500px", overflowY: "auto" }}>
+                    <table className="table table-striped table-hover" style={{ tableLayout: "fixed", width: "100%" ,position:'relative',left:"0px"}}>
+                    <thead className="table" style={{position:'relative',left:"0px"}}>
+                            <tr>
+                                <th style={{ width: "50%" }}>Question</th>
+                                <th style={{ width: "25%" }}>Student Answer</th>
+                                <th style={{ width: "25%" }}>Correct Answer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {selectedAnswerPaper?.answers?.map((answer, index) => (
+                                <tr key={index}>
+                                   
+                                    <td style={{
+                                        wordBreak: "break-word",
+                                        overflowWrap: "anywhere",
+                                        whiteSpace: "pre-line",
+                                        textAlign:"start"
+                                    }}>
+                                        <strong>{index + 1}. {answer.question}</strong>
+                                        <div className="mt-1 text-start">
+                                            {answer.options.length > 0 ? (
+                                                answer.options.map((opt, idx) => (
+                                                    <div key={idx} className="ms-3">
+                                                        <strong>{String.fromCharCode(65 + idx)})</strong> {opt}
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="text-danger">⚠ Options not available</div>
+                                            )}
+                                        </div>
+                                    </td>
+
+                                   
+                                    <td style={{ wordBreak: "break-word", whiteSpace: "pre-line" }}>
+                                        <strong>{answer.studentAnswer}</strong> 
+                                        {answer.isCorrect ? <span className="text-success"> ✅</span> : <span className="text-danger"> ❌</span>}
+                                    </td>
+
+                                
+                                    <td style={{ wordBreak: "break-word", whiteSpace: "pre-line" }}>
+                                        <strong>{answer.correctAnswer}</strong> ✅
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+               
+                <div className="modal-footer">
+                <h6><strong>Score:</strong> {selectedAnswerPaper.score}/{selectedAnswerPaper.totalscore}</h6>
+                <h6><strong>Percentage:</strong> {selectedAnswerPaper.totalscore > 0
+                                                ? ((selectedAnswerPaper.score / selectedAnswerPaper.totalscore) * 100).toFixed(2) + "%"
+                                                : "N/A"}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+)}
+
+
+
+
+
+
+
+
+
+
         </>
     );
 }

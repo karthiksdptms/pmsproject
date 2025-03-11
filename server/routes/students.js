@@ -6,6 +6,8 @@ import { addstudent, upload, getstudent, editstudent, deletestudent, uploadCSV,g
 } from '../controllers/studentcontroller.js';
 import StudentModel from "../models/StudentModel.js";
 import AnswerModel from '../models/AnswerModel.js'
+import AnswerKeyModel from "../models/AnswerkeyModel.js";
+import QpModel from "../models/QpModel.js";
 
 const router = express.Router();
 
@@ -192,11 +194,65 @@ router.get("/training-scores/:id", async (req, res) => {
     }
 });
 
+router.get("/view-answer-paper", async (req, res) => {
+    try {
+        const { registration_number, qpcode } = req.query;
 
+      
+        const studentAnswerData = await AnswerModel.findOne({ registration_number, qpcode });
 
+        if (!studentAnswerData) {
+            return res.status(404).json({ message: "Answer paper not found for this student." });
+        }
 
+        
+        const answerKeyData = await AnswerKeyModel.findOne({ qpcode });
 
+        if (!answerKeyData || !answerKeyData.answerKey) {
+            return res.status(404).json({ message: "Answer key not found for this question paper." });
+        }
 
+       
+        const questionPaper = await QpModel.findOne({ qpcode });
 
-  
+        if (!questionPaper || !questionPaper.questions) {
+            return res.status(404).json({ message: "Question paper not found." });
+        }
+
+     
+        const comparedAnswers = studentAnswerData.answers.map((item, index) => {
+            const correctAnswerObj = answerKeyData.answerKey.find(q => 
+                String(q.QuestionNo) === String(item.QuestionNo || item.question)
+            );
+
+           
+            const questionData = questionPaper.questions[index];  
+
+            return {
+                QuestionNo: item.QuestionNo || index + 1,
+                question: questionData ? questionData.question : "Question not available",
+                options: questionData ? questionData.options : ["Options not available"],
+                studentAnswer: item.answer,
+                correctAnswer: correctAnswerObj ? correctAnswerObj.Answer : "N/A",
+                isCorrect: correctAnswerObj ? item.answer === correctAnswerObj.Answer : false,
+                marks: correctAnswerObj ? correctAnswerObj.marks : "0"
+            };
+        });
+
+       
+        res.json({
+            registration_number: studentAnswerData.registration_number, 
+            qpcode: studentAnswerData.qpcode,
+            title: studentAnswerData.title,
+            answers: comparedAnswers,
+            score: studentAnswerData.score,
+            totalscore: studentAnswerData.totalscore
+        });
+
+    } catch (error) {
+        console.error("Error fetching answer paper:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+ 
 export default router;

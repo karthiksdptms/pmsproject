@@ -628,9 +628,9 @@ function Accountsstudentaccounts() {
 
 
         {show && (
-          <div className="modal d-block" tabIndex="-1"> style={{ minWidth: "100%" }}
+          <div className="modal d-block" tabIndex="-1"> 
             <div className="modal-dialog modal-lg">
-              <div className="modal-content" style={{ minWidth: "100%" }}>
+              <div className="modal-content" style={{minWidth:"100%"}}>
                 <div className="modal-header">
                   <h5 className="modal-title">Add Student Details To Create Account</h5>
                   <button type="button" className="btn-close" onClick={() => setShow(false)}></button>
@@ -853,7 +853,7 @@ function Accountsstudentaccounts() {
         {showw && student && (
           <div className="modal d-block" tabIndex="-1" key={student._id}>
             <div className="modal-dialog modal-lg">
-              <div className="modal-content">
+              <div className="modal-content" style={{minWidth:"100%"}}>
                 <div className="modal-header">
                   <h5 className="modal-title">Add Student Details To Create Account</h5>
                   <button type="button" className="btn-close" onClick={() => setShoww(false)}></button>

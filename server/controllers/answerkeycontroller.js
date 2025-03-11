@@ -58,26 +58,32 @@ const uploadanswerkey = async (req, res) => {
 };
 
 export const submitAnswers = async (req, res) => {
-  const { userId, qpcode, title,answers } = req.body;
+  const { userId, qpcode, title, answers } = req.body;
 
   try {
-    if (!userId || !qpcode || !answers||!title) {
+    if (!userId || !qpcode || !answers || !title) {
       return res.status(400).json({ message: "Invalid Data" });
     }
 
-    const student = await StudentModel.findOne({ userId: userId });
-    if (!student) {
-      return res.status(404).json({ message: "Student Not Found" });
-    }
+   
+    const [student, answerKey, questionPaper] = await Promise.all([
+      StudentModel.findOne({ userId }),
+      AnswerKeyModel.findOne({ qpcode }),
+      QpaperModel.findOne({ qpcode }),
+    ]);
 
-    const answerKey = await AnswerKeyModel.findOne({ qpcode });
-    if (!answerKey) {
-      return res.status(404).json({ message: "Answer Key Not Found" });
-    }
+    if (!student) return res.status(404).json({ message: "Student Not Found" });
+    if (!answerKey) return res.status(404).json({ message: "Answer Key Not Found" });
+    if (!questionPaper) return res.status(404).json({ message: "Question Paper Not Found" });
 
-    const questionPaper = await QpaperModel.findOne({ qpcode });
-    if (!questionPaper) {
-      return res.status(404).json({ message: "Question Paper Not Found" });
+  
+    const existingAnswer = await AnswerModel.findOne({
+      registration_number: student.registration_number,
+      qpcode: qpcode,
+    });
+
+    if (existingAnswer) {
+      return res.status(409).json({ message: "Answers already submitted for this exam" });
     }
 
     const negativeMarking = questionPaper.negativeMarking === "Yes";
@@ -85,51 +91,49 @@ export const submitAnswers = async (req, res) => {
     let score = 0;
     let totalScore = 0;
 
+    const questionMarksMap = new Map();
+    answerKey.answerKey.forEach((key) => {
+      questionMarksMap.set(key.QuestionNo, parseInt(key.marks) || 1); 
+      totalScore += parseInt(key.marks) || 1;
+    });
+
     answers.forEach((answer) => {
-      const correctAnswer = answerKey.answerKey.find(
-        (key) => key.QuestionNo === answer.question
-      );
+      const correctAnswer = answerKey.answerKey.find((key) => key.QuestionNo === answer.question);
 
       if (correctAnswer) {
-      
-        totalScore += parseInt(answer.marks);
-
+        const marks = questionMarksMap.get(answer.question) || 1; 
         if (correctAnswer.Answer === answer.answer) {
-          score += parseInt(answer.marks);
+          score += marks;
         } else if (negativeMarking) {
-          score -= 1; 
+          score -= 1;
         }
       }
     });
 
-    
-    score = Math.max(0, score);
+    score = Math.max(0, score); 
 
     const newAnswer = new AnswerModel({
       registration_number: student.registration_number,
       batch: student.batch,
       department: student.department,
-      qpcode: qpcode,
-      title: title,
-      answers: answers,
-      score: score,
+      qpcode,
+      title,
+      answers,
+      score,
       totalscore: totalScore,
     });
 
    
     student.exams = student.exams.filter((exam) => exam.qpcode !== qpcode);
-    await student.save();
-    await newAnswer.save();
+    await Promise.all([student.save(), newAnswer.save()]);
 
-    res.status(200).json({
-      message: "Answers Submitted Successfully ",
-      
-    });
+    res.status(200).json({ message: "Answers Submitted Successfully" });
   } catch (err) {
     console.error("Server Error:", err);
     res.status(500).json({ message: "Server Error" });
   }
 };
+
 
 
 export const getscores = async (req, res) => {
