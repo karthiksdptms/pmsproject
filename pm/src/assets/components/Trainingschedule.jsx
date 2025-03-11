@@ -51,7 +51,7 @@ function Trainingschedule() {
 
   const [students, setstudents] = useState([])
   useEffect(() => {
-    axios.get("http://localhost:3000/getstudents")
+    axios.get("http://localhost:3000/api/students/getstudents")
       .then(response => setstudents(response.data))
       .catch(error => console.error("Error fetching students:", error));
   }, []);
@@ -97,23 +97,23 @@ function Trainingschedule() {
   const filteredStudents = students.filter((student) => {
     return (
       (filters.department.length === 0 ||
-        filters.department.includes(student.DEPARTMENT) ||
+        filters.department.includes(student.department) ||
         (showOtherDepartment &&
-          student.DEPARTMENT.includes(filters.otherDepartment))) &&
+          student.department.includes(filters.otherDepartment))) &&
       (filters.batch.length === 0 ||
-        filters.batch.includes(student.BATCH) ||
-        (showOtherBatch && student.BATCH.includes(filters.otherBatch))) &&
+        filters.batch.includes(student.batch) ||
+        (showOtherBatch && student.batch.includes(filters.otherBatch))) &&
       (filters.cgpa === "" ||
-        parseFloat(student.CPGA) >= parseFloat(filters.cgpa)) &&
+        parseFloat(student.cgpa) >= parseFloat(filters.cgpa)) &&
       (filters.arrears === "" ||
-        (parseFloat(filters.arrears) >= parseFloat(student.ARREARS))) &&
+        (parseFloat(filters.arrears) >= parseFloat(student.arrears))) &&
       (filters.historyOfArrears === "" ||
-        (parseFloat(filters.historyOfArrears) >= parseFloat(student.HOA))) &&
+        (parseFloat(filters.historyOfArrears) >= parseFloat(student.hoa))) &&
       (filters.aoi.length === 0 ||
-        filters.aoi.includes(student.AOI) ||
-        (showOtherAoi && student.AOI.includes(filters.otherAoi))) &&
+        filters.aoi.includes(student.aoi) ||
+        (showOtherAoi && student.aoi.includes(filters.otherAoi))) &&
       (filters.language === "" ||
-        student.LANGUAGE.toLowerCase().includes(filters.language.toLowerCase()))
+        student.language.toLowerCase().includes(filters.language.toLowerCase()))
     );
   });
   const handleAllCheckboxChange = (e, key) => {
@@ -125,7 +125,7 @@ function Trainingschedule() {
   const [hoverVisible, setHoverVisible] = useState(false);
   const [hoverVisiblee, setHoverVisiblee] = useState(false);
   const [hoverVisibleee, setHoverVisibleee] = useState(false);
-  ///
+  
   const [selectedRecords, setSelectedRecords] = useState([]);
   const [selectedDepartments, setSelectedDepartments] = useState([]);
   const [batchSize, setBatchSize] = useState(3);
@@ -156,47 +156,39 @@ function Trainingschedule() {
     writeFile(wb, `batch_${batchIndex + 1}.xlsx`);
 };
 
-  //new
+  
+  const [trainingData, setTrainingData] = useState([]);
+const [showModal, setShowModal] = useState(false);
+const [scheduleCode, setScheduleCode] = useState("");
+const [trainingName, setTrainingName] = useState("");
+const [type, setType] = useState("");
+const [trainee, setTrainee] = useState("");
+const [fromdate, setFromdate] = useState("");
+const [todate, setTodate] = useState("");
+const [duration, setDuration] = useState("");
+const [batch, setBatch] = useState("");
+const [department, setDepartment] = useState("");
+
+const [error, setError] = useState("");
+const [batchees, setBatchees] = useState([{ batchNumber: 1, fromdate: "", todate: "" }]);
+const updateBatchDate = (index, field, value) => {
+  const updatedBatches = batches.map((batch, i) =>
+    i === index ? { ...batch, [field]: value } : batch
+  );
+  setBatches(updatedBatches); 
+};
 
 
-
-  const [showModal, setShowModal] = useState(false);
-  const [scheduleCode, setScheduleCode] = useState("");
-  const [trainingName, setTrainingName] = useState("");
-  const[type,setType]=useState("");
-  const [trainee,setTrainee]=useState("");
-  const [fromdate,setFromdate]=useState("");
-  const [todate,setTodate]=useState("");
-  const[duration,setDuration]=useState("");
-  const [batch, setBatch] = useState("");
-  const [department,setDepartment]=useState("")
-
-  const [error, setError] = useState("");
-  const handleSave = async () => {
+const handleSave = async () => {
     if (!scheduleCode || !trainingName) {
         setError("Both Schedule Code and Training Name are required.");
         return;
     }
 
     try {
-        // ✅ Check if Schedule Code Exists
-        console.log("Checking schedule code:", scheduleCode);
-
-        const checkScheduleCode = async (code) => {
-            try {
-                const response = await axios.get(`http://localhost:3000/api/training/check-schedule-code/${code}`);
-                return response.data; // ✅ Return response data
-            } catch (error) {
-                console.error("Error checking schedule code:", error);
-                return { exists: false }; // ✅ Fail-safe: Assume it doesn't exist
-            }
-        };
-
-        // ✅ Await the check and store result
-        const checkResponse = await checkScheduleCode(scheduleCode);
-        console.log("Check Response:", checkResponse);
-
-        if (checkResponse.exists) {
+        
+        const response = await axios.get(`http://localhost:3000/api/training/check-schedule-code/${scheduleCode}`);
+        if (response.data.exists) {
             Swal.fire({
                 title: "Error!",
                 text: "Schedule Code Already Taken. Please use a different one.",
@@ -205,8 +197,8 @@ function Trainingschedule() {
             return;
         }
 
-        // ✅ Ensure Batches Exist
-        if (!batches || batches.length === 0) {
+     
+        if (batches.length === 0) {
             Swal.fire({
                 title: "Error!",
                 text: "No batches found. Please add batches before saving.",
@@ -215,7 +207,7 @@ function Trainingschedule() {
             return;
         }
 
-        // ✅ Save Training Data
+       
         const trainingData = {
             scheduleCode,
             trainingName,
@@ -229,8 +221,6 @@ function Trainingschedule() {
             batches,
         };
 
-        console.log("Saving Training Data:", trainingData);
-
         const saveResponse = await axios.post("http://localhost:3000/api/training/saveTraining", trainingData);
 
         if (saveResponse.status === 201) {
@@ -240,7 +230,7 @@ function Trainingschedule() {
                 icon: "success",
             });
 
-            // ✅ Reset Fields After Saving
+            // Reset Fields After Saving
             setScheduleCode("");
             setTrainingName("");
             setType("");
@@ -250,37 +240,20 @@ function Trainingschedule() {
             setDuration("");
             setBatch("");
             setDepartment("");
-            setBatches([]); // Reset batches array
+            setBatches([]);
             setError("");
             setShowModal(false);
         }
     } catch (error) {
         console.error("Error saving training:", error);
-
-        if (error.response) {
-            console.log("Response Error Data:", error.response.data);
-            Swal.fire({
-                title: "Error!",
-                text: error.response.data.message || "Failed to save training data.",
-                icon: "error",
-            });
-        } else if (error.request) {
-            Swal.fire({
-                title: "Error!",
-                text: "No response from server. Please check your backend.",
-                icon: "error",
-            });
-        } else {
-            Swal.fire({
-                title: "Error!",
-                text: "Something went wrong. Please try again.",
-                icon: "error",
-            });
-        }
+        Swal.fire({
+            title: "Error!",
+            text: error.response?.data?.message || "Something went wrong. Please try again.",
+            icon: "error",
+        });
     }
 };
 
-  
   
 
   //new
@@ -719,14 +692,14 @@ function Trainingschedule() {
                   </thead>
                   <tbody>
                     {batch.map((student) => (
-                      <tr key={student.REGISTRATION_NUMBER}>
-                        <td>{student.REGISTRATION_NUMBER}</td>
-                        <td>{student.NAME}</td>
-                        <td>{student.DEPARTMENT}</td>
-                        <td>{student.BATCH}</td>
-                        <td>{student.CPGA}</td>
-                        <td>{student.ARREARS}</td>
-                        <td>{student.HOA}</td>
+                      <tr key={student.registration_number}>
+                        <td>{student.registration_number}</td>
+                        <td>{student.name}</td>
+                        <td>{student.department}</td>
+                        <td>{student.batch}</td>
+                        <td>{student.cgpa}</td>
+                        <td>{student.arrears}</td>
+                        <td>{student.hoa}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -744,9 +717,9 @@ function Trainingschedule() {
       </button>
 
       {/* Bootstrap Modal */}
-      <div className={`modal fade ${showModal ? "show d-block" : "d-none"}`} tabIndex="-1">
+      <div className={`modal fade ${showModal ? "show d-block" : "d-none"}`} tabIndex="-1" style={{}}>
         <div className="modal-dialog">
-          <div className="modal-content">
+          <div className="modal-content" style={{}}>
             <div className="modal-header">
               <h5 className="modal-title">Enter Training Details</h5>
               <button
@@ -798,26 +771,44 @@ function Trainingschedule() {
                   onChange={(e) => setTrainee(e.target.value)}
                 />
               </div>
-              <div className="mb-3">
-                <input
-                  type="date"
-                  className="form-control"
-                  placeholder="Fromdate"
-                  required
-                  value={fromdate}
-                  onChange={(e) =>setFromdate(e.target.value)}
-                />
+              {/* Batches Section */}
+            <h5>Batches</h5>
+            {batches.map((batch, index) => (
+              <div key={index} className="border p-3 mb-2 rounded">
+                <h6>Batch {index+1}</h6>
+                <div className="row">
+                  <div className="col-md-5">
+                    <label className="form-label">From Date</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={batch.fromdate}
+                      onChange={(e) => updateBatchDate(index, "fromdate", e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-5">
+                    <label className="form-label">To Date</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={batch.todate}
+                      onChange={(e) => {
+                        if (e.target.value < batch.fromdate) {
+                          Swal.fire("Invalid Date!", "End date cannot be before start date.", "warning");
+                        } else {
+                          updateBatchDate(index, "todate", e.target.value);
+                        }
+                      }}
+                      required
+                    />
+                  </div>
+                  
+                </div>
               </div>
-              <div className="mb-3">
-                <input
-                  type="date"
-                  className="form-control"
-                  placeholder="Todate"
-                  required
-                  value={todate}
-                  onChange={(e) => setTodate(e.target.value)}
-                />
-              </div>
+            ))}
+          
+         
               <div className="mb-3">
                 <input
                   type="text"
@@ -828,17 +819,7 @@ function Trainingschedule() {
                   onChange={(e) => setDuration(e.target.value)}
                 />
               </div>
-              <div className="mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Batch"
-                  required
-                  
-                  value={batch}
-                  onChange={(e) => setBatch(e.target.value)}
-                />
-              </div>
+             
               <div className="mb-3">
                 <input
                   type="text"
@@ -858,13 +839,15 @@ function Trainingschedule() {
               <button type="button" className="btn btn-primary" onClick={handleSave}>
                 Save
               </button>
+              </div>
+            </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    </div>
-      </div>
+    
+     
     </>
   );
 }

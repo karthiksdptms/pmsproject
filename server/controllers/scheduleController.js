@@ -55,7 +55,7 @@ export const saveTraining = async (req, res) => {
     res.status(500).json({ error: "Failed to save training data" });
   }
 };
-
+ 
 
 export const checkScheduleCode = async (req, res) => {
     try {

@@ -2,7 +2,7 @@ import express from "express";
 import authMiddleware from '../middleware/authMiddleware.js';
 import { addstudent, upload, getstudent, editstudent, deletestudent, uploadCSV,getonestudent
     ,postQuestionPaper,postSpecificQuestionPaper,
-    toggleAutoPost
+    toggleAutoPost,getallstudents
 } from '../controllers/studentcontroller.js';
 import StudentModel from "../models/StudentModel.js";
 import AnswerModel from '../models/AnswerModel.js'
@@ -11,6 +11,8 @@ const router = express.Router();
 
 router.post('/add', authMiddleware, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'resume', maxCount: 1 }, { name: 'offerpdf', maxCount: 1 }]), addstudent);
 router.get('/', authMiddleware, getstudent);
+router.get('/getstudents', getallstudents);
+
 router.put('/edit/:id',authMiddleware, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'resume', maxCount: 1 }, { name: 'offerpdf', maxCount: 1 }]), editstudent);
 router.delete('/delete/:id', authMiddleware, deletestudent);
 router.get('/getone/:id',getonestudent);
