@@ -4,19 +4,19 @@ import { saveTraining, checkScheduleCode } from "../controllers/scheduleControll
 
 const router = express.Router();
 
-// ✅ Middleware to log API calls for debugging
+
 router.use((req, res, next) => {
-    console.log(`API called: ${req.method} ${req.url}`);
+   
     next();
 });
 
-// ✅ Route to save a new training schedule
+
 router.post("/saveTraining", saveTraining);
 
-// ✅ Route to check if a schedule code already exists
+
 router.get("/check-schedule-code/:scheduleCode", checkScheduleCode);
 
-// ✅ Route to fetch all training schedules
+
 router.get("/", async (req, res) => {
   try {
     const schedules = await ScheduleModel.find();

@@ -1,5 +1,15 @@
 import mongoose from "mongoose";
 
+const batchSchema = new mongoose.Schema({
+  batchNumber: String,
+  fromdate: String,
+  todate: String,
+  students: {
+    type: Array, 
+    default: []
+  }
+});
+
 const scheduleSchema = new mongoose.Schema({
   scheduleCode: {
     type: String,
@@ -18,12 +28,8 @@ const scheduleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  fromdate: {
-    type: Date,
-    required: true,
-  },
-  todate: {
-    type: Date,
+  batch: {
+    type: String,
     required: true,
   },
   duration: {
@@ -34,27 +40,13 @@ const scheduleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  participated: {
-    type: Number,
-    required: true,
+  participated:{
+    type:Number,
+    required:true
   },
-  batches: {
-    type: [
-      {
-        batchNumber: String,
-        students: [
-          {
-            registerNumber: String,
-            name: String,
-          },
-        ], // Structure for student details
-      },
-    ],
-    required: true,
-  },
+  batches:  [batchSchema],
 });
 
-// Ensure the model name matches the import in the controller
 const ScheduleModel = mongoose.model("BatchSchedules", scheduleSchema);
 
 export default ScheduleModel;

@@ -9,7 +9,7 @@ import fs from 'fs';
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./public/uploads");
+    cb(null, "./public/uploads")
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname));
@@ -139,15 +139,15 @@ const addstudent = async (req, res) => {
 };
 
 
-
 export const getallstudents = async (req, res) => {
-    try {
-        const students = await StudentModel.find(); 
-        res.status(200).json(students);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching students', error: error.message });
-    }
+  try {
+      const students = await StudentModel.find(); 
+      res.status(200).json({ students });
+  } catch (error) {
+      res.status(500).json({ message: 'Error fetching students', error: error.message });
+  }
 };
+
 
 
 const getstudent =async (req, res) => {
@@ -311,9 +311,6 @@ export const deletestudent = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 }
-
-
-
 const uploadCSV = async (req, res) => {
   try {
     if (!req.file) {

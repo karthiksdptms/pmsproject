@@ -1,9 +1,8 @@
 import express from "express";
 import AttendanceModel from "../models/AttendanceModel.js";
 
-const router = express.Router();
+const router = express.Router()
 
-// Mark attendance
 router.post("/mark-attendance", async (req, res) => {
   const { studentId, batch, scheduleCode, status } = req.body;
 

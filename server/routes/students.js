@@ -4,7 +4,7 @@ import { addstudent, upload, getstudent, editstudent, deletestudent, uploadCSV,g
     ,postQuestionPaper,postSpecificQuestionPaper,
     toggleAutoPost,getallstudents
 } from '../controllers/studentcontroller.js';
-import StudentModel from "../models/StudentModel.js";
+import StudentModel from "../models/StudentModel.js"
 import AnswerModel from '../models/AnswerModel.js'
 
 const router = express.Router();

@@ -28,7 +28,7 @@ function Accountsstudentaccounts() {
     const fetchstudents = async () => {
       setstdloading(true)
       try {
-        const responnse = await axios.get("http://localhost:3000/api/student", {
+        const responnse = await axios.get("http://localhost:3000/api/students", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
 
