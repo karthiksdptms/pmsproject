@@ -51,7 +51,7 @@ function Trainingschedule() {
 
   const [students, setstudents] = useState([])
   useEffect(() => {
-    axios.get("http://localhost:3000/getstudents")
+    axios.get("http://localhost:3000/api/students/getstudents")
       .then(response => setstudents(response.data))
       .catch(error => console.error("Error fetching students:", error));
   }, []);
@@ -97,23 +97,23 @@ function Trainingschedule() {
   const filteredStudents = students.filter((student) => {
     return (
       (filters.department.length === 0 ||
-        filters.department.includes(student.DEPARTMENT) ||
+        filters.department.includes(student.department) ||
         (showOtherDepartment &&
-          student.DEPARTMENT.includes(filters.otherDepartment))) &&
+          student.department.includes(filters.otherDepartment))) &&
       (filters.batch.length === 0 ||
-        filters.batch.includes(student.BATCH) ||
-        (showOtherBatch && student.BATCH.includes(filters.otherBatch))) &&
+        filters.batch.includes(student.batch) ||
+        (showOtherBatch && student.batch.includes(filters.otherBatch))) &&
       (filters.cgpa === "" ||
-        parseFloat(student.CPGA) >= parseFloat(filters.cgpa)) &&
+        parseFloat(student.cgpa) >= parseFloat(filters.cgpa)) &&
       (filters.arrears === "" ||
-        (parseFloat(filters.arrears) >= parseFloat(student.ARREARS))) &&
+        (parseFloat(filters.arrears) >= parseFloat(student.arrears))) &&
       (filters.historyOfArrears === "" ||
-        (parseFloat(filters.historyOfArrears) >= parseFloat(student.HOA))) &&
+        (parseFloat(filters.historyOfArrears) >= parseFloat(student.hoa))) &&
       (filters.aoi.length === 0 ||
-        filters.aoi.includes(student.AOI) ||
-        (showOtherAoi && student.AOI.includes(filters.otherAoi))) &&
+        filters.aoi.includes(student.aoi) ||
+        (showOtherAoi && student.aoi.includes(filters.otherAoi))) &&
       (filters.language === "" ||
-        student.LANGUAGE.toLowerCase().includes(filters.language.toLowerCase()))
+        student.language.toLowerCase().includes(filters.language.toLowerCase()))
     );
   });
   const handleAllCheckboxChange = (e, key) => {
@@ -125,7 +125,7 @@ function Trainingschedule() {
   const [hoverVisible, setHoverVisible] = useState(false);
   const [hoverVisiblee, setHoverVisiblee] = useState(false);
   const [hoverVisibleee, setHoverVisibleee] = useState(false);
-  ///
+  
   const [selectedRecords, setSelectedRecords] = useState([]);
   const [selectedDepartments, setSelectedDepartments] = useState([]);
   const [batchSize, setBatchSize] = useState(3);
@@ -156,7 +156,7 @@ function Trainingschedule() {
     writeFile(wb, `batch_${batchIndex + 1}.xlsx`);
 };
 
-  //new
+  
   const [trainingData, setTrainingData] = useState([]);
 const [showModal, setShowModal] = useState(false);
 const [scheduleCode, setScheduleCode] = useState("");
@@ -168,7 +168,7 @@ const [todate, setTodate] = useState("");
 const [duration, setDuration] = useState("");
 const [batch, setBatch] = useState("");
 const [department, setDepartment] = useState("");
- // Ensure batches is initialized
+
 const [error, setError] = useState("");
 const [batchees, setBatchees] = useState([{ batchNumber: 1, fromdate: "", todate: "" }]);
 const updateBatchDate = (index, field, value) => {
@@ -207,7 +207,7 @@ const handleSave = async () => {
             return;
         }
 
-        // Save Training Data
+       
         const trainingData = {
             scheduleCode,
             trainingName,
@@ -692,14 +692,14 @@ const handleSave = async () => {
                   </thead>
                   <tbody>
                     {batch.map((student) => (
-                      <tr key={student.REGISTRATION_NUMBER}>
-                        <td>{student.REGISTRATION_NUMBER}</td>
-                        <td>{student.NAME}</td>
-                        <td>{student.DEPARTMENT}</td>
-                        <td>{student.BATCH}</td>
-                        <td>{student.CPGA}</td>
-                        <td>{student.ARREARS}</td>
-                        <td>{student.HOA}</td>
+                      <tr key={student.registration_number}>
+                        <td>{student.registration_number}</td>
+                        <td>{student.name}</td>
+                        <td>{student.department}</td>
+                        <td>{student.batch}</td>
+                        <td>{student.cgpa}</td>
+                        <td>{student.arrears}</td>
+                        <td>{student.hoa}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -775,7 +775,7 @@ const handleSave = async () => {
             <h5>Batches</h5>
             {batches.map((batch, index) => (
               <div key={index} className="border p-3 mb-2 rounded">
-                <h6>Batch {batch.batchNumber}</h6>
+                <h6>Batch {index+1}</h6>
                 <div className="row">
                   <div className="col-md-5">
                     <label className="form-label">From Date</label>

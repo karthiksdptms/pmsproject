@@ -138,6 +138,18 @@ const addstudent = async (req, res) => {
   }
 };
 
+
+
+export const getallstudents = async (req, res) => {
+    try {
+        const students = await StudentModel.find(); 
+        res.status(200).json(students);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching students', error: error.message });
+    }
+};
+
+
 const getstudent =async (req, res) => {
   try{
     const students=await StudentModel.find().populate('userId')
