@@ -136,8 +136,8 @@ function Trainingattendance() {
           </h2>
         </Link>
 
-        <div className="container mt-4">
-          <Table striped bordered hover style={{position:"relative",top:"120px",left:"50px"}} >
+        <div className="container mt-4" style={{position:"relative",top:"50px"}}>
+          <Table striped bordered hover style={{position:"relative",top:"30px",left:"50px"}} >
             <thead>
               <tr>
                 <th>Schedule Code</th>
