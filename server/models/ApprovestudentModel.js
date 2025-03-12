@@ -41,10 +41,11 @@ const resultSchema = new mongoose.Schema({
 });
 
 const studentSchema = new mongoose.Schema({
-  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  userId: { type: Schema.Types.ObjectId, ref: "approveUsers", required: true },
+ 
   registration_number: { type: String, required: true, unique: true },
   name: { type: String, required: true },
-  email: { type: String, required: true },
+  email:{type:String,required:true,unique:true},
   department: { type: String, required: true },
   batch: { type: String, required: true },
   sslc: { type: String, required: true },
@@ -78,5 +79,5 @@ const studentSchema = new mongoose.Schema({
   results: [resultSchema],
 });
 
-const ApprovestudentModel = mongoose.model("studentaccdatas", studentSchema);
+const ApprovestudentModel = mongoose.model("approvestddatas", studentSchema);
 export default ApprovestudentModel;

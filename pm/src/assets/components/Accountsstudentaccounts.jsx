@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import Topbar from "./Topbar";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
@@ -204,7 +203,7 @@ function Accountsstudentaccounts() {
     try {
       const response = await axios.post(
         "http://localhost:3000/api/student/add",
-        student,
+        formData,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,

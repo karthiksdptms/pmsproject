@@ -13,8 +13,41 @@ import { Modal, Button, Form, Row, Col, Container } from "react-bootstrap";
 
 function Studentprofile() {
     const { user } = useAuth();
-    const [student, setStudent] = useState({ offers: [], role: "student" });
-
+    const [student, setStudent] = useState({
+        registration_number: "",
+        name: "",
+        department: "",
+        batch: "",
+        sslc: "",
+        hsc: "",
+        diploma: "",
+        sem1: "",
+        sem2: "",
+        sem3: "",
+        sem4: "",
+        sem5: "",
+        sem6: "",
+        sem7: "",
+        sem8: "",
+        cgpa: "",
+        arrears: "",
+        internships: "",
+        certifications: "",
+        patentspublications: "",
+        achievements: "",
+        hoa: "",
+        language: "",
+        aoi: "",
+        email: "",
+        address: "",
+        phoneno: "",
+       
+        resume: null,
+        image: null,
+        offerpdf: null,
+        placement: "",
+        offers: [],
+      });
 
     const [loading, setLoading] = useState(true);
     const [showw, setShoww] = useState(false);
@@ -51,114 +84,152 @@ function Studentprofile() {
     
 
     const handleOfferChange = (index, e) => {
-        const { name, value } = e.target;
-        setStudent((prev) => {
-          const updatedOffers = [...prev.offers];
-          updatedOffers[index] = { ...updatedOffers[index], [name]: value };
-          return { ...prev, offers: updatedOffers };
-        });
-      };
-
-     
-  const addOffer = () => {
-    setStudent({
-      ...student,
-      offers: [...student.offers, { offerno: "", company: "", designation: "", package: "", }],
-    });
-  };
-      
-
-  const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
-
-    setStudent((prevState) => ({
-      ...prevState,
-      [name]: type === "file" ? files[0] : value,
-    }));
-  };
-
-    const handleSubmitt = async (e) => {
-        e.preventDefault();
-    
-    
-        const formData = new FormData();
-    
-    
-        Object.keys(student).forEach((key) => {
-          if (key !== "resume" && key !== "offers" && key !== "image" && key !== "offerpdf") {
-            formData.append(key, student[key]);
-          }
-    
-        });
-        formData.append("role", "student"); 
-
-    
-        if (student.resume) {
-          formData.append("resume", student.resume);
-        } else {
-          formData.append("resume", "");
-        }
-        if (student.image) {
-          formData.append("image", student.image);
-        } else {
-          formData.append("image", "");
-        }
-    
-    
-        student.offers.forEach((offer, index) => {
-          formData.append(`offers[${index}][offerno]`, offer.offerno);
-          formData.append(`offers[${index}][company]`, offer.company);
-          formData.append(`offers[${index}][designation]`, offer.designation);
-          formData.append(`offers[${index}][package]`, offer.package);
-        });
-    
-        if (student.offerpdf) {
-          formData.append("offerpdf", student.offerpdf);
-        } else {
-          formData.append("offerpdf", "");
-        }
-    
-    
-        console.log("Sending FormData:", Object.fromEntries(formData.entries()));
-        console.log(formData)
-        try {
-          const token = localStorage.getItem("token");
-    
-          const response = await axios.put(
-            `http://localhost:3000/api/student/edit/${student._id}`,
-            formData,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
-    
-          if (response.data.success) {
-            alert("Student Updated Successfully");
-    
-            setStudent(response.data);
-            setShoww(false);
-            window.location.reload();
-    
-          } else {
-            alert(response.data.message);
-          }
-        } catch (error) {
-          console.error("Edit Error:", error);
-          alert("Failed to Edit Student");
-        }
-    
-    
-      };
-      
-      const deleteOffer = (index) => {
-        if (!student.offers) return; 
-    
-        const updatedOffers = student.offers.filter((_, i) => i !== index);
-        setStudent((prev) => ({ ...prev, offers: updatedOffers }));
+      const { name, value } = e.target;
+      setStudent((prev) => {
+        const updatedOffers = [...prev.offers];
+        updatedOffers[index][name] = value;
+        return { ...prev, offers: updatedOffers };
+      });
     };
     
+     
+      const addOffer = () => {
+        setStudent((prev) => ({
+          ...prev,
+          offers: [...(prev.offers || []), { offerno: "", company: "", designation: "", package: "" }]
+        }));
+      };
+      
+  
+      const handleChange = (e) => {
+        const { name, value, type, files } = e.target;
+    
+        setStudent((prevState) => ({
+          ...prevState,
+          [name]: type === "file" ? files[0] : value,
+        }));
+      };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(student)
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("No token found! Please login again.");
+      return;
+    }
+
+    const formData = new FormData();
+
+
+    Object.keys(student).forEach((key) => {
+      if (key !== "resume" && key !== "offers" && key !== "image" && key !== "offerpdf") {
+        formData.append(key, student[key]);
+      }
+
+    });
+
+    if (student.resume) {
+      formData.append("resume", student.resume);
+    } else {
+      formData.append("resume", "");
+    }
+    if (student.image) {
+      formData.append("image", student.image);
+    } else {
+      formData.append("image", "");
+    }
+
+
+    student.offers.forEach((offer, index) => {
+      formData.append(`offers[${index}][offerno]`, offer.offerno);
+      formData.append(`offers[${index}][company]`, offer.company);
+      formData.append(`offers[${index}][designation]`, offer.designation);
+      formData.append(`offers[${index}][package]`, offer.package);
+    });
+
+    if (student.offerpdf) {
+      formData.append("offerpdf", student.offerpdf);
+    } else {
+      formData.append("offerpdf", "");
+    }
+
+
+    console.log("Sending FormData:", Object.fromEntries(formData.entries()));
+    console.log(formData)
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/student/approveadd",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+
+          },
+        }
+      );
+
+      console.log("Response:", response.data);
+
+      if (response.data.success) {
+        setShoww(false);
+        setStudent({
+          registration_number: "",
+          name: "",
+          department: "",
+          batch: "",
+          sslc: "",
+          hsc: "",
+          diploma: "",
+          sem1: "",
+          sem2: "",
+          sem3: "",
+          sem4: "",
+          sem5: "",
+          sem6: "",
+          sem7: "",
+          sem8: "",
+          cgpa: "",
+          arrears: "",
+          internships: "",
+          certifications: "",
+          patentspublications: "",
+          achievements: "",
+          hoa: "",
+          language: "",
+          aoi: "",
+          email: "",
+          address: "",
+          phoneno: "",
+          resume: null,
+          image: null,
+          offerpdf: null,
+          placement: "",
+          offers: [],
+        });
+        alert("request sent!")
+        window.location.reload();
+
+      }
+    } catch (error) {
+      console.error("Error posting student data:", error);
+      if (error.response) {
+        console.error("Error Response Data:", error.response.data);
+      }
+      alert("Error submitting form!");
+    }
+  };
+
+      
+      const deleteOffer = (index) => {
+        setStudent((prev) => ({
+          ...prev,
+          offers: prev.offers.filter((_, i) => i !== index),
+        }));
+      };
+      
 
 
       
@@ -267,7 +338,8 @@ function Studentprofile() {
                 )}
             </div>
             {showw && student && (
-          <div className="modal d-block" tabIndex="-1" key={user._id}>
+          <div className="modal d-block" tabIndex="-1" key={user?._id}
+>
             <div className="modal-dialog modal-lg">
               <div className="modal-content" style={{minWidth:"100%"}}>
                 <div className="modal-header">
@@ -275,7 +347,7 @@ function Studentprofile() {
                   <button type="button" className="btn-close" onClick={() => setShoww(false)}></button>
                 </div>
                 <div className="modal-body">
-                  <form encType="multipart/form-data" method="post" onSubmit={handleSubmitt}>
+                  <form encType="multipart/form-data" method="post" onSubmit={handleSubmit}>
                     
                     <Row>
                       <Col md={6}>
@@ -409,17 +481,26 @@ function Studentprofile() {
                     </div>
                     <div className="mb-3">
                       <label>password:<span style={{ color: "red" }}>*</span></label>
-                      <input type="text" className="form-control" name="password" onChange={handleChange} required value={student.password} />
+                      <input type="text" className="form-control" name="password" onChange={handleChange} required />
                     </div>
-                    
+                    <div className="mb-3">
+                      <label>role:<span style={{ color: "red" }}>*</span></label>
+                      <select className="form-control" name="role" onChange={handleChange} required value={student.role}>
+                      
+                      <option value="">Select</option>
+                        <option value="student">student</option>
+                      </select>
+                    </div>
                     <div className="mb-3">
                       <label>Profile Image:</label>
                       <input
                         type="file"
                         className="form-control"
                         name="image"
+                        accept=".jpg" 
+                       required
                         onChange={handleChange}
-                        accept="image/*"
+                       
                       />
                       {student.profileImage && (
                         <img
@@ -451,17 +532,15 @@ function Studentprofile() {
                             <label>Resume:</label>
                             <input type="file" className="form-control" name="resume" onChange={handleChange} accept=".pdf" />
                             {student.resume && (
-                              <img
-                                src={`http://localhost:3000/${student.resume}`}
-                                alt=""
-                                style={{ width: "100px", height: "100px", objectFit: "cover", marginTop: "10px" }}
-                              />
-                            )}
+  <a href={`http://localhost:3000/${student.resume}`} target="_blank" rel="noopener noreferrer">
+    View Resume
+  </a>
+)}
                           </div>
                         </Col>
                         <Col md={6}>
                           <label>Placement:</label>
-                          <select className="form-control" name="placement" onChange={handleChange}>
+                          <select className="form-control" name="placement" onChange={handleChange}  value={student.placement || ""} required>
                             <option value="">Select:</option>
                             <option value="Placed">Placed</option>
                             <option value="Not-placed">Not-placed</option>
@@ -472,7 +551,8 @@ function Studentprofile() {
 
 
                     <h5>Enter Placements Offers:</h5>
-                    {student.offers.map((offer, index) => (
+                    {student?.offers?.map((offer, index) => (
+
                       <div key={index} className="mb-3 border p-3">
                         <div className="d-flex justify-content-between">
 
@@ -496,12 +576,10 @@ function Studentprofile() {
                       <label>Insert the offerletters(pdf,combine all letters as a single pdf):</label>
                       <input type="file" className="form-control" name="offerpdf" onChange={handleChange} accept="*" />
                       {student.offerpdf && (
-                        <img
-                          src={`http://localhost:3000/${student.offerpdf}`}
-                          alt=""
-                          style={{ width: "100px", height: "100px", objectFit: "cover", marginTop: "10px" }}
-                        />
-                      )}
+  <a href={`http://localhost:3000/${student.offerpdf}`} target="_blank" rel="noopener noreferrer">
+    View Offer Letter
+  </a>
+)}
 
                     </div>
 

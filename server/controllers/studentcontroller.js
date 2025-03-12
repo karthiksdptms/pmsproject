@@ -6,6 +6,8 @@ import multer from "multer";
 import path from "path";
 import csv from 'csv-parser';
 import fs from 'fs';
+import ApprovestudentModel from "../models/ApprovestudentModel.js";
+import UUser from "../models/UUsers.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -137,6 +139,126 @@ const addstudent = async (req, res) => {
     });
   }
 };
+export const approveaddstudent = async (req, res) => {
+  try {
+    const {
+      registration_number,
+      name,
+      department,
+      batch,
+      sslc,
+      hsc,
+      diploma,
+      sem1,
+      sem2,
+      sem3,
+      sem4,
+      sem5,
+      sem6,
+      sem7,
+      sem8,
+      cgpa,
+      arrears,
+      hoa,
+      internships,
+      certifications,
+      patentspublications,
+      achievements,
+      language,
+      aoi,
+      email,
+      password,
+      role,
+      address,
+      phoneno,
+      placement,
+      offers,
+     
+    } = req.body;
+
+   
+    const user = await UUser.findOne({ email });
+    if (user) {
+      return res
+        .status(400)
+        .json({ success: false, error: "User already registered in database" });
+    }
+
+   
+    const hashpassword = await bcrypt.hash(password, 10);
+
+    const resume = req.files?.resume ? req.files.resume[0].filename : null;
+    const offerpdf = req.files?.offerpdf ? req.files.offerpdf[0].filename : null;
+
+  
+    const finalOffers = Array.isArray(offers) ? offers : [];
+    
+    const profileImage = req.files?.image ? req.files.image[0].filename : null;
+
+    const newuser = new UUser({
+      name,
+      email,
+      password: hashpassword,
+      role,
+      profileImage
+      
+    });
+
+    const savedUser =await newuser.save();
+
+    
+    const student = new ApprovestudentModel({
+        userId:savedUser._id.toString(),
+      registration_number,
+      name:savedUser.name,
+      email:savedUser.email,
+      department,
+      batch,
+      sslc,
+      hsc,
+      diploma,
+      sem1,
+      sem2,
+      sem3,
+      sem4,
+      sem5,
+      sem6,
+      sem7,
+      sem8,
+      cgpa,
+      arrears,
+      hoa,
+      internships,
+      certifications,
+      patentspublications,
+      achievements,
+      language,
+      aoi,
+      email,
+      address,
+      phoneno,
+      resume,
+      profileImage,
+      placement,
+      offers: finalOffers,
+      offerpdf
+    });
+
+    await student.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Student Added Successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      error: "Server Error  , Failed to Add Student",
+    });
+  }
+};
+
 
 
 const getstudent =async (req, res) => {
@@ -148,6 +270,14 @@ const getstudent =async (req, res) => {
     return res.status(500).json({success: false,error:"get students server error"})
   }
 }
+export const approvegetstudent =async (req, res) => {
+    try {
+      const students = await ApprovestudentModel.find().populate('userId')
+      res.status(200).json({success:true,students})
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching approved students", error });
+    }
+  };
 const getonestudent = async (req, res) => {
   try {
     const { id } = req.params; 
@@ -269,7 +399,7 @@ const editstudent = async (req, res) => {
         name: name,
         password:hashpassword,
         role:role,
-        profileImage: req.files?.image ? req.files.image[0].filename : student.profileImage // This will update the image properly
+        profileImage: req.files?.image ? req.files.image[0].filename : student.profileImage 
       },
       { new: true }
     )
@@ -287,6 +417,132 @@ const editstudent = async (req, res) => {
     })
   }
 }
+export const approveeditstudent = async (req, res) => {
+  try {
+    const { email, registration_number } = req.body;
+
+    const {
+      name,
+      department,
+      batch,
+      sslc,
+      hsc,
+      diploma,
+      sem1,
+      sem2,
+      sem3,
+      sem4,
+      sem5,
+      sem6,
+      sem7,
+      sem8,
+      cgpa,
+      arrears,
+      hoa,
+      internships,
+      certifications,
+      patentspublications,
+      achievements,
+      language,
+      aoi,
+      address,
+      phoneno,
+      placement,
+      offers,
+      role,
+      password
+    } = req.body;
+
+ 
+    const student = await StudentModel.findOne({ registration_number });
+
+    if (!student) {
+      return res.status(404).json({ success: false, message: "Student not found" });
+    }
+
+    const profileImage = req.files?.image ? req.files.image[0].filename : student.profileImage;
+    const resume = req.files?.resume ? req.files.resume[0].filename : student.resume;
+    const offerpdf = req.files?.offerpdf ? req.files.offerpdf[0].filename : student.offerpdf;
+    const finalOffers = offers ? (typeof offers === "string" ? JSON.parse(offers) : offers) : student.offers;
+
+  
+    const updatedStudent = await StudentModel.findOneAndUpdate(
+      { registration_number },
+      {
+        name,
+        department,
+        batch,
+        sslc,
+        hsc,
+        diploma,
+        sem1,
+        sem2,
+        sem3,
+        sem4,
+        sem5,
+        sem6,
+        sem7,
+        sem8,
+        cgpa,
+        arrears,
+        hoa,
+        internships,
+        certifications,
+        patentspublications,
+        achievements,
+        language,
+        aoi,
+        address,
+        phoneno,
+        placement,
+        offers: finalOffers,
+        profileImage,
+        resume,
+        offerpdf,
+      },
+      { new: true }
+    );
+
+  
+    const hashpassword = password ? await bcrypt.hash(password, 10) : student.password;
+
+  
+    await User.findOneAndUpdate(
+      { email },
+      {
+        name: name,
+        password: hashpassword,
+        role: role,
+        profileImage: req.files?.image ? req.files.image[0].filename : student.profileImage
+      },
+      { new: true }
+    );
+
+    
+    const deletedStudent = await ApprovestudentModel.findOneAndDelete({ registration_number })&& await UUser.findOneAndDelete({email})
+
+    if (!deletedStudent) {
+      console.error(`Student with registration number ${registration_number} not found in approvestudentdata`);
+    } else {
+      console.log(`Student with registration number ${registration_number} deleted from approvestudentdata`);
+    }
+
+   
+    res.status(200).json({
+      success: true,
+      message: "Student and User updated successfully, and record deleted from approval data",
+      updatedStudent,
+    });
+  } catch (error) {
+    console.error("Edit Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error, Failed to Edit Student",
+    });
+  }
+};
+
+
 
 
 export const deletestudent = async (req, res) => {
@@ -302,6 +558,29 @@ export const deletestudent = async (req, res) => {
   }
 }
 
+export const rejectStudent = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    
+    const deletedStudent = await ApprovestudentModel.findOneAndDelete({ email })&& await UUser.findOneAndDelete({email})
+
+    if (!deletedStudent) {
+      return res.status(404).json({ success: false, message: "Student not found in approval data" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Student successfully rejected and removed from approval data",
+    });
+  } catch (error) {
+    console.error("Reject Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error, Failed to Reject Student",
+    });
+  }
+};
 
 
 const uploadCSV = async (req, res) => {

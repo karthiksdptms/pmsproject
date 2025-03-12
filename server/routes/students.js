@@ -1,19 +1,28 @@
 import express from "express";
 import authMiddleware from '../middleware/authMiddleware.js';
-import { addstudent, upload, getstudent, editstudent, deletestudent, uploadCSV,getonestudent
+import { addstudent, approveaddstudent,approvegetstudent,upload, getstudent, editstudent, deletestudent, uploadCSV,getonestudent
     ,postQuestionPaper,postSpecificQuestionPaper,
-    toggleAutoPost
+    toggleAutoPost,
+    approveeditstudent,
+    rejectStudent
 } from '../controllers/studentcontroller.js';
 import StudentModel from "../models/StudentModel.js";
 import AnswerModel from '../models/AnswerModel.js'
 import AnswerKeyModel from "../models/AnswerkeyModel.js";
+import ApprovestudentModel from "../models/ApprovestudentModel.js";
 import QpModel from "../models/QpModel.js";
+import UUser from "../models/UUsers.js";
 
 const router = express.Router();
 
 router.post('/add', authMiddleware, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'resume', maxCount: 1 }, { name: 'offerpdf', maxCount: 1 }]), addstudent);
 router.get('/', authMiddleware, getstudent);
-router.put('/edit/:id',authMiddleware, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'resume', maxCount: 1 }, { name: 'offerpdf', maxCount: 1 }]), editstudent);
+router.get('/approved-students', approvegetstudent);
+router.post('/approveadd', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'resume', maxCount: 1 }, { name: 'offerpdf', maxCount: 1 }]), approveaddstudent);
+
+router.put('/edit/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'resume', maxCount: 1 }, { name: 'offerpdf', maxCount: 1 }]), editstudent);
+router.put('/approveedit', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'resume', maxCount: 1 }, { name: 'offerpdf', maxCount: 1 }]), approveeditstudent);
+router.post('/reject',rejectStudent)
 router.delete('/delete/:id', authMiddleware, deletestudent);
 router.get('/getone/:id',getonestudent);
 router.post('/uploadcsv',authMiddleware,upload.single("csvfile"),uploadCSV);
@@ -25,6 +34,8 @@ router.post('/autopost/:id', express.json(), toggleAutoPost);
 
 router.post("/postquestionpaper/:qpcode", postQuestionPaper);
 router.post("/postspecific", postSpecificQuestionPaper);
+
+
 
 
 router.post("/publish-result", async (req, res) => { 
@@ -254,5 +265,5 @@ router.get("/view-answer-paper", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
- 
+
 export default router;

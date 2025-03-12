@@ -31,6 +31,7 @@ import Studentsummary from './studentcomponents/Studentsummary'
 import Studenttrainingexams from './studentcomponents/Studenttrainingexams'
 import Studenttrainingscores from './studentcomponents/Studenttrainingscores'
 import Aptitudescores from './assets/components/Aptitudescores'
+import Accountsapprovals from './assets/components/Accountapprovals'
 
 
 function App() {
@@ -59,6 +60,8 @@ function App() {
             <Route path='/Maindashboard/Aptitude' element={<Aptitude />} />
             <Route path='/Maindashboard/Accounts' element={<Accounts />} />
             <Route path='/Maindashboard/Accountsstudentaccounts' element={<Accountsstudentaccounts />} />
+            <Route path='/Maindashboard/Accountapprovals' element={<Accountsapprovals />} />
+
             <Route path='/Maindashboard/Training' element={<Training />} />
             <Route path='/Maindashboard/Trainingreports' element={<Trainingreports />} />
             <Route path='/Maindashboard/Trainingschedule' element={<Trainingschedule />} />
