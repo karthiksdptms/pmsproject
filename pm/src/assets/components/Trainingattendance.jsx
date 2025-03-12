@@ -42,15 +42,19 @@ function Trainingattendance() {
   };
 
   const handleBatchClick = async (batch, scheduleCode, trainingName) => {
-
+    console.log(`[INFO] Batch Clicked: ${batch}, Schedule Code: ${scheduleCode}, Training Name: ${trainingName}`);
+  
     try {
       const response = await axios.get("http://localhost:3000/api/attendancestudent/attendance-students", {
-        params: { batch },
+        params: { batch, scheduleCode, trainingName },
       });
-      setStudents(response.data);
+  
+      console.log(`[SUCCESS] Received ${response.data.length} students:`, response.data);
+  
+      setStudents(response.data.students); 
       setSelectedBatch(batch);
-      setSelectedScheduleCode(scheduleCode);
-      setSelectedTrainingName(trainingName);
+      setSelectedScheduleCode(scheduleCode); 
+      setSelectedTrainingName(trainingName); 
       setShowBatchModal(false);
       setShowStudentModal(true);
     } catch (error) {
@@ -62,31 +66,7 @@ function Trainingattendance() {
       });
     }
   };
-  const handleAttendance = async (studentId, status) => {
-    try {
-      await axios.post("http://localhost:3000/api/attendance/mark-attendance", {
-        studentId,
-        batch: selectedBatch,
-        scheduleCode: selectedScheduleCode,
-        status,
-      });
-
-      setStudents((prevStudents) =>
-        prevStudents.map((student) =>
-          student._id === studentId ? { ...student, status } : student
-        )
-      );
-
-      Swal.fire({
-        icon: "success",
-        title: `Marked ${status}`,
-        showConfirmButton: false,
-        timer: 1000,
-      });
-    } catch (error) {
-      console.error("Error marking attendance:", error);
-    }
-  };
+  
 
   
     const totalRecords = Schedule.length;

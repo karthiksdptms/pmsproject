@@ -5,30 +5,34 @@ const router = express.Router();
 
 router.get("/attendance-students", async (req, res) => {
     try {
-        let { batch } = req.query;
-
-        if (!batch) {
-            return res.status(400).json({ error: "Batch parameter is required" });
+        const { scheduleCode, batch } = req.query; // Get params from frontend
+    
+        if (!scheduleCode || !batch) {
+          return res.status(400).json({ message: "Missing scheduleCode or batch" });
         }
-        batch = decodeURIComponent(batch.trim());
-        const schedule = await ScheduleModel.findOne({ "batches.batchNumber": batch }).lean()
-
-        if (!schedule) {
-            console.warn(`[WARN] No schedule found containing batch: ${batch}`);
-            return res.status(404).json({ error: `No schedule found for batch: ${batch}` })
+    
+        // Find training session with matching scheduleCode
+        const training = await ScheduleModel.findOne({ scheduleCode });
+    
+        if (!training) {
+          return res.status(404).json({ message: "Training schedule not found" });
         }
-        const batchData = schedule.batches.find((b) => b.batchNumber === batch)
-
-        if (!batchData || !batchData.students || batchData.students.length === 0) {
-            console.warn(`[WARN] No students found for batch: ${batch}`);
-            return res.status(200).json([]); 
+    
+        // Find the specific batch inside the training document
+        const selectedBatch = training.batches.find((b) => b.batchNumber === batch);
+    
+        if (!selectedBatch) {
+          return res.status(404).json({ message: "Batch not found in this training" });
         }
-        res.json(batchData.students);
-    } catch (error) {
-        console.error("[ERROR] Error fetching students:", error);
-        res.status(500).json({ error: "Error fetching students", details: error.message });
-    }
-});
+    
+        // Send the students in that batch
+        return res.json({ students: selectedBatch.students });
+      } catch (error) {
+        console.error("Error fetching students:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+      }
+    })
+
 
 
 export default router;
