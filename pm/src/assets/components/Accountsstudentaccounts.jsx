@@ -809,7 +809,7 @@ function Accountsstudentaccounts() {
 
 
                     <h5>Enter Placements Offers:</h5>
-                    {student.offers.map((offer, index) => (
+                    {student.offers&& student.offers.map((offer, index) => (
                       <div key={index} className="mb-3 border p-3">
                         <div className="d-flex justify-content-between">
 

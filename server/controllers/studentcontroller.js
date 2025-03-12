@@ -138,6 +138,7 @@ const addstudent = async (req, res) => {
   }
 };
 
+
 const getstudent =async (req, res) => {
   try{
     const students=await StudentModel.find().populate('userId')
@@ -286,6 +287,7 @@ const editstudent = async (req, res) => {
     })
   }
 }
+
 
 export const deletestudent = async (req, res) => {
   try {
