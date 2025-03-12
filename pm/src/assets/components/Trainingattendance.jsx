@@ -272,9 +272,9 @@ function Trainingattendance() {
                           <td>{student.name}</td>
                           <td>{student.department}</td>
                           <td>
-                            <Button variant="success" className="m-1" onClick={() => handleAttendance(student._id, "P")}>P</Button>
-                            <Button variant="danger" className="m-1" onClick={() => handleAttendance(student._id, "A")}>A</Button>
-                            <Button variant="warning" className="m-1" onClick={() => handleAttendance(student._id, "OD")}>OD</Button>
+                            <Button variant="success" className="m-1">P</Button>
+                            <Button variant="danger" className="m-1">A</Button>
+                            <Button variant="warning" className="m-1">OD</Button>
                           </td>
                         </tr>
                       ))
