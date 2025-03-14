@@ -40,15 +40,17 @@ router.post("/postspecific", postSpecificQuestionPaper);
 
 router.post("/publish-result", async (req, res) => { 
     try {
-        const { registration_number, batch, qpcode,title, score, totalscore } = req.body;
+        const { registration_number, batch, qpcode, title, score, totalscore } = req.body;
 
-       
-        if (!registration_number || !batch || !qpcode ||!title|| score === undefined || totalscore === undefined) {
+    
+        if (!registration_number || !batch || !qpcode || !title || score === undefined || totalscore === undefined) {
             return res.status(400).json({ message: "Missing required fields" });
         }
 
+       
         const percentage = ((score / totalscore) * 100).toFixed(2) + "%";
 
+      
         const student = await StudentModel.findOne({ registration_number });
 
         if (!student) {
@@ -56,13 +58,13 @@ router.post("/publish-result", async (req, res) => {
         }
 
        
-        const existingResult = student.results.find(result => result.qpcode === qpcode);
+        const existingResultIndex = student.results.findIndex(result => result.qpcode === qpcode);
 
-        if (existingResult) {
-            return res.status(409).json({ message: "Result already published for this exam." }); 
+        if (existingResultIndex !== -1) {
+            return res.status(409).json({ message: "Result already published for this exam." });
         }
 
-       
+        
         student.results.push({
             registration_number,
             batch,
@@ -71,47 +73,57 @@ router.post("/publish-result", async (req, res) => {
             score,
             totalscore,
             percentage,
+            published: true, 
             publishedAt: new Date(),
         });
 
         await student.save();
 
-        res.status(200).json({ message: "Result published successfully!" });
+        res.status(200).json({ message: "Result published successfully!", published: true });
     } catch (error) {
         console.error("Error publishing result:", error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
 router.post("/publish-multiple-results", async (req, res) => {
     try {
-        const { results } = req.body; 
+        const { results } = req.body;
 
         if (!results || results.length === 0) {
             return res.status(400).json({ message: "No results provided" });
         }
 
-        for (const result of results) {
-            const { registration_number, batch, qpcode,title, score, totalscore } = result;
+        let errorMessages = [];
+        let successCount = 0;
 
-           
-            if (!registration_number || !batch || !qpcode||!title || score === undefined || totalscore === undefined) {
-                return res.status(400).json({ message: "Missing required fields" });
+        for (const result of results) {
+            const { registration_number, batch, qpcode, title, score, totalscore } = result;
+
+          
+            if (!registration_number || !batch || !qpcode || !title || score === undefined || totalscore === undefined) {
+                errorMessages.push(`Missing required fields for ${registration_number}`);
+                continue;
             }
 
             const percentage = ((score / totalscore) * 100).toFixed(2) + "%";
 
+           
             const student = await StudentModel.findOne({ registration_number });
 
             if (!student) {
-                return res.status(404).json({ message: `Student ${registration_number} not found` });
+                errorMessages.push(`Student ${registration_number} not found`);
+                continue;
+            }
+
+       
+            const existingResult = student.results.find(r => r.qpcode === qpcode);
+            if (existingResult) {
+                errorMessages.push(`Result already published for ${registration_number} (QP Code: ${qpcode})`);
+                continue;
             }
 
            
-            const existingResult = student.results.find(r => r.qpcode === qpcode);
-            if (existingResult) {
-                return res.status(409).json({ message: `Result already published for ${registration_number} (QP Code: ${qpcode})` });
-            }
-
             student.results.push({
                 registration_number,
                 batch,
@@ -120,18 +132,27 @@ router.post("/publish-multiple-results", async (req, res) => {
                 score,
                 totalscore,
                 percentage,
+                published: true,
                 publishedAt: new Date(),
             });
 
             await student.save();
+            successCount++;
         }
 
-        res.status(200).json({ message: "Results published successfully!" });
+        
+        const responseMessage = {
+            message: `Results published successfully for ${successCount} students`,
+            errors: errorMessages.length > 0 ? errorMessages : null,
+        };
+
+        res.status(200).json(responseMessage);
     } catch (error) {
         console.error("Error publishing multiple results:", error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
 router.post("/delete-multiple-results", async (req, res) => {
     try {
         const { results } = req.body;

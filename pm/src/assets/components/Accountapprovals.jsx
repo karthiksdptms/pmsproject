@@ -593,7 +593,7 @@ function Accountsapprovals() {
                       <label>role:<span style={{ color: "red" }}>*</span></label>
                       <select className="form-control" name="role" onChange={handleChange} required value={student.role}>
                        
-                       
+                      <option value="">Select Role</option>
                         <option value="student">student</option>
                       </select>
                     </div>

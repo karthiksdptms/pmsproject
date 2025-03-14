@@ -37,7 +37,8 @@ const resultSchema = new mongoose.Schema({
   score: { type: Number, required: true }, 
   totalscore: { type: Number, required: true }, 
   percentage: { type: String, required: true }, 
-  publishedAt: { type: Date, default: Date.now }, 
+  published: { type: Boolean, default: false }, 
+  publishedAt: { type: Date, default: null },
 });
 
 const studentSchema = new mongoose.Schema({

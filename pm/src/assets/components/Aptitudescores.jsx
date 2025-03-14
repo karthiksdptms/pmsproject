@@ -8,6 +8,8 @@ function Aptitudescores() {
     const [answers, setAnswers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [publishedResults, setPublishedResults] = useState([]);
+
 
     useEffect(() => {
         fetchAnswers();
@@ -61,11 +63,12 @@ function Aptitudescores() {
             score: answer.score,
             totalscore: answer.totalscore,
         };
-
+    
         try {
             const response = await axios.post("http://localhost:3000/api/student/publish-result", resultData);
-
+    
             if (response.status === 200) {
+                setPublishedResults((prev) => [...prev, answer.registration_number]);
                 alert("Result has been posted to the student.");
             }
         } catch (error) {
@@ -76,13 +79,14 @@ function Aptitudescores() {
             }
         }
     };
+    
 
     const handlePublishSelected = async () => {
         if (selectedRows.length === 0) {
             alert("No students selected.");
             return;
         }
-
+    
         const selectedResults = answers.filter(answer => selectedRows.includes(answer.registration_number))
             .map(answer => ({
                 registration_number: answer.registration_number,
@@ -92,13 +96,14 @@ function Aptitudescores() {
                 score: answer.score,
                 totalscore: answer.totalscore,
             }));
-
+    
         try {
             const response = await axios.post("http://localhost:3000/api/student/publish-multiple-results", {
                 results: selectedResults,
             });
-
+    
             if (response.status === 200) {
+                setPublishedResults((prev) => [...prev, ...selectedRows]);
                 alert("Selected results have been published successfully!");
                 setSelectedRows([]);
             }
@@ -110,6 +115,7 @@ function Aptitudescores() {
             }
         }
     };
+    
 
     const handleDeleteSelected = async () => {
         if (selectedRows.length === 0) {
@@ -310,11 +316,13 @@ function Aptitudescores() {
                                                 : "N/A"}
                                         </td>
                                         <td>
-                                            <td style={{}}>
-                                                <button className="btn btn-primary" onClick={() => handlePublish(answer)}>
-                                                    Publish
-                                                </button>
-                                            </td> </td>
+                                          
+                                        {publishedResults.includes(answer.registration_number) ? (
+        <button className="btn btn-secondary" disabled>Published</button>
+    ) : (
+        <button className="btn btn-success" onClick={() => handlePublish(answer)}>Publish</button>
+    )}
+                                         </td>
                                         <td>
                                             <button className="btn btn-primary" onClick={() => fetchAnswerPaper(answer.registration_number, answer.qpcode)}>
                                                 View
