@@ -7,13 +7,17 @@ import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 
+
 import { Modal, Button, Form, Row, Col, Container } from "react-bootstrap";
 
 
 function Accountsapprovals() {
+  
      const [getstudents, setgetstudents] = useState([])
       const [showw, setShoww] = useState(false);
       const [stdloading, setstdloading] = useState(false)
+      const [preview,setPreview]=useState("")
+     
       
 
    const [student, setStudent] = useState({
@@ -50,7 +54,7 @@ function Accountsapprovals() {
        placement: "",
        offers: [],
      });
-   
+    
     
      useEffect(() => {
         const fetchstudents = async () => {
@@ -99,10 +103,11 @@ function Accountsapprovals() {
                 resume: std.resume,
                 offerpdf: std.offerpdf,
                 placement: std.placement,
-                offers: std.offers
-    
+                offers: std.offers,
+              
     
               }))
+              
               setgetstudents(data)
     
             }
@@ -277,7 +282,11 @@ function Accountsapprovals() {
        startIdx,
        startIdx + rowsPerPage
      );
-  
+     useEffect(() => {
+      if (student.profileImage) {
+        setPreview(`http://localhost:3000/${student.profileImage}`); // Load stored image
+      }
+    }, [student.profileImage]);
   return (
     <>
      
@@ -600,6 +609,7 @@ function Accountsapprovals() {
                     <div className="mb-3">
                       <label>Profile Image:</label>
                       <input
+                        
                         type="file"
                         className="form-control"
                         name="image"
