@@ -4,7 +4,8 @@ import { IoIosArrowBack } from "react-icons/io";
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Button, Table } from "react-bootstrap";
+import { Button, Table,Modal } from "react-bootstrap";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 function Trainingattendance() {
   const [Schedule, setSchedule] = useState([]);
@@ -20,7 +21,45 @@ function Trainingattendance() {
   const [selectedTrainingName, setSelectedTrainingName] = useState("");
   const [selectedActions, setSelectedActions] = useState({});
 
-  // Function to handle button clicks
+  const [showModall, setShowModall] = useState(false);
+ const [selectedBatchess, setSelectedBatchess] = useState([]);
+  
+  const [scheduleCodee, setScheduleCodee] = useState(""); 
+  const [trainingNamee, setSelectedTrainingNamee] = useState("");
+  
+    const [showBatchModall, setShowBatchModall] = useState(false);
+    const [selectedBatchData, setSelectedBatchData] = useState(null);
+  
+
+  const handleView = (batches,selectedScheduleCode,trainingName) => {
+    setScheduleCodee(selectedScheduleCode); 
+    setSelectedTrainingNamee(trainingName)
+    setSelectedBatchess(batches);
+    setShowModall(true);
+  };
+  const fetchBatchAttendance = async (scheduleCodee, batchNumber) => {
+    if (!scheduleCodee) {
+      console.error("Error: scheduleCode is missing.");
+      return;
+    }
+  
+    try {
+      const response = await axios.get(`http://localhost:3000/api/attendance/attendance/${scheduleCodee}/${batchNumber}`);
+      
+      if (!response.data.batches || response.data.batches.length === 0) {
+        console.warn("No batch data found for", batchNumber);
+        return;
+      }
+  
+      setSelectedBatchData(response.data.batches[0]);
+      setShowBatchModall(true);
+      setShowModall(false);
+    } catch (error) {
+      console.error("Error fetching batch attendance:", error);
+    }
+  };
+
+ 
   const handleActionClick = (registerNo, action) => {
     setSelectedActions((prev) => ({
       ...prev,
@@ -294,9 +333,23 @@ function Trainingattendance() {
                       <Button
                         variant="primary"
                         onClick={() => handleTakeAttendance(schedule.scheduleCode, schedule.trainingName, schedule.batches,schedule.trainee )}
-
+                        style={{marginRight:"20px"}}
                       >
                         Take Attendance
+                      </Button>
+                      <Button style={{marginRight:"20px"}}
+                        variant="primary"
+                        onClick={() => handleTakeAttendance(schedule.scheduleCode, schedule.trainingName, schedule.batches,schedule.trainee )}
+
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="primary"
+                        onClick={() => handleView(schedule.batches,schedule.scheduleCode,schedule.trainingName)}
+
+                      >
+                        view
                       </Button>
                     </td>
                   </tr>
@@ -434,6 +487,83 @@ function Trainingattendance() {
           </div>
         </div>
       )}
+       <Modal show={showModall} onHide={() => setShowModall(false)} top >
+        <Modal.Header closeButton>
+          <Modal.Title>Select Batch</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedBatchess.length > 0 ? (
+            selectedBatchess.map((batch, index) => (
+              <Button key={index} variant="outline-primary" className="m-2" onClick={() => fetchBatchAttendance( scheduleCodee,batch.batchNumber)}>
+                {batch.batchNumber}
+              </Button>
+            ))
+          ) : (
+            <p>No batches available</p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+         
+        </Modal.Footer>
+      </Modal>
+      {showBatchModall && selectedBatchData && (
+  <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+    <div className="modal-dialog modal-xl modal-dialog-centered">
+      <div className="modal-content" style={{ width: "100%" }}>
+        <div className="modal-header">
+          <h5 className="modal-title">{`Schedule Code: ${scheduleCodee}| Training Name: ${trainingNamee}`}</h5>
+          <button
+            type="button"
+            className="btn-close"
+            onClick={() => setShowBatchModall(false)}
+          ></button>
+        </div>
+
+        <div className="modal-body">
+          <table className="table table-striped table-bordered table-hover" style={{ width: "100%",position:"relative",left:'0px' }}>
+            <thead>
+              <tr>
+                <th>Register Number</th>
+                <th>Department</th>
+                {selectedBatchData.dates.map((dateObj) => (
+                  <th key={dateObj.date}>{dateObj.date}</th>
+                ))}
+               
+              </tr>
+            </thead>
+            <tbody>
+              {selectedBatchData.dates[0].students.map((student, index) => {
+                const attendanceRecords = selectedBatchData.dates.map((dateObj) => {
+                  const studentRecord = dateObj.students.find((s) => s.registerNumber === student.registerNumber);
+                  return studentRecord ? studentRecord.status : "-";
+                });
+
+                const totalDays = attendanceRecords.length;
+                const presentDays = attendanceRecords.filter((status) => status === "P"|| status === "OD").length;
+                const attendancePercentage = ((presentDays / totalDays) * 100).toFixed(2);
+
+                return (
+                  <tr key={index}>
+                    <td>{student.registerNumber}</td>
+                    <td>{student.department}</td>
+                    {attendanceRecords.map((status, i) => (
+                      <td key={i}>{status}</td>
+                    ))}
+                   
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="modal-footer">
+         
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
     </>
   );
