@@ -1,12 +1,28 @@
 import mongoose from "mongoose";
 
 const AttendanceSchema = new mongoose.Schema({
-  studentId: { type: mongoose.Schema.Types.ObjectId, ref: "AttendanceStudent", required: true },
-  scheduleCode: { type: String, required: true }, 
-  batch: { type: String, required: true }, 
-  status: { type: String, enum: ["Present", "Absent", "On Duty"], required: true },
-  date: { type: Date, default: Date.now },
+  scheduleCode: { type: String, required: true, unique: true },
+  trainingName: { type: String, required: true },
+  trainee:{ type: String, required: true },
+ 
+  batches: [
+    {
+      batchNumber: { type: String, required: true },
+      dates: [
+        {
+          date: { type: String, required: true },
+          students: [
+            {
+              registerNumber: { type: String, required: true },
+              department: { type: String, required: true },
+              status: { type: String, enum: ["P", "A", "OD"], required: true },
+            },
+          ],
+        },
+      ],
+    },
+  ],
 });
 
-const AttendanceModel = mongoose.model("Attendances", AttendanceSchema);
+const AttendanceModel = mongoose.model("stdattendances", AttendanceSchema);
 export default AttendanceModel;

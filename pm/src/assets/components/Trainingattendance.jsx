@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Button, Table } from "react-bootstrap";
-
+import "bootstrap/dist/css/bootstrap.min.css";
 function Trainingattendance() {
   const [Schedule, setSchedule] = useState([]);
   const [showBatchModal, setShowBatchModal] = useState(false);
@@ -13,9 +13,20 @@ function Trainingattendance() {
   const [selectedBatches, setSelectedBatches] = useState([]);
   const [selectedBatch, setSelectedBatch] = useState("");
   const [students, setStudents] = useState([]);
-  const [selectedScheduleCode, setSelectedScheduleCode] = useState("");
-  const [selectedTrainingName, setSelectedTrainingName] = useState("");
 
+  const [selectedScheduleCode, setSelectedScheduleCode] = useState("");
+  const [selectedTrainee, setSelectedTrainee] = useState("");
+
+  const [selectedTrainingName, setSelectedTrainingName] = useState("");
+  const [selectedActions, setSelectedActions] = useState({});
+
+  // Function to handle button clicks
+  const handleActionClick = (registerNo, action) => {
+    setSelectedActions((prev) => ({
+      ...prev,
+      [registerNo]: prev[registerNo] === action ? null : action, // Toggle visibility per row
+    }));
+  };
 
   useEffect(() => {
     fetchSchedule();
@@ -30,13 +41,14 @@ function Trainingattendance() {
     }
   };
 
-  const handleTakeAttendance = (scheduleCode, trainingName, batches) => {
+  const handleTakeAttendance = (scheduleCode, trainingName, batches,trainee) => {
     const batchNames = batches.map(batch =>
       typeof batch === "object" && batch.batchNumber ? batch.batchNumber : batch
     );
 
     setSelectedBatches(batchNames);
     setSelectedScheduleCode(scheduleCode);
+    setSelectedTrainee(trainee)
     setSelectedTrainingName(trainingName);
     setShowBatchModal(true);
   };
@@ -54,6 +66,7 @@ function Trainingattendance() {
       setStudents(response.data.students); 
       setSelectedBatch(batch);
       setSelectedScheduleCode(scheduleCode); 
+     
       setSelectedTrainingName(trainingName); 
       setShowBatchModal(false);
       setShowStudentModal(true);
@@ -88,7 +101,90 @@ function Trainingattendance() {
       startIdx + rowsPerPage
     );
   
-
+    const [availableDates, setAvailableDates] = useState([]);
+    const [selectedDate, setSelectedDate] = useState("");
+  
+    useEffect(() => {
+      if (selectedScheduleCode && selectedBatch) {
+        fetchAvailableDates();
+      }
+    }, [selectedScheduleCode, selectedBatch]);
+    
+    const fetchAvailableDates = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/schedule/schedule-dates?scheduleCode=${selectedScheduleCode}&batch=${selectedBatch}`
+        );
+    
+        const { fromDate, toDate } = response.data;
+        if (fromDate && toDate) {
+          setAvailableDates(generateDateRange(fromDate, toDate));
+        }
+      } catch (error) {
+        console.error("Error fetching schedule dates:", error);
+      }
+    };
+    const handleSaveAttendance = async () => {
+      if (!selectedScheduleCode ||!selectedTrainee|| !selectedTrainingName || !selectedBatch || !selectedDate || students.length === 0) {
+        Swal.fire({
+          icon: "error",
+          title: "Missing Data",
+          text: "Please select all fields before saving attendance.",
+        });
+        return;
+      }
+    
+      const attendanceData = {
+        scheduleCode: selectedScheduleCode,
+        trainingName: selectedTrainingName,
+        trainee:selectedTrainee,
+        batchNumber: selectedBatch,
+        date: selectedDate,
+        students: students.map((student) => ({
+          registerNumber: student.registration_number,
+          department: student.department,
+          status: selectedActions[student.registration_number] || "P",
+        })),
+      };
+    
+      console.log(attendanceData);
+    
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/attendance/save",
+          attendanceData
+        );
+    
+        Swal.fire({
+          icon: "success",
+          title: "Attendance Saved",
+          text: "Attendance has been successfully recorded.",
+        });
+    
+        setShowStudentModal(false);
+      } catch (error) {
+        console.error("Error saving attendance:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Save Failed",
+          text: error.response?.data?.error || "An error occurred while saving attendance.",
+        });
+      }
+    };
+    
+    
+   
+    const generateDateRange = (fromDate, toDate) => {
+      const dates = [];
+      let currentDate = new Date(fromDate);
+      const endDate = new Date(toDate);
+  
+      while (currentDate <= endDate) {
+        dates.push(currentDate.toISOString().split("T")[0]); 
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      return dates;
+    };
   return (
     <>
       <div className="had">
@@ -121,7 +217,7 @@ function Trainingattendance() {
           </h2>
         </Link>
         <h4 className="mb-4" style={{ position: "relative", top: "70px", left: "50px", width: '350px' }}>
-                Total Question Papers: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{totalRecords}</span>
+                Total no of Schedules: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{totalRecords}</span>
               </h4>
 
 
@@ -197,7 +293,7 @@ function Trainingattendance() {
                     <td>
                       <Button
                         variant="primary"
-                        onClick={() => handleTakeAttendance(schedule.scheduleCode, schedule.trainingName, schedule.batches)}
+                        onClick={() => handleTakeAttendance(schedule.scheduleCode, schedule.trainingName, schedule.batches,schedule.trainee )}
 
                       >
                         Take Attendance
@@ -252,39 +348,87 @@ function Trainingattendance() {
                   Schedule: {selectedScheduleCode || "N/A"} - {selectedTrainingName || "N/A"}<br />
                    {selectedBatch || "N/A"}
                 </h5>
+        
+        <select style={{width:"150px",position:"relative",left:"210px"}}
+        className="form-select"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)} required
+        >
+          <option value="">Select Date</option>
+          {availableDates.map((date) => (
+            <option key={date} value={date}>
+              {date}
+            </option>
+          ))}
+        </select>
                 <button type="button" className="btn-close" onClick={() => setShowStudentModal(false)}></button>
               </div>
               <div className="modal-body">
-                <Table striped bordered hover style={{ position: "relative", left: '0px' }}>
-                  <thead>
-                    <tr>
-                      <th>Register No.</th>
-                      <th>Name</th>
-                      <th>Department</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {students.length > 0 ? (
-                      students.map((student, index) => (
-                        <tr key={index}>
-                          <td>{student.registration_number}</td>
-                          <td>{student.name}</td>
-                          <td>{student.department}</td>
-                          <td>
-                            <Button variant="success" className="m-1">P</Button>
-                            <Button variant="danger" className="m-1">A</Button>
-                            <Button variant="warning" className="m-1">OD</Button>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="4" className="text-center">No students in this batch</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </Table>
+              <table className="table table-striped table-bordered table-hover  " style={{position:"relative",left:"0px"}} >
+        <thead>
+          <tr>
+            <th>Register No.</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+        {students.map((student) => {
+            const selectedAction = selectedActions[student.registration_number] || "P"; 
+            const isDisabled = !selectedActions[student.registration_number];
+
+            return (
+              <tr key={student.registration_number}>
+                <td>{student.registration_number}</td>
+                <td>{student.name}</td>
+                <td>{student.department}</td>
+                <td>
+                  <button
+                    className={`btn ${
+                      selectedAction === "P"
+                        ? "btn-success"
+                        : selectedAction === "A"
+                        ? "btn-danger"
+                        : "btn-warning"
+                    }`}
+                    disabled={isDisabled} 
+                    onClick={() =>
+                      handleActionClick(student.registration_number, selectedAction)
+                    }
+                  >
+                    {selectedAction}
+                  </button>
+                  {!selectedActions[student.registration_number] && (
+                    <>
+                      <button
+                        className="btn btn-danger ms-2"
+                        onClick={() =>
+                          handleActionClick(student.registration_number, "A")
+                        }
+                      >
+                        A
+                      </button>
+                      <button
+                        className="btn btn-warning ms-2"
+                        onClick={() =>
+                          handleActionClick(student.registration_number, "OD")
+                        }
+                      >
+                        OD
+                      </button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+  
+              </div>
+              <div className="modal-footer">
+                <button  className="btn btn-secondary" onClick={handleSaveAttendance}>save</button>
               </div>
             </div>
           </div>
