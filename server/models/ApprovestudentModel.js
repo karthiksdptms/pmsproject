@@ -77,6 +77,7 @@ const studentSchema = new mongoose.Schema({
   offerpdf: { type: String },
   exams: [examSchema],
   results: [resultSchema],
+  expassword:{ type: String },
 });
 
 const ApprovestudentModel = mongoose.model("approvestddatas", studentSchema);

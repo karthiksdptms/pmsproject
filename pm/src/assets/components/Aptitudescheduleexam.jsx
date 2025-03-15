@@ -101,7 +101,7 @@ function Aptitudescheduleexam() {
     console.log("Toggling Auto Post for:", qpcode, "New Status:", newStatus);
 
     try {
-      await axios.post(`http://localhost:3000/api/student/autopost/${qpcode}`, {
+      await axios.post(`http://localhost:3000/api/students/autopost/${qpcode}`, {
         autoPost: newStatus,
       });
 
@@ -121,7 +121,7 @@ function Aptitudescheduleexam() {
 
   const handlePostQuestionPaper = async (qpcode) => {
     try {
-      const response = await axios.post(`http://localhost:3000/api/student/postquestionpaper/${qpcode}`);
+      const response = await axios.post(`http://localhost:3000/api/students/postquestionpaper/${qpcode}`);
       if (response.status === 200) {
         alert("Question Paper Posted Successfully");
       }

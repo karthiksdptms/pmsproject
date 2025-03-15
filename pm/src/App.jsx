@@ -29,6 +29,9 @@ import Studenttrainingexams from './studentcomponents/Studenttrainingexams'
 import Studenttrainingscores from './studentcomponents/Studenttrainingscores'
 import Aptitudescores from './assets/components/Aptitudescores'
 import Accountsapprovals from './assets/components/Accountapprovals'
+import Studentactualtraining from './studentcomponents/Studentactualtraining'
+import Studenttrainingschedules from './studentcomponents/Studenttrainingschedules'
+import Studenttrainingattendance from './studentcomponents/Studenttrainingattendance'
 
 
 
@@ -88,6 +91,12 @@ function App() {
 
             <Route index element={<Studentsummary/>}/>
             <Route path='/Studentdashboard/Studenttraining' element={<Studenttraining />} />
+            <Route path='/Studentdashboard/Studentactualtraining' element={<Studentactualtraining />} />
+            <Route path='/Studentdashboard/Studenttrainingschedules' element={<Studenttrainingschedules />} />
+            <Route path='/Studentdashboard/Studenttrainingattendance' element={<Studenttrainingattendance />} />
+
+
+
             <Route path='/Studentdashboard/Studenttrainingexams' element={<Studenttrainingexams />} />
             <Route path='/Studentdashboard/Studenttrainingscores' element={<Studenttrainingscores />} />
 

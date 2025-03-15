@@ -186,21 +186,21 @@ function Dashboard() {
     }
   };
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(students.length / rowsPerPage);
+  const totalPages = Math.ceil(filteredStudents.length / rowsPerPage);
 
   const startIdx = (currentPage - 1) * rowsPerPage;
   const displayedData = filteredStudents.slice(
     startIdx,
     startIdx + rowsPerPage
   );
-  //new
+ 
 
 
   return (
     <>
       <div className="">
         <div className="clr"></div>
-        <div className="container  contain" className="">
+        <div className="  contain" >
 
 
           <div className="">
@@ -928,7 +928,7 @@ function Dashboard() {
                                     onClick={closeDivs}
                                   >
                                     <a
-                                      className="nav-link active"
+                                     
                                       href="#"
                                       className="acolor"
                                     >
@@ -950,7 +950,7 @@ function Dashboard() {
                                     onClick={handleButtonClick}
                                   >
                                     <a
-                                      className="nav-link active  "
+                                     
                                       href="#"
                                       className="acolor"
                                     >
@@ -972,7 +972,7 @@ function Dashboard() {
                                     onClick={handleButtonnClick}
                                   >
                                     <a
-                                      className="nav-link active"
+                                   
                                       href="#"
                                       className="acolor"
                                     >
@@ -994,7 +994,7 @@ function Dashboard() {
                                     onClick={handleButtonnnClick}
                                   >
                                     <a
-                                      className="nav-link active"
+                                    
                                       href="#"
                                       className="acolor"
                                     >

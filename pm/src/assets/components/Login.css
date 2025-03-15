@@ -25,7 +25,7 @@ body{
 }
 .log{
     width:400px;
-height: 350px;
+height: 400px;
    z-index: 20;
    display: flex;
    flex-direction: column;
@@ -96,7 +96,7 @@ left: 100px;
 }
 .user{
 position: relative;
-bottom: 200px;
+bottom: 240px;
 left: 340px;
 display: inline;
 font-size: 25px;

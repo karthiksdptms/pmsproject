@@ -3,7 +3,7 @@ import authMiddleware from '../middleware/authMiddleware.js';
 import { addstudent, approveaddstudent,approvegetstudent,upload, getstudent, editstudent, deletestudent, uploadCSV,getonestudent
     ,postQuestionPaper,postSpecificQuestionPaper,
     toggleAutoPost,
-    approveeditstudent,
+    approveeditstudent,getallstudents,
     rejectStudent
 } from '../controllers/studentcontroller.js';
 import StudentModel from "../models/StudentModel.js"
@@ -24,6 +24,8 @@ router.put('/edit/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: '
 router.put('/approveedit', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'resume', maxCount: 1 }, { name: 'offerpdf', maxCount: 1 }]), approveeditstudent);
 router.post('/reject',rejectStudent)
 router.get('/getstudents', getallstudents);
+
+router.put('/edit/:id',authMiddleware, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'resume', maxCount: 1 }, { name: 'offerpdf', maxCount: 1 }]), editstudent);
 router.delete('/delete/:id', authMiddleware, deletestudent);
 router.get('/getone/:id',getonestudent);
 router.post('/uploadcsv',authMiddleware,upload.single("csvfile"),uploadCSV);
@@ -226,6 +228,25 @@ router.get("/training-scores/:id", async (req, res) => {
         res.status(500).json({ message: "Server Error" });
     }
 });
+
+
+router.get("/training-exams/:id", async (req, res) => {
+    try {
+        const studentData = await StudentModel.findOne({ userId: req.params.id })
+            .populate("userId")
+            .select("exams"); // Selecting only the 'exams' field
+
+        if (!studentData) {
+            return res.status(404).json({ message: "Student not found" });
+        }
+
+        res.json({ exams: studentData.exams });
+    } catch (error) {
+        console.error("Error fetching student training scores:", error);
+        res.status(500).json({ message: "Server Error" });
+    }
+});
+
 
 router.get("/view-answer-paper", async (req, res) => {
     try {

@@ -33,7 +33,7 @@ function Studenttrainingexams() {
     if (user?._id) {
       setstdloading(true);
       axios
-        .get(`http://localhost:3000/getstudent/${user._id}`)
+        .get(`http://localhost:3000/api/students/training-exams/${user._id}`)
         .then((result) => {
           console.log("API Response:", result.data);
           setQuestionPapers(result.data.exams || []);
@@ -82,32 +82,90 @@ function Studenttrainingexams() {
     setAnswerStatus(Array(selectedPaper.questions.length).fill(""));
     setRemainingTime(calculateDuration(selectedPaper.startTime, selectedPaper.endTime));
     setExamStarted(true);
+  
+ 
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) { 
+      elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) { 
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { 
+      elem.msRequestFullscreen();
+    }
+  };
+
+  useEffect(() => {
+    const preventExitFullscreen = () => {
+      if (!document.fullscreenElement) {
+       
+        Swal.fire({
+          title: "Full-Screen Mode Disabled!",
+          text: "Autosubmitted as you exited full-screen mode during the exam.",
+          icon: "warning",
+          timer: 5000,
+          showConfirmButton: false,
+        });
+  
+      
+        const elem = document.documentElement;
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) {
+          elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) {
+          elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+          elem.msRequestFullscreen();
+        }
+      }
+    };
+  
+    if (examStarted) {
+      document.addEventListener("fullscreenchange", preventExitFullscreen);
+    }
+  
+    return () => {
+      document.removeEventListener("fullscreenchange", preventExitFullscreen);
+    };
+  }, [examStarted]);
+  
+  
+  const exitFullScreen = () => {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
   };
   useEffect(() => {
     if (examStarted && remainingTime > 0 && displayedData.length > 0) {
       const timer = setInterval(() => {
         setRemainingTime((prev) => prev - 1);
       }, 1000);
-
+  
       return () => {
-        if (timer) {
-          clearInterval(timer);
-        }
+        clearInterval(timer);
       };
     }
+  
     if (examStarted && remainingTime === 0) {
-      if (remainingTime === 0) {
-        Swal.fire({
-          title: "Time Over ⏰",
-          text: "Your Exam is Automatically Submitted",
-          icon: "info",
-          showConfirmButton: false,
-          timer: 3000,
-        }).then(() => {
-          handleSubmit();
-          setShowQuestionPaper(false);
-        });
-      }
+      Swal.fire({
+        title: "Time Over ⏰",
+        text: "Your Exam is Automatically Submitted",
+        icon: "info",
+        showConfirmButton: false,
+        timer: 3000,
+      }).then(() => {
+        exitFullScreen(); 
+        handleSubmit();
+        setShowQuestionPaper(false);
+      });
     }
   }, [remainingTime, displayedData, examStarted]);
 
@@ -167,12 +225,12 @@ function Studenttrainingexams() {
 
   const handleSubmit = async () => {
     const resultArray = [];
-
+  
     questions.forEach((q, index) => {
       if (selectedAnswers[index] !== undefined) {
         const selectedOptionIndex = selectedAnswers[index];
         const optionAlphabet = String.fromCharCode(65 + selectedOptionIndex);
-
+  
         resultArray.push({
           question: index + 1,
           answer: optionAlphabet,
@@ -180,9 +238,7 @@ function Studenttrainingexams() {
         });
       }
     });
-
-    console.log("Submitted Answers:", resultArray);
-
+  
     try {
       const response = await axios.post('http://localhost:3000/api/answerkey/submitans', {
         userId: user._id,
@@ -190,21 +246,33 @@ function Studenttrainingexams() {
         title: title,
         answers: resultArray,
       });
-
+  
       setShowQuestionPaper(false);
-
+  
       Swal.fire({
         icon: "success",
         title: "Answers Submitted Successfully 🎯",
         showConfirmButton: true,
         timer: 3000,
       }).then(() => {
+        
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+        }
+  
         window.location.reload();
       });
-
+  
       setSelectedAnswers({});
       setShowQuestionPaper(false);
     } catch (err) {
+
       console.error("Submit Error", err);
       Swal.fire({
         icon: "error",
@@ -213,6 +281,7 @@ function Studenttrainingexams() {
       });
     }
   };
+  
 
 
   return (

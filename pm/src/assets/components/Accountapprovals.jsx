@@ -53,6 +53,7 @@ function Accountsapprovals() {
        offerpdf: null,
        placement: "",
        offers: [],
+       expassword:"",
      });
     
     
@@ -60,7 +61,7 @@ function Accountsapprovals() {
         const fetchstudents = async () => {
           setstdloading(true)
           try {
-            const responnse = await axios.get("http://localhost:3000/api/student/approved-students", {
+            const responnse = await axios.get("http://localhost:3000/api/students/approved-students", {
              
             }
             )
@@ -104,6 +105,7 @@ function Accountsapprovals() {
                 offerpdf: std.offerpdf,
                 placement: std.placement,
                 offers: std.offers,
+                expassword:std.expassword,
               
     
               }))
@@ -180,21 +182,21 @@ function Accountsapprovals() {
           }
         });
       
-        // Add resume to formData
+       
         if (student.resume) {
           formData.append("resume", student.resume);
         } else {
           formData.append("resume", "");
         }
       
-        // Add image to formData
+       
         if (student.image) {
           formData.append("image", student.image);
         } else {
           formData.append("image", "");
         }
       
-        // Add offers to formData
+      
         student.offers.forEach((offer, index) => {
           formData.append(`offers[${index}][offerno]`, offer.offerno);
           formData.append(`offers[${index}][company]`, offer.company);
@@ -216,7 +218,7 @@ function Accountsapprovals() {
       
          
           const response = await axios.put(
-            "http://localhost:3000/api/student/approveedit", 
+            "http://localhost:3000/api/students/approveedit", 
             formData,
             {
               headers: {
@@ -242,7 +244,7 @@ function Accountsapprovals() {
       const handleReject = async (email) => {
         try {
           const response = await axios.post(
-            "http://localhost:3000/api/student/reject",  // The route to handle rejection
+            "http://localhost:3000/api/students/reject", 
             { email },
             {
               headers: {
@@ -253,7 +255,8 @@ function Accountsapprovals() {
       
           if (response.data.success) {
             alert("Student rejected and removed from approval data");
-            // Optionally, refresh the data or remove the student from the UI
+            window.location.reload();
+           
           } else {
             alert(response.data.message);
           }
@@ -595,7 +598,7 @@ function Accountsapprovals() {
                       <input type="email" className="form-control" name="email" onChange={handleChange} required value={student.email} readOnly />
                     </div>
                     <div className="mb-3">
-                      <label>password:<span style={{ color: "red" }}>*</span></label>
+                      <label>password:(password given by student: {student.expassword})<span style={{ color: "red" }}>*</span></label>
                       <input type="text" className="form-control" name="password" onChange={handleChange} required value={student.password} />
                     </div>
                     <div className="mb-3">
@@ -656,7 +659,7 @@ function Accountsapprovals() {
                         </Col>
                         <Col md={6}>
                           <label>Placement:</label>
-                          <select className="form-control" name="placement" onChange={handleChange} value={student.placement}>
+                          <select className="form-control" name="placement" onChange={handleChange} >
                             <option value="">Select:</option>
                             <option value="Placed">Placed</option>
                             <option value="Not-placed">Not-placed</option>

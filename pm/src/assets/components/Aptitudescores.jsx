@@ -65,7 +65,7 @@ function Aptitudescores() {
         };
     
         try {
-            const response = await axios.post("http://localhost:3000/api/student/publish-result", resultData);
+            const response = await axios.post("http://localhost:3000/api/students/publish-result", resultData);
     
             if (response.status === 200) {
                 setPublishedResults((prev) => [...prev, answer.registration_number]);
@@ -98,7 +98,7 @@ function Aptitudescores() {
             }));
     
         try {
-            const response = await axios.post("http://localhost:3000/api/student/publish-multiple-results", {
+            const response = await axios.post("http://localhost:3000/api/students/publish-multiple-results", {
                 results: selectedResults,
             });
     
@@ -130,7 +130,7 @@ function Aptitudescores() {
             }));
 
         try {
-            const response = await axios.post("http://localhost:3000/api/student/delete-multiple-results", {
+            const response = await axios.post("http://localhost:3000/api/students/delete-multiple-results", {
                 results: selectedResults,
             });
 
@@ -151,7 +151,7 @@ function Aptitudescores() {
     const fetchAnswerPaper = async (registration_number, qpcode) => {
         try {
             
-            const response = await axios.get("http://localhost:3000/api/student/view-answer-paper", {
+            const response = await axios.get("http://localhost:3000/api/students/view-answer-paper", {
                 params: { registration_number, qpcode },
             });
     
@@ -345,7 +345,7 @@ function Aptitudescores() {
                 
               
                 <div className="modal-header">
-                    <h4 className="modal-title">Answer Sheet - {selectedAnswerPaper.qpcode}</h4>
+                    <h4 className="modal-title">Answer Sheet | Question paper code:  {selectedAnswerPaper.qpcode}</h4>
                     <button type="button" className="btn-close" onClick={() => setIsModalOpen(false)}></button>
                 </div>
                 <div className="px-4 pt-2">
@@ -378,7 +378,7 @@ function Aptitudescores() {
                                             {answer.options.length > 0 ? (
                                                 answer.options.map((opt, idx) => (
                                                     <div key={idx} className="ms-3">
-                                                        <strong>{String.fromCharCode(65 + idx)})</strong> {opt}
+                                                        <strong>{String.fromCharCode(65 + idx)}</strong> {opt}
                                                     </div>
                                                 ))
                                             ) : (

@@ -10,6 +10,7 @@ import FilterModel from "./models/FilterModel.js";
 import QpModel from "./models/QpModel.js";
 import attendanceStudentRoutes from "./routes/attendanceStudentRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
+import answerkeyRouter from "./routes/answerkey.js"
 
 dotenv.config();
 connectDatabase();
@@ -27,10 +28,9 @@ app.use('/api/schedule', scheduleRoutes);
 app.use("/api/training", scheduleRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/attendancestudent", attendanceStudentRoutes);
+app.use("/api/answerkey",answerkeyRouter)
 
-// ✅ Removed direct `/api/schedule` GET request since it's inside `scheduleRoutes.js`
 
-// Filter table
 app.get("/getstudents", async (req, res) => {
   try {
     const students = await FilterModel.find();
@@ -40,7 +40,7 @@ app.get("/getstudents", async (req, res) => {
   }
 });
 
-// Aptitude Question Papers CRUD
+
 app.post("/addqp", async (req, res) => {
   try {
     const qpaper = await QpModel.create(req.body);
@@ -81,7 +81,7 @@ app.delete("/delqp/:id", async (req, res) => {
 
 
 
-// Start Server
+
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });

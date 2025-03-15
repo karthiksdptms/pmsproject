@@ -19,7 +19,7 @@ function Studenttrainingscores() {
   const fetchScores = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:3000/api/student/training-scores/${user._id}`);
+      const response = await axios.get(`http://localhost:3000/api/students/training-scores/${user._id}`);
       setScores(response.data.results || []);
     } catch (error) {
       console.error("Error fetching training scores:", error);
@@ -49,7 +49,7 @@ function Studenttrainingscores() {
   const fetchAnswerPaper = async (registration_number, qpcode) => {
       try {
          
-          const response = await axios.get("http://localhost:3000/api/student/view-answer-paper", {
+          const response = await axios.get("http://localhost:3000/api/students/view-answer-paper", {
               params: { registration_number, qpcode },
           });
   

@@ -59,7 +59,7 @@ function Login() {
         <div className="log">
           <h2 className="logs">LOGIN</h2>
         
-          {error &&<p className="text-red-500" style={{color:"red"}}>{error}</p>}
+          {error &&<p className="text-red-500" style={{color:"red",position:'relative',top:"20px"}}>{error}</p>}
           <form onSubmit={handleSubmit}>
             <div>
               <input
@@ -90,11 +90,20 @@ function Login() {
                 >
                   <i className={isPasswordVisible ? "bi bi-eye-slash" : "bi bi-eye"}></i>
                 </button>
+                <br />
+                <p>
+  <a href="" style={{ color: "blue", cursor: "pointer",position:'relative',top:'15px',left:'30px',fontSize:'13px' }}>
+    forgot Password?
+  </a>
+</p>
+
               </div>
+              
               <br />
               <button className="btn btn-primary submit" type="submit">
                 Submit
               </button>
+              
             </div>
             <FaUser className="user" />
           </form>

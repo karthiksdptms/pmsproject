@@ -8,6 +8,10 @@ import axios from "axios";
 import Loading from "../assets/components/Loading";
 import { HiComputerDesktop } from "react-icons/hi2";
 import { MdOutlineSmsFailed } from "react-icons/md";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+
+
 
 import { Modal, Button, Form, Row, Col, Container } from "react-bootstrap";
 
@@ -47,6 +51,7 @@ function Studentprofile() {
         offerpdf: null,
         placement: "",
         offers: [],
+        expassword:"",
       });
 
     const [loading, setLoading] = useState(true);
@@ -56,7 +61,7 @@ function Studentprofile() {
     const fetchStudent = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get(`http://localhost:3000/api/student/getone/${user._id}`, {
+            const response = await axios.get(`http://localhost:3000/api/students/getone/${user._id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -155,13 +160,13 @@ function Studentprofile() {
       formData.append("offerpdf", "");
     }
 
-
+  formData.append("expassword",student.password)
     console.log("Sending FormData:", Object.fromEntries(formData.entries()));
     console.log(formData)
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/student/approveadd",
+        "http://localhost:3000/api/students/approveadd",
         formData,
         {
           headers: {
@@ -210,7 +215,7 @@ function Studentprofile() {
           offers: [],
         });
         alert("request sent!")
-        window.location.reload();
+      window.location.reload()
 
       }
     } catch (error) {
@@ -231,7 +236,78 @@ function Studentprofile() {
       };
       
 
-
+   
+      const generatePdf = () => {
+        if (!student) {
+          alert("Student data not available!");
+          return;
+        }
+      
+        const doc = new jsPDF();
+      
+        // Header
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        doc.text("Resume", 105, 20, { align: "center" });
+      
+        // Student Details
+        doc.setFontSize(14);
+        doc.text(`Name: ${student.name}`, 20, 40);
+        doc.text(`Email: ${student.email}`, 20, 50);
+        doc.text(`Phone: ${student.phoneno}`, 20, 60);
+        doc.text(`Address: ${student.address}`, 20, 70);
+      
+        // Academic Details Table
+        doc.setFontSize(14);
+        doc.text("Academic Details", 20, 85);
+        autoTable(doc, {
+          startY: 90,
+          head: [["Degree", "Score"]],
+          body: [
+            ["HSC", student.hsc || "N/A"],
+            ["Semester 1", student.sem1 || "N/A"],
+            ["Semester 2", student.sem2 || "N/A"],
+            ["Semester 3", student.sem3 || "N/A"],
+            ["Semester 4", student.sem4 || "N/A"],
+            ["Semester 5", student.sem5 || "N/A"],
+            ["Semester 6", student.sem6 || "N/A"],
+            ["Semester 7", student.sem7 || "N/A"],
+            ["Semester 8", student.sem8 || "N/A"],
+          ],
+        });
+      
+        // Work Experience Table
+        doc.text("Work Experience", 20, doc.lastAutoTable.finalY + 10);
+        if (student.offers && student.offers.length > 0) {
+          autoTable(doc, {
+            startY: doc.lastAutoTable.finalY + 15,
+            head: [["Company", "Designation", "Package"]],
+            body: student.offers.map((offer) => [
+              offer.company,
+              offer.designation,
+              offer.package,
+            ]),
+          });
+        } else {
+          doc.text("No work experience added.", 20, doc.lastAutoTable.finalY + 25);
+        }
+      
+        // Skills & Certifications
+        doc.text("Skills & Certifications", 20, doc.lastAutoTable.finalY + 35);
+        doc.text(student.certifications || "N/A", 20, doc.lastAutoTable.finalY + 45);
+      
+        // Projects
+        doc.text("Projects", 20, doc.lastAutoTable.finalY + 55);
+        doc.text(student.projects || "N/A", 20, doc.lastAutoTable.finalY + 65);
+      
+        // Languages
+        doc.text("Languages", 20, doc.lastAutoTable.finalY + 75);
+        doc.text(student.language || "Not specified", 20, doc.lastAutoTable.finalY + 85);
+      
+        // Save the PDF
+        doc.save(`${student.name}_Resume.pdf`);
+      };
+      
       
 
     return (
@@ -272,6 +348,15 @@ function Studentprofile() {
                             My Profile              </h2>
                     </div>
                 </Link>
+                <button   className="btn btn-secondary btn-sm me-2"  style={{position:"relative",left:"1100px"}}   onClick={generatePdf}>Resume <i
+                                    className="bi bi-download resdow"
+                                    style={{
+                                      position: "relative",
+                                      right: "-5PX",
+                                      borderRadius: "35%",
+                                    }}
+                                    
+                                  ></i> </button>
                 <button  className="btn btn-primary btn-sm me-2"
                           onClick={() => handleEdit(user._id)} style={{position:"relative",left:"1100px"}}>edit</button>
                 {loading ? (

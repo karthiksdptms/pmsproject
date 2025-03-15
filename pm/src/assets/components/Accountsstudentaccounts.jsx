@@ -202,7 +202,7 @@ function Accountsstudentaccounts() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/student/add",
+        "http://localhost:3000/api/students/add",
         formData,
         {
           headers: {
@@ -271,7 +271,7 @@ function Accountsstudentaccounts() {
     if (confirm) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:3000/api/student/delete/${id}`, {
+        await axios.delete(`http://localhost:3000/api/students/delete/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -352,7 +352,7 @@ function Accountsstudentaccounts() {
       const token = localStorage.getItem("token");
 
       const response = await axios.put(
-        `http://localhost:3000/api/student/edit/${student._id}`,
+        `http://localhost:3000/api/students/edit/${student._id}`,
         formData,
         {
           headers: {
@@ -772,7 +772,6 @@ function Accountsstudentaccounts() {
                         className="form-control"
                         name="image"
                         onChange={handleChange}
-                        required
                       />
                     </div>
                     <div className="mb-3">

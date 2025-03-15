@@ -174,6 +174,7 @@ export const approveaddstudent = async (req, res) => {
       phoneno,
       placement,
       offers,
+      expassword,
      
     } = req.body;
 
@@ -242,7 +243,8 @@ const profileImage = req.files && req.files["image"] ? req.files["image"][0].fil
       profileImage,
       placement,
       offers: finalOffers,
-      offerpdf
+      offerpdf,
+      expassword:password,
     });
 
     await student.save();
@@ -260,7 +262,14 @@ const profileImage = req.files && req.files["image"] ? req.files["image"][0].fil
   }
 };
 
-
+export const getallstudents = async (req, res) => {
+  try {
+      const students = await StudentModel.find(); 
+      res.status(200).json({ students });
+  } catch (error) {
+      res.status(500).json({ message: 'Error fetching students', error: error.message });
+  }
+};
 
 const getstudent =async (req, res) => {
   try{
@@ -279,21 +288,30 @@ export const approvegetstudent =async (req, res) => {
       res.status(500).json({ message: "Error fetching approved students", error });
     }
   };
-const getonestudent = async (req, res) => {
-  try {
-    const { id } = req.params; 
-    const student = await StudentModel.findOne({ userId: id }).populate("userId");
+  const getonestudent = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log("Received ID:", id); 
 
-    if (!student) {
-      return res.status(404).json({ success: false, message: "Student not found" });
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "Invalid ID format" });
+        }
+
+        let student = await StudentModel.findById(id).populate("userId", "-password");
+
+        if (!student) {
+            student = await StudentModel.findOne({ userId: new mongoose.Types.ObjectId(id) }).populate("userId", "-password");
+        }
+
+        if (!student) {
+            return res.status(404).json({ success: false, message: "Student not found" });
+        }
+
+        res.status(200).json({ success: true, student });
+    } catch (error) {
+        console.error("Get Student Error:", error);
+        res.status(500).json({ success: false, error: "Internal Server Error" });
     }
-
-    res.status(200).json({ success: true, student });
-
-  } catch (error) {
-    console.error("Get Student Error:", error);
-    return res.status(500).json({ success: false, error: "Get student server error" });
-  }
 };
 
 
@@ -354,7 +372,7 @@ const editstudent = async (req, res) => {
       hashpassword = await bcrypt.hash(password, 10);
     }
 
-    // Update Student Data
+  
     const updatedStudent = await StudentModel.findByIdAndUpdate(
       id,
       {
@@ -455,25 +473,25 @@ export const approveeditstudent = async (req, res) => {
       password,
     } = req.body;
 
-    // ✅ Fetch Student from the Main Collection
+  
     const student = await StudentModel.findOne({ registration_number });
     if (!student) {
       return res.status(404).json({ success: false, message: "Student not found" });
     }
 
-    // ✅ Fetch Student from the Approval Collection
+  
     const pendingStudent = await ApprovestudentModel.findOne({ registration_number });
     console.log("Pending Student Data from ApprovestudentModel:", pendingStudent);
 
-    // ✅ Profile Image Handling
+  
     const profileImage = 
       req.files?.image && req.files.image.length > 0
-        ? req.files.image[0].filename  // If admin uploads a new image
-        : pendingStudent?.profileImage // Otherwise, take from the student's approval data
+        ? req.files.image[0].filename  
+        : pendingStudent?.profileImage 
         ? pendingStudent.profileImage
-        : student.profileImage; // If all else fails, keep the old image
+        : student.profileImage; 
 
-    // ✅ Resume & Offer PDF Handling
+    
     const resume = 
       req.files?.resume && req.files.resume.length > 0
         ? req.files.resume[0].filename
@@ -494,7 +512,7 @@ export const approveeditstudent = async (req, res) => {
         : offers
       : student.offers;
 
-    // ✅ Update Student Details in Main Collection (Forcing Image Update)
+    
     const updatedStudent = await StudentModel.findOneAndUpdate(
       { registration_number },
       {
@@ -525,7 +543,7 @@ export const approveeditstudent = async (req, res) => {
         phoneno,
         placement,
         offers: finalOffers,
-        profileImage, // ✅ Now correctly updated
+        profileImage, 
         resume,
         offerpdf,
       },
@@ -534,26 +552,26 @@ export const approveeditstudent = async (req, res) => {
 
     console.log("Updated Student Data in StudentModel:", updatedStudent);
 
-    // ✅ Hash password if changed
+   
     const hashpassword = password ? await bcrypt.hash(password, 10) : student.password;
 
-    // ✅ Update User Collection (Admin Login)
+   
     await User.findOneAndUpdate(
       { email },
       {
         name: name,
         password: hashpassword,
         role: role,
-        profileImage: profileImage, // ✅ Now correctly updated
+        profileImage: profileImage,
       },
       { new: true }
     );
 
-    // ✅ Delete from Approval Collection
+    
     await ApprovestudentModel.findOneAndDelete({ registration_number });
     await UUser.findOneAndDelete({ email });
 
-    // ✅ Success Response
+   
     res.status(200).json({
       success: true,
       message: "Student and User updated successfully, and record deleted from approval data",
@@ -619,6 +637,7 @@ export const deletestudent = async (req, res) => {
     console.error("Delete Error:", error);
     res.status(500).json({ message: "Server Error" });
   }
+
 };
 
 
@@ -646,6 +665,7 @@ export const rejectStudent = async (req, res) => {
     });
   }
 };
+
 
 
 const uploadCSV = async (req, res) => {

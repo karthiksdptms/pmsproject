@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link ,NavLink} from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { GrAchievement } from "react-icons/gr";
 import "./Studenttopbar.css";
@@ -97,50 +97,70 @@ function Studenttopbar() {
 
 
     <div className="sidebox">
+    <div className="btnn">
+      {" "}
+      <NavLink to="/Studentdashboard" end>
+  {({ isActive }) => (
+    <button className={`btnn ${isActive ? "bgg" : ""}`}>
+      <i className="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
+      Dashboard
+    </button>
+  )}
+</NavLink>
+        </div>
+      
       <div className="btnn">
-        {" "}
-        <Link to="/Studentdashboard">
-          <button className="btnn ">
-            <i className="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: '5px' }} ></i>
-
-            Dashboard
-          </button>
-        </Link>
-      </div>
-      <div className="btnn">
-        {" "}
-
-        <Link to="/Studentdashboard/Studentprofile">
-          <button className="btnn ">
-            <i className="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: '5px' }} ></i>
-            My Profile
-
-          </button>
-        </Link>
-      </div>
+      {" "}
+      <NavLink to="/Studentdashboard/Studentprofile" end>
+  {({ isActive }) => (
+    <button className={`btnn ${isActive ? "bgg" : ""}`}>
+      <i className="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
+      My Profile
+    </button>
+  )}
+</NavLink>
+        </div>
+      
 
 
       <div className="btnn">
-
-        <Link to="/Studentdashboard/Studenttraining">
-
-          <button className="btnn">
-            <i className="bi bi-funnel-fill" style={{ marginRight: "10px", paddingLeft: '5px' }} />
-            Training
-          </button>
-        </Link>
-      </div>
+      {" "}
+      <NavLink to="/Studentdashboard/Studentactualtraining" end>
+  {({ isActive }) => (
+    <button className={`btnn ${isActive ? "bgg" : ""}`}>
+      <i className="bi bi-bullseye" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
+      Training
+    </button>
+  )}
+</NavLink>
+        </div>
+      
+    
       <div className="btnn">
-        {" "}
+      {" "}
+      <NavLink to="/Studentdashboard/Studenttraining" end>
+  {({ isActive }) => (
+    <button className={`btnn ${isActive ? "bgg" : ""}`}>
+      <i className="bi bi-funnel-fill" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
+      Aptitude
+    </button>
+  )}
+</NavLink>
+        </div>
 
-        <Link to="/Studentdashboard/Studentplacement">
-
-          <button className="btnn">
-            <i className="bi bi-bullseye" style={{ marginRight: "10px", paddingLeft: '5px' }} />
-            Placement
-          </button>
-        </Link>
-      </div>
+      
+      <div className="btnn">
+      {" "}
+      <NavLink to="/Studentdashboard/Studentplacement" end>
+  {({ isActive }) => (
+    <button className={`btnn ${isActive ? "bgg" : ""}`}>
+      <i className="bi bi-bullseye" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
+      Placement
+    </button>
+  )}
+</NavLink>
+        </div>
+      
 
 
       <div className="btnn">
