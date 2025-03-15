@@ -6,7 +6,7 @@ import { addstudent, approveaddstudent,approvegetstudent,upload, getstudent, edi
     approveeditstudent,
     rejectStudent
 } from '../controllers/studentcontroller.js';
-import StudentModel from "../models/StudentModel.js";
+import StudentModel from "../models/StudentModel.js"
 import AnswerModel from '../models/AnswerModel.js'
 import AnswerKeyModel from "../models/AnswerkeyModel.js";
 import ApprovestudentModel from "../models/ApprovestudentModel.js";
@@ -23,6 +23,7 @@ router.post('/approveadd', upload.fields([{ name: 'image', maxCount: 1 }, { name
 router.put('/edit/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'resume', maxCount: 1 }, { name: 'offerpdf', maxCount: 1 }]), editstudent);
 router.put('/approveedit', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'resume', maxCount: 1 }, { name: 'offerpdf', maxCount: 1 }]), approveeditstudent);
 router.post('/reject',rejectStudent)
+router.get('/getstudents', getallstudents);
 router.delete('/delete/:id', authMiddleware, deletestudent);
 router.get('/getone/:id',getonestudent);
 router.post('/uploadcsv',authMiddleware,upload.single("csvfile"),uploadCSV);

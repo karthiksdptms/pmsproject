@@ -736,7 +736,10 @@ function Dashboard() {
                     {selectedData && (
                       <div
                         className="offcanvas offcanvas-end"
+
+
                         tabIndex="-1"
+
                         id="offcanvasRight"
                         aria-labelledby="offcanvasRightLabel"
                         data-bs-backdrop="static"

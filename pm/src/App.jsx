@@ -16,12 +16,9 @@ import Aptitudeconfigurequestions from './assets/components/Aptitudeconfigureque
 import Aptitudescheduleexam from './assets/components/Aptitudescheduleexam'
 import Accounts from './assets/components/Accounts'
 import Accountsstudentaccounts from './assets/components/Accountsstudentaccounts'
-
 import Studentdashboard from './studentcomponents/Studentdashboard'
 import Studenttraining from './studentcomponents/Studenttraining'
 import Studentplacement from './studentcomponents/Studentplacement'
-
-
 import Login from './assets/components/Login'
 import PrivateRoute from './assets/components/pages/utils/PrivateRoute'
 import RoleBaseRoutes from './assets/components/pages/utils/RoleBaseRoutes'
@@ -32,6 +29,7 @@ import Studenttrainingexams from './studentcomponents/Studenttrainingexams'
 import Studenttrainingscores from './studentcomponents/Studenttrainingscores'
 import Aptitudescores from './assets/components/Aptitudescores'
 import Accountsapprovals from './assets/components/Accountapprovals'
+
 
 
 function App() {
@@ -54,7 +52,6 @@ function App() {
               </RoleBaseRoutes>
             </PrivateRoute>
           } >
-
             <Route index element={<Adminsummmary />} />
             <Route path='/Maindashboard/Dashboard' element={<Dashboard />} />
             <Route path='/Maindashboard/Aptitude' element={<Aptitude />} />
@@ -67,7 +64,7 @@ function App() {
             <Route path='/Maindashboard/Trainingschedule' element={<Trainingschedule />} />
 
             <Route path='/Maindashboard/Trainingattendence' element={<Trainingattendance />} />
-
+           
             <Route path='/Maindashboard/Placementannounce' element={<Placementsannounce />} />
             <Route path='/Maindashboard/Aptitudeconfigurequestions' element={<Aptitudeconfigurequestions />} />
             <Route path='/Maindashboard/Aptitudescores' element={<Aptitudescores />} />

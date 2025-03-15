@@ -1,10 +1,12 @@
 import React from "react";
-import Topbar from "./Topbar";
 import "./Trainingschedule.css";
 import { Link } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
+
+
 import { utils, writeFile } from 'xlsx';
 function Trainingschedule() {
   const departments = ["CSE", "MECH", "ECE", "CCE", "AIDS", "AIML"];
@@ -48,9 +50,13 @@ function Trainingschedule() {
 
   const [students, setstudents] = useState([])
   useEffect(() => {
-    axios.get("http://localhost:3000/getstudents")
-      .then(response => setstudents(response.data))
-      .catch(error => console.error("Error fetching students:", error));
+    axios
+      .get("http://localhost:3000/api/students/getstudents")
+      .then((response) => {
+        console.log("Fetched Students:", response.data);
+        setstudents(response.data.students || []); 
+      })
+      .catch((error) => console.error("Error fetching students:", error));
   }, []);
   const [filters, setFilters] = useState({
     department: [],
@@ -94,23 +100,23 @@ function Trainingschedule() {
   const filteredStudents = students.filter((student) => {
     return (
       (filters.department.length === 0 ||
-        filters.department.includes(student.DEPARTMENT) ||
+        filters.department.includes(student.department) ||
         (showOtherDepartment &&
-          student.DEPARTMENT.includes(filters.otherDepartment))) &&
+          student.department.includes(filters.otherDepartment))) &&
       (filters.batch.length === 0 ||
-        filters.batch.includes(student.BATCH) ||
-        (showOtherBatch && student.BATCH.includes(filters.otherBatch))) &&
+        filters.batch.includes(student.batch) ||
+        (showOtherBatch && student.batch.includes(filters.otherBatch))) &&
       (filters.cgpa === "" ||
-        parseFloat(student.CPGA) >= parseFloat(filters.cgpa)) &&
+        parseFloat(student.cgpa) >= parseFloat(filters.cgpa)) &&
       (filters.arrears === "" ||
-        (parseFloat(filters.arrears) >= parseFloat(student.ARREARS))) &&
+        (parseFloat(filters.arrears) >= parseFloat(student.arrears))) &&
       (filters.historyOfArrears === "" ||
-        (parseFloat(filters.historyOfArrears) >= parseFloat(student.HOA))) &&
+        (parseFloat(filters.historyOfArrears) >= parseFloat(student.hoa))) &&
       (filters.aoi.length === 0 ||
-        filters.aoi.includes(student.AOI) ||
-        (showOtherAoi && student.AOI.includes(filters.otherAoi))) &&
+        filters.aoi.includes(student.aoi) ||
+        (showOtherAoi && student.aoi.includes(filters.otherAoi))) &&
       (filters.language === "" ||
-        student.LANGUAGE.toLowerCase().includes(filters.language.toLowerCase()))
+        student.language.toLowerCase().includes(filters.language.toLowerCase()))
     );
   });
   const handleAllCheckboxChange = (e, key) => {
@@ -122,9 +128,9 @@ function Trainingschedule() {
   const [hoverVisible, setHoverVisible] = useState(false);
   const [hoverVisiblee, setHoverVisiblee] = useState(false);
   const [hoverVisibleee, setHoverVisibleee] = useState(false);
-  ///
-  const [selectedRecords, setSelectedRecords] = useState([]);
-  const [selectedDepartments, setSelectedDepartments] = useState([]);
+  
+ 
+
   const [batchSize, setBatchSize] = useState(3);
   const [batches, setBatches] = useState([]);
 
@@ -136,22 +142,161 @@ function Trainingschedule() {
   };
 
   const applyFilters = () => {
-    const filteredStudentss = filteredStudents.filter((s) =>
-      selectedDepartments.includes(s.DEPARTMENT)
-    );
     const newBatches = [];
     for (let i = 0; i < filteredStudents.length; i += batchSize) {
-      newBatches.push(filteredStudents.slice(i, i + batchSize));
+      newBatches.push({
+        batchNumber: `Batch ${Math.floor(i / batchSize) + 1}`,
+        students: filteredStudents.slice(i, i + batchSize),
+        fromdate: "",
+        todate: "",
+      });
     }
     setBatches(newBatches);
   };
+  
 
   const downloadExcel = (batch, batchIndex) => {
     const ws = utils.json_to_sheet(batch);
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, `Batch_${batchIndex + 1}`);
     writeFile(wb, `batch_${batchIndex + 1}.xlsx`);
-  };
+};
+const [showModal, setShowModal] = useState(false);
+const [scheduleCode, setScheduleCode] = useState("");
+const [trainingName, setTrainingName] = useState("");
+const [type, setType] = useState("");
+const [trainee, setTrainee] = useState("");
+const [fromdate, setFromdate] = useState("");
+const [todate, setTodate] = useState("");
+const [duration, setDuration] = useState("");
+const [batch, setBatch] = useState("");
+const [department, setDepartment] = useState("");
+
+const [error, setError] = useState("");
+
+const updateBatchDate = (index, field, value) => {
+  setBatches((prevBatches) =>
+    prevBatches.map((batch, i) =>
+      i === index
+        ? {
+            ...batch,
+            batch: batch.batch || `Batch ${i + 1}`,
+            [field]: value || "",
+          }
+        : batch
+    )
+  );
+};
+
+
+
+
+
+const handleSave = async () => {
+  if (!scheduleCode || !trainingName) {
+    setError("Both Schedule Code and Training Name are required.");
+    return;
+  }
+
+  try {
+   
+    let scheduleCheck;
+    try {
+      scheduleCheck = await axios.get(
+        `http://localhost:3000/api/training/check-schedule-code/${scheduleCode}`
+      );
+    } catch (checkError) {
+      console.error("Error checking schedule code:", checkError);
+      Swal.fire({
+        title: "Error!",
+        text: "Could not verify Schedule Code. Please try again.",
+        icon: "error",
+      });
+      return;
+    }
+
+    if (scheduleCheck.data?.exists) {
+      Swal.fire({
+        title: "Error!",
+        text: "Schedule Code Already Taken. Please use a different one.",
+        icon: "error",
+      });
+      return;
+    }
+
+    
+    if (!Array.isArray(batches) || batches.length === 0) {
+      Swal.fire({
+        title: "Error!",
+        text: "No batches found. Please add batches before saving.",
+        icon: "error",
+      });
+      return;
+    }
+
+    const formattedBatches = batches.map((b, i) => ({
+      batchNumber: b.batch || `Batch ${i + 1}`,  
+      fromdate: b.fromdate || "",
+      todate: b.todate || "",
+      students: Array.isArray(b.students) && b.students.length > 0 ? b.students : filteredStudents, 
+    }));
+    
+
+    const trainingData = {
+      scheduleCode,
+      trainingName,
+      type,
+      trainee,
+      batch,
+      duration,
+      department,
+      batches: formattedBatches,
+    };
+
+  
+    const saveResponse = await axios.post(
+      "http://localhost:3000/api/training/saveTraining",
+      trainingData
+    );
+
+    if (saveResponse.status === 201) {
+      Swal.fire({
+        title: "Saved!",
+        text: "Training data has been saved successfully.",
+        icon: "success",
+      });
+
+      
+      setScheduleCode("");
+      setTrainingName("");
+      setType("");
+      setTrainee("");
+      setFromdate("");
+      setTodate("");
+      setDuration("");
+      setBatch("");
+      setDepartment("");
+      setBatches([]);
+      setError("");
+      setShowModal(false);
+    }
+  } catch (error) {
+    console.error("Error saving training:", error);
+    Swal.fire({
+      title: "Error!",
+      text: error.response?.data?.message || "Something went wrong. Please try again.",
+      icon: "error",
+    });
+  }
+};
+
+
+
+
+
+  
+
+  
 
 
 
@@ -558,54 +703,206 @@ function Trainingschedule() {
             Total Records: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{batches.flat().length}</span>
           </h4>
 
-          {batches.map((batch, index) => (
-            <div key={index} className="mb-4">
-              <h5 className="mb-4" style={{ position: "relative", left: "40px", fontSize: "25px" }}>Batch {index + 1} :</h5> <button
-                className="btn btn-success me-2 "
-                style={{ position: "relative", left: "1000px", bottom: "40px" }}
-                onClick={() => downloadExcel(batch, index)}
-              >
-                <i
-                  className="bi bi-file-earmark-excel"
-                  style={{ marginRight: "10px" }}
-                ></i>
-                Excel
-                <i className="bi bi-download" style={{ marginLeft: "5PX" }}></i>
-              </button>
-              <div className="mb-4" style={{ position: "relative", right: "230px" }}>
-                <table className="table table-striped  table-hover tabl"  >
-                  <thead>
-                    <tr>
-                      <th>REGISTRATION_NUMBER</th>
-                      <th>NAME</th>
-                      <th>DEPARTMENT</th>
-                      <th>BATCH</th>
-                      <th>CGPA</th>
-                      <th>ARREARS</th>
-                      <th>HOA</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {batch.map((student) => (
-                      <tr key={student.REGISTRATION_NUMBER}>
-                        <td>{student.REGISTRATION_NUMBER}</td>
-                        <td>{student.NAME}</td>
-                        <td>{student.DEPARTMENT}</td>
-                        <td>{student.BATCH}</td>
-                        <td>{student.CPGA}</td>
-                        <td>{student.ARREARS}</td>
-                        <td>{student.HOA}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+          {batches.length > 0 ? (
+  batches.map((batch, index) => (
+    <div key={index} className="mb-4">
+      <h5 className="mb-4" style={{ position: "relative", left: "40px", fontSize: "25px" }}>
+        {batch.batchNumber}
+      </h5>
+      <button
+        className="btn btn-success me-2"
+        style={{ position: "relative", left: "1000px", bottom: "40px" }}
+        onClick={() => downloadExcel(batch.students, index)}
+      >
+        <i className="bi bi-file-earmark-excel" style={{ marginRight: "10px" }}></i>
+        Excel
+        <i className="bi bi-download" style={{ marginLeft: "5PX" }}></i>
+      </button>
+
+      <div className="mb-4" style={{ position: "relative", right: "230px" }}>
+        <table className="table table-striped table-hover tabl">
+          <thead>
+            <tr>
+              <th>REGISTRATION_NUMBER</th>
+              <th>NAME</th>
+              <th>DEPARTMENT</th>
+              <th>BATCH</th>
+              <th>CGPA</th>
+              <th>ARREARS</th>
+              <th>HOA</th>
+            </tr>
+          </thead>
+          <tbody>
+            {batch.students.map((student) => (
+              <tr key={student.registration_number}>
+                <td>{student.registration_number}</td>
+                <td>{student.name}</td>
+                <td>{student.department}</td>
+                <td>{batch.batchNumber}</td> 
+                <td>{student.cgpa}</td>
+                <td>{student.arrears}</td>
+                <td>{student.hoa}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  ))
+) : (
+  <p>No batches available.</p>
+)}
 
 
+        </div>
+        <div>
+        <div>
+      <button className="btn" onClick={() => setShowModal(true)} disabled={batches.length === 0} style={{backgroundColor:"grey",color:'white'}}>
+        Save
+      </button>
+
+    
+      <div className={`modal fade ${showModal ? "show d-block" : "d-none"}`} tabIndex="-1" style={{}}>
+        <div className="modal-dialog">
+          <div className="modal-content" style={{}}>
+            <div className="modal-header">
+              <h5 className="modal-title">Enter Training Details</h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setShowModal(false)}
+              ></button>
             </div>
-          ))}
+            <div className="modal-body">
+              {error && <div className="alert alert-danger">{error}</div>}
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Schedule Code:"
+                  value={scheduleCode}
+                  onChange={(e) => setScheduleCode(e.target.value)}
+                  required
+                />
+              </div>
+             
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Training Name:"
+                  value={trainingName}
+                  onChange={(e) => setTrainingName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Type Name:"
+                  value={type}
+                  required
+                  onChange={(e) => setType(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Trainee Name:"
+                  required
+                  value={trainee}
+                  onChange={(e) => setTrainee(e.target.value)}
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Batch:"
+                  required
+                  value={batch}
+                  onChange={(e) => setBatch(e.target.value)}
+                />
+              </div>
+            
+            <h5>Batches</h5>
+            {batches.map((batch, index) => (
+              <div key={index} className="border p-3 mb-2 rounded">
+                <h6>Batch {index+1}</h6>
+                <div className="row">
+                  <div className="col-md-5">
+                    <label className="form-label">From Date</label>
+                    <input
+  type="date"
+  className="form-control"
+  value={batch.fromdate || ""}  
+  onChange={(e) => updateBatchDate(index, "fromdate", e.target.value)}
+  required
+/>
+                  </div>
+                  <div className="col-md-5">
+                    <label className="form-label">To Date</label>
+                    <input
+  type="date"
+  className="form-control"
+  value={batch.todate || ""}
+  onChange={(e) => {
+    if (e.target.value < batch.fromdate) {
+      Swal.fire("Invalid Date!", "End date cannot be before start date.", "warning");
+    } else {
+      updateBatchDate(index, "todate", e.target.value);
+    }
+  }}
+  required
+/>
+                  </div>
+                  
+                </div>
+              </div>
+            ))}
+          
+         
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  required
+                  placeholder="Duration"
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                />
+              </div>
+             
+              <div className="mb-3">
+                <input
+                  type="text"
+                  required
+                  className="form-control"
+                  placeholder=" Department "
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                />
+              </div>
+              
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                Cancel
+              </button>
+              <button type="button" className="btn btn-primary" onClick={handleSave}>
+                Save
+              </button>
+              </div>
+            </div>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+    
+     
     </>
   );
 }
