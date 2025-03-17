@@ -28,16 +28,15 @@ const examSchema = new mongoose.Schema({
   ],
 });
 
-
 const resultSchema = new mongoose.Schema({
-  registration_number: { type: String, required: true }, 
+  registration_number: { type: String, required: true },
   batch: { type: String, required: true },
-  qpcode: { type: String, required: true }, 
-  title: { type: String,  }, 
-  score: { type: Number, required: true }, 
-  totalscore: { type: Number, required: true }, 
-  percentage: { type: String, required: true }, 
-  published: { type: Boolean, default: false }, 
+  qpcode: { type: String, required: true },
+  title: { type: String },
+  score: { type: Number, required: true },
+  totalscore: { type: Number, required: true },
+  percentage: { type: String, required: true },
+  published: { type: Boolean, default: false },
   publishedAt: { type: Date, default: null },
 });
 
@@ -45,7 +44,7 @@ const studentSchema = new mongoose.Schema({
   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   registration_number: { type: String, required: true, unique: true },
   name: { type: String, required: true },
-  email:{type:String,required:true,unique:true},
+  email: { type: String, required: true, unique: true },
   department: { type: String, required: true },
   batch: { type: String, required: true },
   sslc: { type: String, required: true },
@@ -78,6 +77,7 @@ const studentSchema = new mongoose.Schema({
   exams: [examSchema],
   results: [resultSchema],
 });
+
 
 const StudentModel = mongoose.model("studentaccdatas", studentSchema);
 export default StudentModel;

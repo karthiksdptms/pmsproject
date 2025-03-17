@@ -91,11 +91,7 @@ function Login() {
                   <i className={isPasswordVisible ? "bi bi-eye-slash" : "bi bi-eye"}></i>
                 </button>
                 <br />
-                <p>
-  <a href="" style={{ color: "blue", cursor: "pointer",position:'relative',top:'15px',left:'30px',fontSize:'13px' }}>
-    forgot Password?
-  </a>
-</p>
+               
 
               </div>
               

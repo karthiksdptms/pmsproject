@@ -700,7 +700,7 @@ const handleSave = async () => {
             Apply Filters
           </button>
           <h4 className="mb-4">
-            Total Records: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{batches.flat().length}</span>
+            Total Batches: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{batches.flat().length}</span>
           </h4>
 
           {batches.length > 0 ? (

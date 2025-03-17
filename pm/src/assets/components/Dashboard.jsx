@@ -10,6 +10,9 @@ import { IoIosArrowBack } from "react-icons/io";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
+import Loading from "./Loading";
+
+
 const departmentOptions = [
   "AIDS",
   "ECE",
@@ -105,33 +108,49 @@ function Dashboard() {
     setFilters((prev) => ({ ...prev, [key]: e.target.value }));
   };
 
-  const [students, setstudents] = useState([])
+  
+  const handleAllCheckboxChange = (e, key) => {
+    const isChecked = e.target.checked;
+    if (isChecked) {
+      setFilters((prev) => ({ ...prev, [key]: [] }));
+    }
+  };const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true); 
+  
   useEffect(() => {
-    axios.get("http://localhost:3000/getstudents")
-      .then(response => setstudents(response.data))
-      .catch(error => console.error("Error fetching students:", error));
+    setLoading(true); 
+    axios
+      .get("http://localhost:3000/api/students/getstudents")
+      .then((response) => {
+        console.log("Fetched Students:", response.data);
+        setStudents(response.data.students || []);
+      })
+      .catch((error) => console.error("Error fetching students:", error))
+      .finally(() => {
+        setLoading(false); 
+      });
   }, []);
 
   const filteredStudents = students.filter((student) => {
     return (
       (filters.department.length === 0 ||
-        filters.department.includes(student.DEPARTMENT) ||
+        filters.department.includes(student.department) ||
         (showOtherDepartment &&
-          student.DEPARTMENT.includes(filters.otherDepartment))) &&
+          student.department.includes(filters.otherDepartment))) &&
       (filters.batch.length === 0 ||
-        filters.batch.includes(student.BATCH) ||
-        (showOtherBatch && student.BATCH.includes(filters.otherBatch))) &&
+        filters.batch.includes(student.batch) ||
+        (showOtherBatch && student.batch.includes(filters.otherBatch))) &&
       (filters.cgpa === "" ||
-        parseFloat(student.CPGA) >= parseFloat(filters.cgpa)) &&
+        parseFloat(student.cgpa) >= parseFloat(filters.cgpa)) &&
       (filters.arrears === "" ||
-        student.ARREARS.toString() === filters.arrears) &&
+        student.arrears.toString() === filters.arrears) &&
       (filters.historyOfArrears === "" ||
-        student.HOA.toString() === filters.historyOfArrears) &&
+        student.hoa.toString() === filters.historyOfArrears) &&
       (filters.aoi.length === 0 ||
-        filters.aoi.includes(student.AOI) ||
-        (showOtherAoi && student.AOI.includes(filters.otherAoi))) &&
+        filters.aoi.includes(student.aoi) ||
+        (showOtherAoi && student.aoi.includes(filters.otherAoi))) &&
       (filters.language === "" ||
-        student.LANGUAGE.toLowerCase().includes(filters.language.toLowerCase()))
+        student.language.toLowerCase().includes(filters.language.toLowerCase()))
     );
   });
 
@@ -383,75 +402,91 @@ function Dashboard() {
                   </div>
                 </div>
                 <div className="lable1">
-                  <div>
-                    <label style={{ fontSize: "23px" }}>CGPA:</label><br />
-                    <select onChange={(e) => handleSelectChange(e, "cgpa")} style={{
-                      marginBottom: "10px",
-                      padding: "8px",
-                      width: "100%",
-                      maxWidth: "300px",
-                    }}>
-                      <option value="" disabled>
-                        select CGPA:
-                      </option>
-                      <option value="" >ANY</option>
-                      {cgpaOptions.map((cgpa) => (
-                        <option key={cgpa} value={cgpa.split(" ")[0]}>
-                          {cgpa}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="lable1">
-                  <div>
-                    <label style={{ fontSize: "23px" }}>Arrears:</label><br />
-                    <select onChange={(e) => handleSelectChange(e, "arrears")} style={{
-                      marginBottom: "10px",
-                      padding: "8px",
-                      width: "100%",
-                      maxWidth: "300px",
-                    }}>
-                      <option value="" disabled>
-                        select Arrears:
-                      </option>
-                      <option value="">ANY</option>
-                      {arrearsOptions.map((arr) => (
-                        <option key={arr} value={arr}>
-                          {arr}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="lable1">
-                  <div>
-                    <label style={{ fontSize: "23px" }}>
-                      History of Arrears:
-                    </label>
-                    <select
+  <div>
+    <label htmlFor="cgpaSelect" style={{ fontSize: "23px" }}>CGPA:</label><br />
+    <select
+      id="cgpaSelect"
+      name="cgpa"
+      onChange={(e) => handleSelectChange(e, "cgpa")}
+      style={{
+        marginBottom: "10px",
+        padding: "8px",
+        width: "100%",
+        maxWidth: "300px",
+      }}
+    >
+      <option value="" disabled selected>
+        Select CGPA:
+      </option>
+      <option value="any">ANY</option>
+      {cgpaOptions.map((cgpa) => (
+        <option key={cgpa} value={cgpa.split(" ")[0]}>
+          {cgpa}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
 
-                      onChange={(e) =>
-                        handleSelectChange(e, "historyOfArrears")
-                      }
-                      style={{
-                        marginBottom: "10px",
-                        padding: "8px",
-                        width: "210px",
-                        maxWidth: "300px",
-                      }}
-                    >  <option value="" disabled>
-                        select HOA:
-                      </option>
-                      <option value="">ANY</option>
-                      {historyOfArrearsOptions.map((hoa) => (
-                        <option key={hoa} value={hoa}>
-                          {hoa}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+                <div className="lable1">
+  <div>
+    <label htmlFor="arrearsSelect" style={{ fontSize: "23px" }}>
+      Arrears:
+    </label>
+    <br />
+    <select
+      id="arrearsSelect"
+      name="arrears"
+      onChange={(e) => handleSelectChange(e, "arrears")}
+      style={{
+        marginBottom: "10px",
+        padding: "8px",
+        width: "100%",
+        maxWidth: "300px",
+      }}
+    >
+      <option value="" disabled selected>
+        Select Arrears:
+      </option>
+      <option value="any">ANY</option>
+      {arrearsOptions.map((arr) => (
+        <option key={arr} value={arr}>
+          {arr}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
+
+<div className="lable1">
+  <div>
+    <label htmlFor="hoaSelect" style={{ fontSize: "23px" }}>
+      History of Arrears:
+    </label>
+    <select
+      id="hoaSelect"
+      name="historyOfArrears"
+      onChange={(e) => handleSelectChange(e, "historyOfArrears")}
+      style={{
+        marginBottom: "10px",
+        padding: "8px",
+        width: "210px",
+        maxWidth: "300px",
+      }}
+    >
+      <option value="" disabled selected>
+        Select HOA:
+      </option>
+      <option value="any">ANY</option>
+      {historyOfArrearsOptions.map((hoa) => (
+        <option key={hoa} value={hoa}>
+          {hoa}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
+
                 <div
                   className="lable1"
                   style={{ left: "550px", bottom: "575px" }}
@@ -514,25 +549,27 @@ function Dashboard() {
 
                   </div>
                 </div>
-                <div
-                  className="lable1"
-                  style={{ left: "0px", bottom: "575px" }}
-                >
-                  <div>
-                    <label style={{ fontSize: "23px" }}>Languages:</label>
-                    <input
-                      type="text"
-                      placeholder="Enter Language:"
-                      onChange={(e) => handleInputChange(e, "language")}
-                      style={{
-                        marginBottom: "10px",
-                        padding: "8px",
-                        width: "100%",
-                        maxWidth: "300px",
-                      }}
-                    />
-                  </div>
-                </div>
+                <div className="lable1" style={{ position: "relative", left: "0px", bottom: "575px" }}>
+  <div>
+    <label htmlFor="languageInput" style={{ fontSize: "23px" }}>Languages:</label>
+    <input
+      id="languageInput"
+      type="text"
+      name="language"
+      placeholder="Enter Language"
+      onChange={(e) => handleInputChange(e, "language")}
+      style={{
+        marginBottom: "10px",
+        padding: "8px",
+        width: "100%",
+        maxWidth: "300px",
+        border: "1px solid #ccc",
+        borderRadius: "5px"
+      }}
+    />
+  </div>
+</div>
+
               </div>
               <div
                 className="filinner"
@@ -576,162 +613,165 @@ function Dashboard() {
                     <h4 className="mb-4">
                       Total Records: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{filteredStudents.flat().length}</span>
                     </h4>
-                    <div
-                      style={{
-                        position: "relative",
-                        bottom: "60px",
-                        overflowY: "auto",
-                        maxHeight: "800px",
-                      }}
-                    >
-                      <div
-                        className="flex justify-right items-center gap-4 mt-4 "
-                        style={{ position: "relative", left: "800px", bottom: "20PX" }}
-                      >
-                        <label>
-                          {" "}
-                          No of records per page:{" "}
-                          <input
-                            type="number"
-                            value={rowsPerPage}
-                            onChange={handleRowsPerPageChange}
-                            style={{ width: "50px", padding: "5px", marginRight: "20PX" }}
-                          />
-                        </label>
-                        <button
-                          onClick={() =>
-                            setCurrentPage((prev) => Math.max(prev - 1, 1))
-                          }
-                          className="btn"
-                          disabled={currentPage === 1}
-                        >
-                          <i className="bi bi-chevron-double-left"></i>
-                        </button>
+                    {loading ? (
+  <div >
+    
+  <Loading/>
+  </div>
+) : (
+  <div
+    style={{
+      position: "relative",
+      bottom: "60px",
+      overflowY: "auto",
+      maxHeight: "800px",
+    }}
+  >
+    <div
+      className="flex justify-right items-center gap-4 mt-4"
+      style={{ position: "relative", left: "800px", bottom: "20px" }}
+    >
+      <label htmlFor="rowsPerPage">No of records per page:</label>
+      <input
+        type="number"
+        id="rowsPerPage"
+        name="rowsPerPage"
+        value={rowsPerPage}
+        onChange={handleRowsPerPageChange}
+        style={{ width: "50px", padding: "5px", marginRight: "20px" }}
+      />
 
-                        <span className="text-lg">
-                          Page {currentPage} of {totalPages}
-                        </span>
+      <button
+        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        className="btn"
+        disabled={currentPage === 1}
+      >
+        <i className="bi bi-chevron-double-left"></i>
+      </button>
 
-                        <button
-                          onClick={() =>
-                            setCurrentPage((prev) =>
-                              Math.min(prev + 1, totalPages)
-                            )
-                          }
-                          className="btn"
-                          disabled={currentPage === totalPages}
-                        >
-                          <i className="bi bi-chevron-double-right arr"></i>
-                        </button>
-                      </div>
-                      <div>
-                        <table
-                          border="1"
-                          className="table table-striped  table-hover tabl"
-                          id="my-table"
-                          style={{
-                            position: "relative",
-                            left: "-0px",
-                            bottom: "0px",
-                          }}
-                        >
-                          <thead>
-                            <tr>
-                              <th scope="col">s.no</th>
-                              <th scope="col">REGISTRATION_NO</th>
-                              <th scope="col">NAME</th>
-                              <th scope="col">DEPARTMENT</th>
-                              <th scope="col">BATCH(YEAR)</th>
-                              <th scope="col">SSLC(%)</th>
-                              <th scope="col">HSC(%)</th>
-                              <th scope="col">Diploma(%)</th>
-                              <th scope="col">Sem 1</th>
-                              <th scope="col">Sem 2</th>
-                              <th scope="col">Sem 3</th>
-                              <th scope="col">Sem 4</th>
-                              <th scope="col">Sem 5</th>
-                              <th scope="col">Sem 6</th>
-                              <th scope="col">Sem 7</th>
-                              <th scope="col">Sem 8</th>
-                              <th scope="col">CGPA</th>
-                              <th scope="col">ARREARS</th>
-                              <th scope="col">HISTORY_OF_ARREARS</th>
-                              <th scope="col">ADDITIONAL_LANGUAGES</th>
-                              <th scope="col">INTERNSHIPS</th>
-                              <th scope="col">CERTIFICATIONS</th>
-                              <th scope="col">PATENTS/PUBLICATIONS</th>
-                              <th scope="col">AWARDS/ACHIEVMENTS</th>
-                              <th scope="col">AREA_OF_INTEREST</th>
-                              <th scope="col">PLACEMENT_INFO</th>
-                              <th>INFO</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {displayedData.map((item, index) => (
-                              <tr key="index">
-                                <td>{index + 1}</td>
-                                <td>{item["REGISTRATION_NUMBER"]}</td>
-                                <td>{item.NAME}</td>
-                                <td>{item.DEPARTMENT}</td>
-                                <td>{item.BATCH}</td>
-                                <td>{item.SSLC}</td>
-                                <td>{item.HSC}</td>
-                                <td>{item.HSC}</td>
-                                <td>{item.SEM1}</td>
-                                <td>{item.SEM2}</td>
-                                <td>{item.SEM3}</td>
-                                <td>{item.SEM4}</td>
-                                <td>{item.SEM5}</td>
-                                <td>{item.SEM6}</td>
-                                <td>{item.SEM7}</td>
-                                <td>{item.SEM8}</td>
-                                <td>{item.CPGA}</td>
-                                <td>{item.ARREARS}</td>
-                                <td>{item.HOA}</td>
-                                <td>{item.LANGUAGE}</td>
-                                <td>{item.INTERNSHIPS}</td>
-                                <td>{item.CERTIFICATIONS}</td>
-                                <td>{item.PATENTSPUBLICATIONS}</td>
-                                <td>{item.ACHEIVEMENTS}</td>
-                                <td>{item.AOI}</td>
-                                <td>{item.PLACEMENT}</td>
-                                <td>
-                                  <button
-                                    style={{
-                                      border: "none",
-                                      width: "50px",
-                                      fontSize: "20px",
-                                      borderRadius: "50%",
-                                      backgroundColor: "transparent",
-                                    }}
-                                    type="button"
-                                    data-bs-toggle="offcanvas"
-                                    data-bs-target="#offcanvasRight"
-                                    aria-controls="offcanvasRight"
-                                    onClick={() => handleClick(item)}
-                                  >
-                                    <i className="bi bi-info-circle"></i>
-                                  </button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                          <tfoot>
-                            <tr className="norec">
-                              <td>
-                                {filteredStudents.length === 0 && (
-                                  <h5 style={{ color: "red" }}>
-                                    <img src="norec.png" alt="" />
-                                    No_records_found
-                                  </h5>
-                                )}
-                              </td>
-                            </tr>
-                          </tfoot>
-                        </table>
-                      </div>
+      <span className="text-lg">Page {currentPage} of {totalPages}</span>
 
-                    </div>
+      <button
+        onClick={() =>
+          setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+        }
+        className="btn"
+        disabled={currentPage === totalPages}
+      >
+        <i className="bi bi-chevron-double-right arr"></i>
+      </button>
+    </div>
+
+    <div>
+      <table
+        border="1"
+        className="table table-striped table-hover tabl"
+        id="my-table"
+        style={{
+          position: "relative",
+          left: "0px",
+          bottom: "0px",
+          minWidth: "3500px",
+        }}
+      >
+        <thead>
+          <tr>
+            <th scope="col">s.no</th>
+            <th scope="col">REGISTRATION_NO</th>
+            <th scope="col">NAME</th>
+            <th scope="col">DEPARTMENT</th>
+            <th scope="col">BATCH(YEAR)</th>
+            <th scope="col">SSLC(%)</th>
+            <th scope="col">HSC(%)</th>
+            <th scope="col">Diploma(%)</th>
+            <th scope="col">Sem 1</th>
+            <th scope="col">Sem 2</th>
+            <th scope="col">Sem 3</th>
+            <th scope="col">Sem 4</th>
+            <th scope="col">Sem 5</th>
+            <th scope="col">Sem 6</th>
+            <th scope="col">Sem 7</th>
+            <th scope="col">Sem 8</th>
+            <th scope="col">CGPA</th>
+            <th scope="col">ARREARS</th>
+            <th scope="col">HISTORY_OF_ARREARS</th>
+            <th scope="col">ADDITIONAL_LANGUAGES</th>
+            <th scope="col">INTERNSHIPS</th>
+            <th scope="col">CERTIFICATIONS</th>
+            <th scope="col">PATENTS/PUBLICATIONS</th>
+            <th scope="col">AWARDS/ACHIEVMENTS</th>
+            <th scope="col">AREA_OF_INTEREST</th>
+            <th scope="col">PLACEMENT_INFO</th>
+            <th>INFO</th>
+          </tr>
+        </thead>
+        <tbody>
+          {displayedData.map((item, index) => (
+            <tr key={item.registration_number}>
+              <td>{index + 1}</td>
+              <td>{item.registration_number}</td>
+              <td>{item.name}</td>
+              <td>{item.department}</td>
+              <td>{item.batch}</td>
+              <td>{item.sslc}</td>
+              <td>{item.hsc}</td>
+              <td>{item.diploma}</td>
+              <td>{item.sem1}</td>
+              <td>{item.sem2}</td>
+              <td>{item.sem3}</td>
+              <td>{item.sem4}</td>
+              <td>{item.sem5}</td>
+              <td>{item.sem6}</td>
+              <td>{item.sem7}</td>
+              <td>{item.sem8}</td>
+              <td>{item.cgpa}</td>
+              <td>{item.arrears}</td>
+              <td>{item.hoa}</td>
+              <td>{item.language}</td>
+              <td>{item.internships}</td>
+              <td>{item.certifications}</td>
+              <td>{item.patentspublications}</td>
+              <td>{item.achievements}</td>
+              <td>{item.aoi}</td>
+              <td>{item.placement}</td>
+              <td>
+                <button
+                  style={{
+                    border: "none",
+                    width: "50px",
+                    fontSize: "20px",
+                    borderRadius: "50%",
+                    backgroundColor: "transparent",
+                  }}
+                  type="button"
+                  data-bs-toggle="offcanvas"
+                  data-bs-target="#offcanvasRight"
+                  aria-controls="offcanvasRight"
+                  onClick={() => handleClick(item)}
+                >
+                  <i className="bi bi-info-circle"></i>
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr className="norec">
+            <td>
+              {filteredStudents.length === 0 && (
+                <h5 style={{ color: "red" }}>
+                  <img src="norec.png" alt="" />
+                  No records found
+                </h5>
+              )}
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+)}
+
 
                     {selectedData && (
                       <div
@@ -764,15 +804,16 @@ function Dashboard() {
                                 top: "15px",
                               }}
                             />
-                            <h2
+                            <p
                               style={{
                                 position: "relative",
                                 bottom: "100px",
                                 left: "240px",
+                                fontSize:'25px'
                               }}
                             >
-                              {selectedData.NAME}
-                            </h2>
+                              {selectedData.name}
+                            </p>
                           </h5>
                           <h5
                             style={{
@@ -781,7 +822,7 @@ function Dashboard() {
                               right: "-40px",
                             }}
                           >
-                            {selectedData.REGISTRATION_NUMBER}
+                            {selectedData.registration_number}
                           </h5>
                           <div
                             className="ribbon1"
@@ -811,7 +852,7 @@ function Dashboard() {
                               className="btn-check"
                               name="btnradio"
                               id="btnradio1"
-                              autocomplete="off"
+                              autoComplete="off"
                             />
                             <label
                               style={{
@@ -820,7 +861,7 @@ function Dashboard() {
                               }}
                               className="btn btn-outline-primary"
                               onClick={closeDivs}
-                              for="btnradio1"
+                              htmlFor="btnradio1" 
                             >
                               {" "}
                               1
@@ -831,7 +872,7 @@ function Dashboard() {
                               className="btn-check bnt"
                               name="btnradio"
                               id="btnradio2"
-                              autocomplete="off"
+                              autoComplete="off"
                             />
                             <label
                               style={{
@@ -840,7 +881,7 @@ function Dashboard() {
                               }}
                               className="btn btn-outline-primary"
                               onClick={handleButtonClick}
-                              for="btnradio2"
+                              htmlFor="btnradio2" 
                             >
                               {" "}
                               2
@@ -851,7 +892,7 @@ function Dashboard() {
                               className="btn-check bnt"
                               name="btnradio"
                               id="btnradio3"
-                              autocomplete="off"
+                              autoComplete="off"
                             />
                             <label
                               style={{
@@ -860,7 +901,7 @@ function Dashboard() {
                               }}
                               className="btn btn-outline-primary"
                               onClick={handleButtonnClick}
-                              for="btnradio3"
+                              htmlFor="btnradio3" 
                             >
                               {" "}
                               3
@@ -869,8 +910,8 @@ function Dashboard() {
                               type="radio"
                               className="btn-check bnt"
                               name="btnradio"
-                              id="btnradio3"
-                              autocomplete="off"
+                              id="btnradio4"
+                              autoComplete="off"
                             />
                             <label
                               style={{
@@ -879,7 +920,7 @@ function Dashboard() {
                               }}
                               className="btn btn-outline-primary"
                               onClick={handleButtonnnClick}
-                              for="btnradio3"
+                              htmlFor="btnradio4" 
                             >
                               {" "}
                               4
@@ -1018,7 +1059,7 @@ function Dashboard() {
                               </h5>
                               <button className="btn resume bnt">
                                 <a
-                                  href={selectedData.RESUME}
+                                  href={selectedData.resume}
                                   download="resume.pdf"
                                   style={{
                                     zIndex: "10",
@@ -1050,7 +1091,7 @@ function Dashboard() {
                                     ></i>
                                     Email
                                   </p>
-                                  <h5 className="ul"> {selectedData.EMAIL}</h5>
+                                  <h5 className="ul"> {selectedData.email}</h5>
                                 </div>
                                 <div className="bdyear bdbase mar">
                                   <p>
@@ -1059,8 +1100,8 @@ function Dashboard() {
                                     />
                                     BATCH
                                   </p>
-                                  <h6 className="hsty ul">
-                                    {selectedData.BATCH}
+                                  <h6 className="hsty ul ulll">
+                                    {selectedData.batch}
                                   </h6>
                                 </div>
                                 <div className="bdcgpa bdbase mar">
@@ -1071,8 +1112,8 @@ function Dashboard() {
                                     ></i>
                                     CGPA
                                   </p>
-                                  <h5 className="hsty ul">
-                                    {selectedData.CPGA}
+                                  <h5 className="hsty ul ">
+                                    {selectedData.cgpa}
                                   </h5>
                                 </div>
                                 <div className="bdph bdbase mar">
@@ -1085,7 +1126,7 @@ function Dashboard() {
                                   </p>
                                   <h5 className="ul">
                                     {" "}
-                                    {selectedData.PHONENO}
+                                    {selectedData.phoneno}
                                   </h5>
                                 </div>
                                 <div className="bddept bdbase mar">
@@ -1097,7 +1138,7 @@ function Dashboard() {
                                     Department
                                   </p>
                                   <h5 className="hsty ul">
-                                    {selectedData.DEPARTMENT}
+                                    {selectedData.department}
                                   </h5>
                                 </div>
                                 <div className="bdarrear bdbase mar">
@@ -1109,7 +1150,7 @@ function Dashboard() {
                                     Arrear
                                   </p>
                                   <h5 className="hsty ul">
-                                    {selectedData.ARREARS}
+                                    {selectedData.arrears}
                                   </h5>
                                 </div>
                                 <div className="bdaddress bdbase mar">
@@ -1121,7 +1162,7 @@ function Dashboard() {
                                   </p>
                                   <h5 className="ul">
                                     {" "}
-                                    {selectedData.ADDRESS}
+                                    {selectedData.address}
                                   </h5>
                                 </div>
                               </div>
@@ -1155,7 +1196,7 @@ function Dashboard() {
                                       <ul style={{ marginTop: "40px" }}>
                                         <li className="ul">
                                           <h5 style={{ margin: "10px" }}>
-                                            {selectedData.ACHEIVEMENTS}
+                                            {selectedData.achievements}
                                           </h5>{" "}
                                         </li>
                                       </ul>
@@ -1167,7 +1208,7 @@ function Dashboard() {
                                       <ul style={{ marginTop: "40px" }}>
                                         <li className="ul">
                                           <h5 style={{ margin: "10px" }}>
-                                            {selectedData.CERTIFICATIONS}
+                                            {selectedData.certifications}
                                           </h5>{" "}
                                         </li>
                                       </ul>
@@ -1184,7 +1225,7 @@ function Dashboard() {
                                         <ul>
                                           <li>
                                             <h5 className="ul">
-                                              {selectedData.PATENTSPUBLICATIONS}
+                                              {selectedData.patentspublications}
                                             </h5>{" "}
                                           </li>
                                         </ul>
@@ -1236,7 +1277,7 @@ function Dashboard() {
                                 <ul style={{ marginTop: "40px" }}>
                                   <li className="ul">
                                     <h5 style={{ marginTop: "30px" }}>
-                                      {selectedData.INTERNSHIPS}
+                                      {selectedData.internships}
                                     </h5>{" "}
                                   </li>
                                 </ul>
@@ -1266,21 +1307,21 @@ function Dashboard() {
                                 <br />
 
                                 <div style={{ position: "relative", bottom: "30px" }}>
-                                  <h5 className="mx-3">Placement Status: {selectedData.PLACEMENT}</h5>
+                                  <h5 className="mx-3">Placement Status: {selectedData.placement}</h5>
 
 
-                                  {/* Transform the Offers Data */}
+                                
                                   {(() => {
                                     const offers = [];
                                     Object.keys(selectedData).forEach((key) => {
                                       if (key.startsWith("OFFERS/")) {
-                                        const index = key.split("/")[1]; // Extract offer index
-                                        const field = key.split("/")[2]; // Extract field name
+                                        const index = key.split("/")[1]; 
+                                        const field = key.split("/")[2]; 
 
                                         if (!offers[index]) {
-                                          offers[index] = {}; // Initialize empty object
+                                          offers[index] = {}; 
                                         }
-                                        offers[index][field] = selectedData[key]; // Assign value
+                                        offers[index][field] = selectedData[key]; 
                                       }
                                     });
 
@@ -1293,9 +1334,9 @@ function Dashboard() {
                                               <div key={index} className="col-lg-4 col-md-6 mb-3">
                                                 <div className="offer-details card p-2 border rounded shadow-sm ">
                                                   <h5 className="card-title p-1 " style={{ backgroundColor: "rgb(218, 216, 216)", width: "112.5%", position: "relative", bottom: "8px", right: "10px", borderTopLeftRadius: "5px", borderTopRightRadius: "5px" }}> {offer.OFFERNO}</h5>
-                                                  <h6><strong>Company:</strong> {offer.COMPDETAIL}</h6>
-                                                  <p><strong>Designation:</strong> {offer.DESIGNATION}</p>
-                                                  <p><strong>Package:</strong> {offer.PACKAGE}</p>
+                                                  <h6><strong>Company:</strong> {offer.company}</h6>
+                                                  <p><strong>Designation:</strong> {offer.designation}</p>
+                                                  <p><strong>Package:</strong> {offer.package}</p>
                                                   <a href={offer.OFFER} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-sm">
                                                     📄  Offer Letter
                                                   </a>

@@ -393,9 +393,16 @@ function Trainingattendance() {
       )}
 
       {showStudentModal && (
-        <div className="modal fade show d-block" tabIndex="-1">
-          <div className="modal-dialog modal-lg">
-            <div className="modal-content" style={{ width: "100%" }}>
+        <div className="modal fade show d-block" tabIndex="-1" >
+          <div className="modal-dialog modal-lg"  style={{
+            width: "55%", 
+            maxWidth: "900px",
+        position: "absolute",
+        top: "50%",
+        left: "36%",
+        transform: "translate(-50%, -50%)", 
+      }}>
+            <div className="modal-content" style={{ width: "150%" }}>
               <div className="modal-header">
                 <h5 className="modal-title">
                   Schedule: {selectedScheduleCode || "N/A"} - {selectedTrainingName || "N/A"}<br />
@@ -416,8 +423,8 @@ function Trainingattendance() {
         </select>
                 <button type="button" className="btn-close" onClick={() => setShowStudentModal(false)}></button>
               </div>
-              <div className="modal-body">
-              <table className="table table-striped table-bordered table-hover  " style={{position:"relative",left:"0px"}} >
+              <div className="modal-body" style={{ maxHeight: "500px", overflowY: "auto" }}>
+              <table className="table table-striped table-bordered table-hover  " style={{position:"relative",left:"-5px"}} >
         <thead>
           <tr>
             <th>Register No.</th>

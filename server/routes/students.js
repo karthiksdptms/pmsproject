@@ -10,7 +10,9 @@ import StudentModel from "../models/StudentModel.js"
 import AnswerModel from '../models/AnswerModel.js'
 import AnswerKeyModel from "../models/AnswerkeyModel.js";
 import ApprovestudentModel from "../models/ApprovestudentModel.js";
-import QpModel from "../models/QpModel.js";
+import QpModel from "../models/QpModel.js"
+import ScheduleModel from "../models/ScheduleModel.js"
+import AttendanceModel from "../models/AttendanceModel.js"
 import UUser from "../models/UUsers.js";
 
 const router = express.Router();
@@ -38,6 +40,71 @@ router.post('/autopost/:id', express.json(), toggleAutoPost);
 router.post("/postquestionpaper/:qpcode", postQuestionPaper);
 router.post("/postspecific", postSpecificQuestionPaper);
 
+router.get("/schedules", async (req, res) => {
+    try {
+        const { registration_number } = req.query; 
+
+        if (!registration_number) {
+            return res.status(400).json({ message: "Register number is required" });
+        }
+
+       
+        const schedules = await ScheduleModel.find({
+            "batches.students.registration_number": registration_number,
+        });
+
+        res.json(schedules);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching schedules", error });
+    }
+});
+router.get("/attendance", async (req, res) => {
+    try {
+        const { registration_number } = req.query;
+
+        if (!registration_number) {
+            return res.status(400).json({ message: "Register number is required" });
+        }
+
+      
+        const attendanceRecords = await AttendanceModel.find({
+            "batches.dates": { 
+                $elemMatch: { "students.registerNumber": registration_number }
+            }
+        });
+
+        
+        if (!attendanceRecords || attendanceRecords.length === 0) {
+            return res.status(404).json({ message: "No attendance records found" });
+        }
+
+        let totalDays = 0;
+        let presentDays = 0;
+
+        attendanceRecords.forEach(record => {
+            record.batches.forEach(batch => {
+                batch.dates.forEach(dateEntry => {
+                    const student = dateEntry.students.find(
+                        (s) => s.registerNumber === registration_number
+                    );
+                    if (student) {
+                        totalDays++;
+                        if (student.status === "P" || student.status === "OD") {
+                            presentDays++;
+                        }
+                    }
+                });
+            });
+        });
+
+        const attendancePercentage = totalDays > 0 ? (presentDays / totalDays) * 100 : 0;
+
+        res.json({ attendanceRecords, attendancePercentage: `${attendancePercentage.toFixed(2)}%` });
+    } catch (error) {
+        console.error("Error fetching attendance:", error);
+        res.status(500).json({ message: "Error fetching attendance records", error: error.message });
+    }
+});
 
 
 

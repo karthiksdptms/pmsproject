@@ -407,7 +407,7 @@ function Accountsstudentaccounts() {
     formData.append("csvfile", csvFile);
 
     try {
-      const response = await axios.post("http://localhost:3000/api/student/uploadcsv", formData, {
+      const response = await axios.post("http://localhost:3000/api/students/uploadcsv", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -506,7 +506,7 @@ function Accountsstudentaccounts() {
             <Loading />
           ) : (
 
-            <div className="table-responsive" style={{ position: "relative", top: '60px' }}>
+            <div className="table-responsive" style={{ position: "relative", top: '60px',marginBottom:'200px' }}>
 
 
               <h4 className="" style={{ width: "250px", position: "relative", top: "20px" }}>
@@ -556,6 +556,7 @@ function Accountsstudentaccounts() {
                 position: "relative",
                 left: "12px",
                 bottom: "0px",
+                minWidth:'1700px'
               }}>
                 <thead className="thead-dark">
                   <tr>
@@ -689,7 +690,7 @@ function Accountsstudentaccounts() {
                     
                     <Row>
                       {["sem5", "sem6", "sem7", "sem8"].map((sem, index) => (
-                        <Col md={3} key={index}>
+                        <Col md={3} key={sem}>
                           <label>{sem.toUpperCase() + ":"}</label>
                           <input type="text" className="form-control" name={sem} onChange={handleChange} />
                         </Col>
@@ -903,7 +904,7 @@ function Accountsstudentaccounts() {
                     
                     <Row>
                       {["sem1", "sem2", "sem3", "sem4"].map((sem, index) => (
-                        <Col md={3} key={index}>
+                        <Col md={3} key={sem}>
                           <label>{sem.toUpperCase() + ":"}</label>
                           <input
                             type="text"
@@ -919,7 +920,7 @@ function Accountsstudentaccounts() {
                    
                     <Row>
                       {["sem5", "sem6", "sem7", "sem8"].map((sem, index) => (
-                        <Col md={3} key={index}>
+                        <Col md={3} key={sem}>
                           <label>{sem.toUpperCase() + ":"}</label>
                           <input
                             type="text"

@@ -83,6 +83,43 @@ function Trainingreports() {
         startIdx + rowsPerPage
       );
 
+      const handleExport = () => {
+        if (!selectedBatchData || !scheduleCode || !trainingName) {
+          console.error("No data available to export.");
+          return;
+        }
+      
+        const wsData = [
+          ["Register Number", "Department", ...selectedBatchData.dates.map(dateObj => dateObj.date), "Attendance %"]
+        ];
+      
+        selectedBatchData.dates[0].students.forEach(student => {
+          const attendanceRecords = selectedBatchData.dates.map(dateObj => {
+            const studentRecord = dateObj.students.find(s => s.registerNumber === student.registerNumber);
+            return studentRecord ? studentRecord.status : "-";
+          });
+      
+          const totalDays = attendanceRecords.length;
+          const presentDays = attendanceRecords.filter(status => status === "P" || status === "OD").length;
+          const attendancePercentage = ((presentDays / totalDays) * 100).toFixed(2);
+      
+          wsData.push([
+            student.registerNumber,
+            student.department,
+            ...attendanceRecords,
+            `${attendancePercentage}%`
+          ]);
+        });
+      
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Attendance");
+      
+        const fileName = `${scheduleCode}-${trainingName}-${selectedBatchData.batchNumber}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+      };
+      
+
   return (
     <>
 
@@ -232,12 +269,17 @@ function Trainingreports() {
       <div className="modal-content" style={{ width: "100%" }}>
         <div className="modal-header">
           <h5 className="modal-title">{`Schedule Code: ${scheduleCode}| Training Name: ${trainingName}`}</h5>
+          
+        <button className="btn btn-success" style={{width:'120px',position:"relative",left:'360px'}} onClick={handleExport}> <i className="bi bi-file-earmark-excel" style={{ marginRight: "10px" }}></i>
+        Excel
+        <i className="bi bi-download" style={{ marginLeft: "5PX" }}></i></button>
           <button
             type="button"
             className="btn-close"
             onClick={() => setShowBatchModal(false)}
           ></button>
         </div>
+
 
         <div className="modal-body">
           <table className="table table-striped table-bordered table-hover" style={{ width: "100%",position:"relative",left:'0px' }}>

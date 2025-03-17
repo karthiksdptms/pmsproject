@@ -83,7 +83,7 @@ function App() {
 
           <Route path='/Studentdashboard' element={
             <PrivateRoute>
-              <RoleBaseRoutes requiredRole={["admin","student"]}>
+              <RoleBaseRoutes requiredRole={["student"]}>
                 <Studentdashboard />
               </RoleBaseRoutes>
             </PrivateRoute>

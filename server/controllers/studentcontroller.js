@@ -666,8 +666,6 @@ export const rejectStudent = async (req, res) => {
   }
 };
 
-
-
 const uploadCSV = async (req, res) => {
   try {
     if (!req.file) {
@@ -677,10 +675,12 @@ const uploadCSV = async (req, res) => {
     const results = [];
     const csvFilePath = req.file.path;
 
-   
     fs.createReadStream(csvFilePath)
       .pipe(csv())
       .on("data", (data) => {
+        if (data.registration_number) {
+          data.registration_number = String(data.registration_number).trim();
+        }
         results.push(data);
       })
       .on("end", async () => {
@@ -717,38 +717,54 @@ const uploadCSV = async (req, res) => {
               placement,
               offers,
               role,
-              password
-          
+              password,
             } = row;
 
-           
+         
             const existingUser = await User.findOne({ email });
             if (existingUser) {
-              console.log(`User ${email} already exists`);
+              console.log(`Skipping existing user: ${email}`);
               continue; 
             }
 
-         
-            const hashedPassword = await bcrypt.hash(password, 10);
+            
+            const existingStudent = await StudentModel.findOne({ registration_number });
+            if (existingStudent) {
+              console.log(`Skipping existing student: ${registration_number}`);
+              continue; 
+            }
 
            
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            
             const newUser = new User({
               name,
               email,
               password: hashedPassword,
               role,
-              profileImage:""
+              profileImage: "",
             });
 
             const savedUser = await newUser.save();
-            const finalOffers = offers ? (typeof offers === "string" ? JSON.parse(offers) : offers) : student.offers;
+            if (!savedUser) {
+              console.error(`❌ Failed to save User: ${email}`);
+              break; 
+            }
 
           
+            const finalOffers = offers
+              ? typeof offers === "string"
+                ? JSON.parse(offers)
+                : offers
+              : [];
+
+           
             const student = new StudentModel({
               userId: savedUser._id.toString(),
               registration_number,
-              name:savedUser.name,
-              email:savedUser.email,
+              name: savedUser.name,
+              email: savedUser.email,
               department,
               batch,
               sslc,
@@ -773,15 +789,18 @@ const uploadCSV = async (req, res) => {
               achievements,
               language,
               aoi,
-             
-              address,
-              phoneno,
               placement,
               offers: finalOffers,
             });
 
-            await student.save();
+            const savedStudent = await student.save();
+            if (!savedStudent) {
+              console.error(`❌ Failed to save Student: ${registration_number}`);
+              break;
+            }
           }
+
+          fs.unlinkSync(csvFilePath);
 
           res.status(200).json({
             success: true,
@@ -800,9 +819,10 @@ const uploadCSV = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server Error",
-    })
+    });
   }
-}
+};
+
 
 export const toggleAutoPost = async (req, res) => {
   const { id } = req.params; 
