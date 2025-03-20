@@ -13,6 +13,8 @@ import attendanceStudentRoutes from "./routes/attendanceStudentRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 import answerkeyRouter from "./routes/answerkey.js"
 import StudentModel from "./models/StudentModel.js";
+import chartRoutes from "./routes/chartRoutes.js";
+import companyRoutes from "./routes/companyRoutes.js";
 dotenv.config();
 connectDatabase();
 
@@ -30,12 +32,14 @@ app.use("/api/training", scheduleRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/attendancestudent", attendanceStudentRoutes);
 app.use("/api/answerkey",answerkeyRouter)
+app.use("/api/charts", chartRoutes);
+app.use("/api/companies", companyRoutes);
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER, // Use environment variables
-    pass: process.env.EMAIL_PASS, // Use App Password
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -44,7 +48,9 @@ app.post("/send-email", async (req, res) => {
   const { studentIds, company, date, venue, requirements, skills } = req.body;
 
   if (!studentIds || studentIds.length === 0) {
-    return res.status(400).json({ success: false, message: "No recipients selected" });
+    return res
+      .status(400)
+      .json({ success: false, message: "No recipients selected" });
   }
 
   try {
@@ -55,29 +61,48 @@ app.post("/send-email", async (req, res) => {
       return res.status(404).json({ error: "No students found" });
     }
 
-    console.log(`📩 Sending emails to: ${students.map(s => s.email).join(", ")}`);
+    console.log(
+      `📩 Sending emails to: ${students.map((s) => s.email).join(", ")}`
+    );
 
-    // Send emails
+    // Prepare placement announcement data
+    const announcementData = {
+      title: `Placement Announcement - ${company}`,
+      description: `You are invited for a placement drive at ${company}.\n\nDate: ${date}\nVenue: ${venue}\nRequirements: ${requirements}\nSkills: ${skills}`,
+      postedAt: new Date(),
+    };
+
+    // Send emails and update placement_announce for each student
     await Promise.all(
       students.map(async (student) => {
         let mailOptions = {
           from: process.env.EMAIL_USER,
           to: student.email,
-          subject: `Placement Announcement - ${company}`,
-          text: `Dear ${student.name},\n\nYou are invited for a placement drive at ${company}.\n\nDate: ${date}\nVenue: ${venue}\nRequirements: ${requirements}\nSkills: ${skills}\n\nBest regards,\nPlacement Team`,
+          subject: announcementData.title,
+          text: `Dear ${student.name},\n\n${announcementData.description}\n\nBest regards,\nPlacement Team`,
         };
 
         // Send email and log response
         try {
           const info = await transporter.sendMail(mailOptions);
           console.log(`✅ Email sent to ${student.email}: ${info.response}`);
+
+        
+          await StudentModel.updateOne(
+            { _id: student._id },
+            {
+              $push: { placement_announce: announcementData },
+            }
+          );
+
+          console.log(`📚 Announcement added for ${student.name}`);
         } catch (err) {
-          console.error(`❌ Failed to send email to ${student.email}:, err.message`);
+          console.error(`❌ Failed to send email to ${student.email}: ${err.message}`);
         }
       })
     );
 
-    res.status(200).json({ success: true, message: "Emails sent successfully" });
+    res.status(200).json({ success: true, message: "Emails sent successfully and announcements recorded." });
   } catch (error) {
     console.error("Error sending emails:", error.message);
     res.status(500).json({ error: error.message || "Internal Server Error" });

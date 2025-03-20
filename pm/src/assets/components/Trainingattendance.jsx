@@ -6,8 +6,10 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { Button, Table,Modal } from "react-bootstrap";
 
+import Loading from "./Loading";
 import "bootstrap/dist/css/bootstrap.min.css";
 function Trainingattendance() {
+  const [loading, setLoading] = useState(true);
   const [Schedule, setSchedule] = useState([]);
   const [showBatchModal, setShowBatchModal] = useState(false);
   const [showStudentModal, setShowStudentModal] = useState(false);
@@ -68,6 +70,7 @@ function Trainingattendance() {
   };
 
   useEffect(() => {
+    setLoading(true)
     fetchSchedule();
   }, []);
 
@@ -75,6 +78,7 @@ function Trainingattendance() {
     try {
       const response = await axios.get("http://localhost:3000/api/schedule");
       setSchedule(response.data);
+      setLoading(false)
     } catch (error) {
       console.error("Error fetching schedules:", error);
     }
@@ -255,6 +259,10 @@ function Trainingattendance() {
             Attendance
           </h2>
         </Link>
+        {loading ? (
+                    <Loading />
+                ) : (
+        <div>
         <h4 className="mb-4" style={{ position: "relative", top: "70px", left: "50px", width: '350px' }}>
                 Total no of Schedules: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{totalRecords}</span>
               </h4>
@@ -364,6 +372,8 @@ function Trainingattendance() {
           </div>
           </div>
         </div>
+        </div>
+                )}
       </div>
 
 

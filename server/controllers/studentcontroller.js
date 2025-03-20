@@ -9,6 +9,7 @@ import fs from 'fs';
 import ApprovestudentModel from "../models/ApprovestudentModel.js";
 import UUser from "../models/UUsers.js";
 import mongoose from "mongoose";
+import TextModel from "../models/TextModel.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -20,6 +21,54 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+
+
+export const getTexts = async (req, res) => {
+  try {
+    const texts = await TextModel.find();
+    res.status(200).json(texts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const addText = async (req, res) => {
+  const { text } = req.body;
+
+  if (!text) {
+    return res.status(400).json({ message: "Text is required" });
+  }
+
+  try {
+    // Add createdAt field with the current date and time
+    const newText = new TextModel({
+      text,
+      createdAt: new Date().toISOString(), // Save timestamp
+    });
+
+    await newText.save();
+    res.status(201).json(newText);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export const deleteTextById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await TextModel.findByIdAndDelete(id);
+
+    if (!result) {
+      return res.status(404).json({ message: "Text not found" });
+    }
+
+    res.status(200).json({ message: "Text deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 const addstudent = async (req, res) => {
   try {

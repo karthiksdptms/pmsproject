@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from "react";
+
 import { Link } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import axios from "axios";
@@ -7,28 +8,31 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./Placementannounce.css";
 
 import Loading from "./Loading";
-
-const jsonData = [
-  { ID: 1, COMPANYIMG: "amazon.png", COMPANYNAME: "Amazon", content: "Join Amazon for exciting career opportunities!" },
-  { ID: 2, COMPANYIMG: "bosch.png", COMPANYNAME: "Bosch", content: "Innovate with Bosch and shape the future." },
-  { ID: 3, COMPANYIMG: "capgemini.png", COMPANYNAME: "Capgemini", content: "Work with cutting-edge tech at Capgemini." }, { ID: 4, COMPANYIMG: "cognizant.png", COMPANYNAME: "Cognizant", content: "Enhance your career with Cognizant." },
-  { ID: 5, COMPANYIMG: "ge.png", COMPANYNAME: "GENERAL ELECTRIC", content: "Build the future of energy with GE." },
-  { ID: 6, COMPANYIMG: "hexaware.png", COMPANYNAME: "Hexaware", content: "Join Hexaware for a dynamic career path." },
-  { ID: 7, COMPANYIMG: "ibm.png", COMPANYNAME: "IBM", content: "Shape AI and cloud computing at IBM." },
-  { ID: 8, COMPANYIMG: "infosys.png", COMPANYNAME: "Infosys", content: "Innovate and grow with Infosys." },
-  { ID: 9, COMPANYIMG: "nttdata.png", COMPANYNAME: "NTT DATA", content: "Be part of NTT DATA's global team." },
-  { ID: 10, COMPANYIMG: "odessa.png", COMPANYNAME: "Odessa", content: "Drive digital transformation at Odessa." },
-  { ID: 11, COMPANYIMG: "samsung.png", COMPANYNAME: "Samsung", content: "Invent the future with Samsung." },
-  { ID: 12, COMPANYIMG: "sigma.png", COMPANYNAME: "Mu Sigma", content: "Join Mu Sigma and redefine analytics." },
-  { ID: 13, COMPANYIMG: "sutherland.png", COMPANYNAME: "Sutherland", content: "Explore career paths at Sutherland." },
-  { ID: 14, COMPANYIMG: "tcs.png", COMPANYNAME: "TCS", content: "Lead digital change with TCS." },
-  { ID: 15, COMPANYIMG: "trimble.png", COMPANYNAME: "Trimble", content: "Revolutionize engineering at Trimble." },
-  { ID: 16, COMPANYIMG: "virtusa.png", COMPANYNAME: "Virtusa", content: "Build future-ready solutions at Virtusa." },
-  { ID: 17, COMPANYIMG: "wipro.png", COMPANYNAME: "Wipro", content: "Join Wipro for endless possibilities." },
-  { ID: 18, COMPANYIMG: "zoho.png", COMPANYNAME: "ZOHO", content: "Innovate with Zoho’s cutting-edge solutions." },
-
-];
 function Placementsannounce() {
+
+
+
+  
+const [companies, setCompanies] = useState([]);
+
+
+
+const fetchCompanies = async () => {
+  try {
+    const response = await axios.get("http://localhost:3000/api/companies/get-companies");
+    setCompanies(response.data|| []);
+    setLoading(false);
+  } catch (error) {
+    console.error("Error fetching companies:", error);
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchCompanies();
+}, []);
+
+
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [date, setDate] = useState("");
   const [venue, setVenue] = useState("");
@@ -77,15 +81,15 @@ function Placementsannounce() {
       });
 
       if (response.data.success) {
-        alert("✅ Emails sent successfully!");
+        alert("Emails sent successfully!");
         setSelectedStudents([]); 
       } else {
-        alert("❌ Failed to send emails: " + (response.data.message || "Unknown error"));
+        alert("Failed to send emails: " + (response.data.message || "Unknown error"));
       }
     } catch (error) {
-      alert("❌ Error sending emails: " + error.response?.data?.message || error.message);
+      alert("Error sending emails: " + error.response?.data?.message || error.message);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false); 
     }
   };
 
@@ -95,29 +99,29 @@ function Placementsannounce() {
   const handleSelectStudent = (id) => {
     setSelectedStudents((prevSelected) =>
       prevSelected.includes(id)
-        ? prevSelected.filter((studentId) => studentId !== id)
-        : [...prevSelected, id]
+        ? prevSelected.filter((studentId) => studentId !== id) 
+        : [...prevSelected, id] 
     );
   };
-
+  
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-    
+      
       setSelectedStudents(getstudents.flat().map((student) => student._id));
     } else {
-     
+    
       setSelectedStudents([]);
     }
   };
+  
 
 
-
-  // Open company details modal
+ 
   const openCompanyDetails = (company) => {
     setSelectedCompany(company);
   };
 
-  // Apply filter and fetch students
+
   const applyFilter = () => {
     if (!department && !batch && cgpa === "Any") {
       alert("Please select at least one filter.");
@@ -337,7 +341,7 @@ function Placementsannounce() {
     <>
 
 
-      <div className='hea'> <Link to="/Studentdashboard" style={{
+      <div className='hea'> <Link to="/Maindashboard" style={{
         textDecoration: 'none', color:
           "black"
       }}>
@@ -363,7 +367,7 @@ function Placementsannounce() {
       </Link>
 
         <div className="companies-grid" style={{ position: 'relative', top: "50px", marginBottom: '200px', marginTop: '40px' }}>
-          {jsonData.map((company) => (
+          {companies.map((company) => (
             <div key={company.ID} className="company-card" data-bs-toggle="offcanvas" data-bs-target="#companyDetails" onClick={() => openCompanyDetails(company)}>
               <img src={`/images/${company.COMPANYIMG}`} alt={company.COMPANYNAME} className="company-logo" />
               <h3 className="company-name">{company.COMPANYNAME}</h3>
@@ -791,13 +795,14 @@ function Placementsannounce() {
       <table className="table table-striped table-bordered mt-3" style={{ position: 'relative', left: '0px', minWidth: '1100px' }}>
         <thead className="thead-dark">
           <tr>
-            <th>
-              <input
-                type="checkbox"
-                onChange={handleSelectAll}
-                checked={selectedStudents.length === students.flat().length && students.flat().length > 0}
-              />
-            </th>
+          <th>
+  <input
+    type="checkbox"
+    onChange={handleSelectAll}
+    checked={selectedStudents.length === getstudents.flat().length && getstudents.flat().length > 0}
+  />
+</th>
+
             <th>#</th>
             <th>Profile</th>
             <th>Registration Number</th>
@@ -810,13 +815,14 @@ function Placementsannounce() {
         <tbody>
           {displayedData.map((student, index) => (
             <tr key={student._id}>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={selectedStudents.includes(student._id)}
-                  onChange={() => handleSelectStudent(student._id)}
-                />
-              </td>
+             <td>
+  <input
+    type="checkbox"
+    checked={selectedStudents.includes(student._id)}
+    onChange={() => handleSelectStudent(student._id)}
+  />
+</td>
+
               <td>{index + 1}</td>
               <td>
                 <img

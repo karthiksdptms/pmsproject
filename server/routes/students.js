@@ -4,7 +4,7 @@ import { addstudent, approveaddstudent,approvegetstudent,upload, getstudent, edi
     ,postQuestionPaper,postSpecificQuestionPaper,
     toggleAutoPost,
     approveeditstudent,getallstudents,
-    rejectStudent
+    rejectStudent,getTexts,addText,deleteTextById
 } from '../controllers/studentcontroller.js';
 import StudentModel from "../models/StudentModel.js"
 import AnswerModel from '../models/AnswerModel.js'
@@ -39,25 +39,39 @@ router.post('/autopost/:id', express.json(), toggleAutoPost);
 
 router.post("/postquestionpaper/:qpcode", postQuestionPaper);
 router.post("/postspecific", postSpecificQuestionPaper);
-
 router.get("/schedules", async (req, res) => {
     try {
-        const { registration_number } = req.query; 
+        const { registration_number } = req.query;
 
         if (!registration_number) {
             return res.status(400).json({ message: "Register number is required" });
         }
 
-       
+   
         const schedules = await ScheduleModel.find({
             "batches.students.registration_number": registration_number,
         });
 
-        res.json(schedules);
+        
+        const filteredSchedules = schedules.map((schedule) => {
+            const filteredBatches = schedule.batches.filter((batch) =>
+                batch.students.some(
+                    (student) => student.registration_number === registration_number
+                )
+            );
+
+            return {
+                ...schedule.toObject(),
+                batches: filteredBatches,
+            };
+        });
+
+        res.json(filteredSchedules);
     } catch (error) {
         res.status(500).json({ message: "Error fetching schedules", error });
     }
 });
+
 router.get("/attendance", async (req, res) => {
     try {
         const { registration_number } = req.query;
@@ -376,4 +390,30 @@ router.get("/view-answer-paper", async (req, res) => {
     }
 });
 
+
+
+router.get("/placements/:id", async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const student = await StudentModel.findById(id);
+  
+      if (!student) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+  
+      res.status(200).json({ placement_announce: student.placement_announce });
+    } catch (error) {
+      console.error("Error fetching placement announcements:", error.message);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  });
+  
+  
+
+  router.get("/texts", getTexts);
+  router.post("/add-text", addText);
+  router.delete("/delete-text/:id", deleteTextById);
+
+  
 export default router;

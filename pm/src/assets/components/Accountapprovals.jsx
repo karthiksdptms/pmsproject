@@ -8,11 +8,13 @@ import { useEffect } from "react";
 import axios from "axios";
 
 
+import Loading from "./Loading";
 import { Modal, Button, Form, Row, Col, Container } from "react-bootstrap";
 
 
 function Accountsapprovals() {
   
+    const [loading, setLoading] = useState(true);
      const [getstudents, setgetstudents] = useState([])
       const [showw, setShoww] = useState(false);
       const [stdloading, setstdloading] = useState(false)
@@ -59,7 +61,7 @@ function Accountsapprovals() {
     
      useEffect(() => {
         const fetchstudents = async () => {
-          setstdloading(true)
+          setLoading(true)
           try {
             const responnse = await axios.get("http://localhost:3000/api/students/approved-students", {
              
@@ -111,6 +113,7 @@ function Accountsapprovals() {
               }))
               
               setgetstudents(data)
+              setLoading(false)
     
             }
     
@@ -336,6 +339,9 @@ function Accountsapprovals() {
             </h2>
           </div>
         </Link>
+        {loading ? (
+                    <Loading />
+                ) : (
         <div className="table-responsive" style={{ position: "relative", top: '60px' }}>
 
 
@@ -456,6 +462,7 @@ function Accountsapprovals() {
             
 
             </div>
+            )}
             {showw && student && (
           <div className="modal d-block" tabIndex="-1" key={student._id}>
             <div className="modal-dialog modal-lg">

@@ -33,20 +33,20 @@ function Training() {
             <h2 style={{ position: "relative", top: '45px', left: "30px", fontFamily: 'poppins', fontSize: "35px", width: '100px' }}>Training's</h2>
           </div>
         </Link></div>
-        <div className="menu">
+        <div className=" menu">
           
-            <Link to="/Maindashboard/Trainingschedule" style={{textDecoration:"none",width:"250px"}}> <div className='sce'>
+            <Link to="/Maindashboard/Trainingschedule" style={{textDecoration:"none",width:"250px"}} > <div className='sce'>
                 <h4 style={{position:"relative",top:"30px",right:"40px"}}>Schedule</h4>
-                <i className="bi bi-calendar2-check-fill" style={{fontSize:"50px",position:"relative",left:"70px",bottom:"30px",color:'rgba(11,132,164,255)'}}></i>
+                <i className="bi bi-calendar2-check-fill" style={{fontSize:"50px",position:"relative",left:"70px",bottom:"30px",color:'rgb(132, 65, 136)'}}></i>
             </div></Link>
             <Link to="/Maindashboard/Trainingattendence" style={{textDecoration:"none",width:"250px"}}> <div className='att'>
                 <h4 style={{position:"relative",top:"30px",right:"40px"}}>Attendance</h4>
-                <i className="bi bi-card-checklist" style={{fontSize:"50px",position:"relative",left:"70px",bottom:"30px",color:"rgb(74, 109, 90)"}}></i>
+                <i className="bi bi-card-checklist" style={{fontSize:"50px",position:"relative",left:"70px",bottom:"30px",color:"rgb(73, 67, 119)"}}></i>
             </div></Link>
             
             <Link to="/Maindashboard/Trainingreports" style={{textDecoration:"none",width:"250px"}}> <div className='rep'>
                 <h4 style={{position:"relative",top:"30px",right:"40px"}}>Reports</h4>
-                <i className="bi bi-bar-chart-line-fill" style={{fontSize:"60px",position:"relative",left:"70px",bottom:"30px",color:"rgb(158, 64, 48)"}}></i>
+                <i className="bi bi-bar-chart-line-fill" style={{fontSize:"60px",position:"relative",left:"70px",bottom:"30px",color:"rgb(117, 58, 89)"}}></i>
             </div></Link>
 
         </div>

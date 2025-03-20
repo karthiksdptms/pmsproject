@@ -29,7 +29,7 @@ function Studenttraining() {
         >
           <IoIosArrowBack />
         </button>
-        <h2 style={{ position: "relative", top: '45px', left: "30px", fontFamily: 'poppins', fontSize: "35px", width: '100px' }}>Aptitude</h2>
+        <h2 style={{ position: "relative", top: '45px', left: "30px", fontFamily: 'poppins', fontSize: "35px", width: '100px' }}>Assessments</h2>
       </div>
     </Link></div>
     <div className="menu">

@@ -20,7 +20,8 @@ function Studenttrainingscores() {
     try {
       setLoading(true);
       const response = await axios.get(`http://localhost:3000/api/students/training-scores/${user._id}`);
-      setScores(response.data.results || []);
+      setScores((response.data.results || []).reverse());
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching training scores:", error);
     } finally {
@@ -105,7 +106,9 @@ function Studenttrainingscores() {
           </div>
         </Link>
       </div>
-
+      {loading ? (
+                    <Loading />
+                ) : (
       <div style={{ position: "relative", left: "250px" }}>
         <div className="mt-4">
           <h4
@@ -227,6 +230,7 @@ function Studenttrainingscores() {
           </div>
         </div>
       </div>
+      )}
       {isModalOpen && selectedAnswerPaper && (
     <div className="modal fade show d-block" tabIndex="-1" role="dialog">
         <div className="modal-dialog modal-xl modal-dialog-centered">

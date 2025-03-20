@@ -4,7 +4,10 @@ import { IoIosArrowBack } from "react-icons/io";
 import { Link } from "react-router-dom";
 
 
+import Loading from "./Loading";
 function Aptitudescores() {
+    
+      const [loading, setLoading] = useState(true);
     const [answers, setAnswers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -12,6 +15,7 @@ function Aptitudescores() {
 
 
     useEffect(() => {
+        setLoading(true)
         fetchAnswers();
     }, []);
 
@@ -19,6 +23,7 @@ function Aptitudescores() {
         try {
             const response = await axios.get("http://localhost:3000/api/answerkey/getscores");
             setAnswers(response.data);
+            setLoading(false)
         } catch (error) {
             console.error("Error fetching answers:", error);
         }
@@ -215,7 +220,9 @@ function Aptitudescores() {
                 Publish(selected)
             </button>
 
-
+            {loading ? (
+                    <Loading />
+                ) : (
             <div className="" style={{ position: "relative", left: '250px' }}>
                 <div className="mt-4">
                     <h4 className="mb-4" style={{ position: "relative", top: "50px", left: "50px", width: '350px' }}>
@@ -338,6 +345,7 @@ function Aptitudescores() {
                     </div>
                 </div>
             </div>
+            )}
             {isModalOpen && selectedAnswerPaper && (
     <div className="modal fade show d-block" tabIndex="-1" role="dialog">
         <div className="modal-dialog modal-xl modal-dialog-centered">

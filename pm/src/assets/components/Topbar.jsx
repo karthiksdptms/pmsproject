@@ -116,7 +116,7 @@ function Topbar() {
           {({ isActive }) => (
           <button className={`btnn ${isActive ? "bgg" : ""}`}>
               <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"20px"}} />
-              Aptitude
+              Assessments
             </button>
              )}
           </NavLink>
@@ -173,10 +173,11 @@ function Topbar() {
         <div className="btnn">
           <button className="btnn"></button>
         </div>
+        
       </div>
 
       <div className="rajalakshmibottomimg">
-        <img src="rajalakshmibottom.png" alt="" />
+        <img src="/rajbtm.png" alt="" />
       </div>
     </>
   );

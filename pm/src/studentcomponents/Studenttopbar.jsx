@@ -142,7 +142,7 @@ function Studenttopbar() {
   {({ isActive }) => (
     <button className={`btnn ${isActive ? "bgg" : ""}`}>
       <i className="bi bi-funnel-fill" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
-      Aptitude
+      Assessments
     </button>
   )}
 </NavLink>

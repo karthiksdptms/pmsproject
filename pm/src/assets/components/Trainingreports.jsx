@@ -6,11 +6,14 @@ import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
 import axios from "axios";
 
+import Loading from "./Loading";
 import { Button, Table,Modal } from "react-bootstrap";
 
 
 
 function Trainingreports() {
+  
+    const [loading, setLoading] = useState(true);
   const [reports, setReports] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedBatches, setSelectedBatches] = useState([]);
@@ -19,9 +22,11 @@ function Trainingreports() {
   const [trainingName, setSelectedTrainingName] = useState("");
 
   useEffect(() => {
+    setLoading(true)
     axios.get("http://localhost:3000/api/attendance/attendance-reports")
       .then(response => {
         setReports(response.data);
+        setLoading(false)
       })
       .catch(error => {
         console.error("Error fetching attendance reports:", error);
@@ -198,6 +203,9 @@ function Trainingreports() {
                   <i className="bi bi-chevron-double-right arr"></i>
                 </button>
               </div>
+              {loading ? (
+                    <Loading />
+                ) : (
         <div className="container mt-2" style={{ position: "relative", right: "0px", top: "50px" }}>
         <div style={{
                 position: "relative",
@@ -244,6 +252,7 @@ function Trainingreports() {
           </div>
           </div>
         </div>
+                )}
         <Modal show={showModal} onHide={() => setShowModal(false)} top >
         <Modal.Header closeButton>
           <Modal.Title>Select Batch</Modal.Title>

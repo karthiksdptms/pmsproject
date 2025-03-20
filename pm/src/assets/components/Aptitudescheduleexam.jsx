@@ -27,9 +27,10 @@ function Aptitudescheduleexam() {
 
         });
         setAutoPostStatus(autoPostData);
+        setstdloading(false)
       })
       .catch(err => console.log(err));
-    setstdloading(false)
+   
     axios.get("http://localhost:3000/api/answerkey/getuploadedanswerkeys")
       .then((res) => {
         const uploadedData = {};
@@ -119,17 +120,30 @@ function Aptitudescheduleexam() {
 
 
 
-  const handlePostQuestionPaper = async (qpcode) => {
-    try {
-      const response = await axios.post(`http://localhost:3000/api/students/postquestionpaper/${qpcode}`);
-      if (response.status === 200) {
-        alert("Question Paper Posted Successfully");
-      }
-    } catch (err) {
-      console.log(err);
-      alert(err.response.data.message);
+const [isLoading, setIsLoading] = useState(false);
+const handlePostQuestionPaper = async (qpcode) => {
+  // Show loading screen
+  setIsLoading(true);
+
+  try {
+    const response = await axios.post(
+      `http://localhost:3000/api/students/postquestionpaper/${qpcode}`
+    );
+
+    if (response.status === 200) {
+
+      alert("Question Paper Posted Successfully");
+      setIsLoading(false);
     }
-  };
+  } catch (err) {
+    console.error("Error posting question paper:", err);
+    setIsLoading(false);
+    alert(err.response?.data?.message || "Failed to post question paper");
+  } finally {
+    // Hide loading screen
+    setIsLoading(false);
+  }
+};
 
 
   const [showModal, setShowModal] = useState(false);
@@ -146,9 +160,10 @@ function Aptitudescheduleexam() {
     setRegisterNumbers("");
   };
   const handleSpecificPost = async () => {
+    setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/student/postspecific/",
+        "http://localhost:3000/api/students/postspecific/",
         {
           registerNumbers: registerNumbers.split(",").map((num) => num.trim()),
           qpcode: selectedQpcode,
@@ -162,11 +177,13 @@ function Aptitudescheduleexam() {
 
       if (response.status === 200) {
         alert("Question Paper Posted to Specific Students Successfully");
+        setIsLoading(false);
         setShowModal(false);
         setRegisterNumbers("");
       }
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
       alert(error.response.data.message || "Failed to Post Question Paper");
     }
   };
@@ -359,13 +376,48 @@ function Aptitudescheduleexam() {
                             {autoPostStatus[paper.qpcode] ? "On" : "Off"}
                           </button></td>
                         <td>
-                          <button
-                            style={{ marginRight: "20px" }}
-                            className="btn btn-primary me-2"
-                            onClick={() => handlePostQuestionPaper(paper.qpcode)}
-                          >
-                            Post
-                          </button>
+                        
+
+  {isLoading && (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "rgba(47, 47, 47, 0.7)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 9999,
+      }}
+    >
+      <div style={{ textAlign: "center", color: "#fff" }}>
+        <div
+          className="spinner-border text-light"
+          role="status"
+          style={{ width: "4rem", height: "4rem" }}
+        >
+          <span className="visually-hidden">Processing...</span>
+        </div>
+        <p style={{ marginTop: "12px", fontSize: "18px" }}>
+          Posting Question Paper... Please wait
+        </p>
+      </div>
+    </div>
+  )}
+
+ 
+  <button
+    style={{ marginRight: "20px" }}
+    className="btn btn-primary me-2"
+    onClick={() => handlePostQuestionPaper(paper.qpcode)}
+  >
+    Post
+  </button>
+
+
 
                           <button
                             className="btn btn-info me-2"

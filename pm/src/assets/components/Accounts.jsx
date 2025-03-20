@@ -56,13 +56,13 @@ function Accounts() {
           
                     <div>
                       
-                      <Link to="/Maindashboard/Accountsstudentaccounts" style={{textDecoration:"none",width:"250px"}}> <div className='cq'>
+                      <Link to="/Maindashboard/Accountsstudentaccounts" style={{textDecoration:"none",width:"20px"}}> <div className='sce'>
                                     <h4 style={{position:"relative",top:"30px",right:"40px"}}>Students</h4>
-                                    <i className="bi bi-calendar2-check-fill" style={{fontSize:"50px",position:"relative",left:"110px",bottom:"30px",color:'rgba(11,132,164,255)'}}></i>
+                                    <i className="bi bi-calendar2-check-fill" style={{fontSize:"50px",position:"relative",left:"80px",bottom:"30px",color:'rgb(132, 65, 136)'}}></i>
                                 </div></Link></div>
-                                <div> <Link to="/Maindashboard/Accountapprovals" style={{textDecoration:"none",width:"250px"}}> <div className='sc'>
+                                <div style={{fontSize:"50px",position:"relative",left:"20px",color:'rgba(11,132,164,255)'}}> <Link to="/Maindashboard/Accountapprovals" style={{textDecoration:"none",width:"250px"}}> <div className='att'>
                                     <h4 style={{position:"relative",top:"30px",right:"40px"}}>Approvals</h4>
-                                    <i className="bi bi-calendar2-check-fill" style={{fontSize:"50px",position:"relative",left:"110px",bottom:"30px",color:'rgba(11,132,164,255)'}}></i>
+                                    <i className="bi bi-calendar2-check-fill" style={{fontSize:"50px",position:"relative",left:"80px",bottom:"30px",color:"rgb(73, 67, 119)"}}></i>
                                 </div></Link></div>
          
         </div>

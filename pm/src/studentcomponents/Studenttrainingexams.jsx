@@ -36,7 +36,7 @@ function Studenttrainingexams() {
         .get(`http://localhost:3000/api/students/training-exams/${user._id}`)
         .then((result) => {
           console.log("API Response:", result.data);
-          setQuestionPapers(result.data.exams || []);
+          setQuestionPapers((result.data.exams || []).reverse());
           setstdloading(false);
         })
         .catch((err) => {
@@ -99,7 +99,7 @@ function Studenttrainingexams() {
   useEffect(() => {
     const preventExitFullscreen = () => {
       if (!document.fullscreenElement) {
-       
+         handleSubmit()
         Swal.fire({
           title: "Full-Screen Mode Disabled!",
           text: "Autosubmitted as you exited full-screen mode during the exam.",
@@ -369,6 +369,7 @@ function Studenttrainingexams() {
                     <td colSpan="10" style={{ textAlign: "center", fontWeight: "bold", color: "red", fontSize: "20px" }}>
                       No Exams Left
                     </td>
+                    <td></td>
                   </tr>
                 )}
               </tbody>

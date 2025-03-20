@@ -77,6 +77,7 @@ function Studenttrainingattendance() {
           setAttendanceData(Object.values(formattedData));
           setAttendancePercentage(data?.attendancePercentage || "0%");
           setDepartment(data?.department || "N/A");
+          setLoading(false);
       } catch (err) {
           setError("Failed to fetch attendance data");
       } finally {
@@ -141,6 +142,9 @@ function Studenttrainingattendance() {
         <h2 style={{ position: "relative", top: '45px', left: "30px", fontFamily: 'poppins', fontSize: "35px", width: '100px' }}>Attendance</h2>
       </div>
     </Link>
+    {loading ? (
+                    <Loading />
+                ) : (
     <div
     style={{
       position: "relative",
@@ -228,6 +232,7 @@ function Studenttrainingattendance() {
                 <p className="text-center">No attendance records found.</p>
             )}
             </div>
+                )}
             </div>
     
     

@@ -428,7 +428,7 @@ function Studentprofile() {
             <div className="modal-dialog modal-lg">
               <div className="modal-content" style={{minWidth:"100%"}}>
                 <div className="modal-header">
-                  <h5 className="modal-title">Add Student Details To Create Account</h5>
+                  <h5 className="modal-title">Edit Details</h5>
                   <button type="button" className="btn-close" onClick={() => setShoww(false)}></button>
                 </div>
                 <div className="modal-body">
@@ -670,11 +670,9 @@ function Studentprofile() {
 
                     <div className="modal-footer">
 
-                      <button type="button" className="btn btn-danger" onClick={() => setShoww(false)}>
-                        Cancel
-                      </button>
+                     
                       <button type="submit" className="btn btn-success" >
-                        Save
+                        Send Request
                       </button>
                     </div>
 

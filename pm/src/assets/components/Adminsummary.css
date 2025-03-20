@@ -1,0 +1,21 @@
+
+.abc {
+   
+    backdrop-filter: blur(10px);
+   
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+
+  .abc:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  }
+  .calendar-day {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    margin: 2px;
+    display: inline-block;
+    font-size: 13px;
+  }

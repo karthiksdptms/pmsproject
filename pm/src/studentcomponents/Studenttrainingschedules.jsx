@@ -7,6 +7,7 @@ import axios from "axios";
 import { useAuth } from "../assets/context/authContext";
 
 
+import Loading from "../assets/components/Loading";
 function Studenttrainingschedules() {
 
   const [schedules, setSchedules] = useState([]);
@@ -76,12 +77,14 @@ function Studenttrainingschedules() {
    const registration_number = student.registration_number; 
  
    useEffect(() => {
+    setLoading(true)
     if (registration_number) {
         console.log("Fetching schedules for:", registration_number);
         
         axios.get(`http://localhost:3000/api/students/schedules?registration_number=${registration_number}`)
             .then((response) => {
-                setSchedules(response.data);
+                setSchedules((response.data).reverse());
+                setLoading(false)
             })
             .catch((error) => {
                 console.error("Error fetching schedules:", error);
@@ -132,6 +135,9 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
         <h2 style={{ position: "relative", top: '45px', left: "30px", fontFamily: 'poppins', fontSize: "35px", width: '100px' }}>Schedules</h2>
       </div>
     </Link>
+    {loading ? (
+                    <Loading />
+                ) : (
     <div
     style={{
       position: "relative",
@@ -234,6 +240,7 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
           </tbody>
         </table>
       </div>
+                )}
       </div>
     
     

@@ -7,7 +7,10 @@ import { IoIosArrowBack } from "react-icons/io";
 import { Link } from "react-router-dom";
 import axios from 'axios';
 
+import Loading from "./Loading";
 function Aptitudeconfigurequestions() {
+  
+    const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [instructions, setInstructions] = useState("");
   const [qpcode, setqpcode] = useState("");
@@ -147,9 +150,10 @@ function Aptitudeconfigurequestions() {
   }, [remainingTime]);
 
   useEffect(() => {
-
+    setLoading(true)
     axios.get('http://localhost:3000/getqp')
-      .then(result => setQuestionPapers(result.data))
+      .then(result => setQuestionPapers(result.data),setLoading(false))
+      
       .catch(err => console.log(err))
   }, [])
 
@@ -249,6 +253,9 @@ function Aptitudeconfigurequestions() {
             </h2>
           </div>
         </Link>
+        {loading ? (
+                    <Loading />
+                ) : (
         <div className="container mt-4" style={{ position: "relative", top: "-35px", }}>
           {!showQuestionPaper ? (
             <>
@@ -717,6 +724,7 @@ function Aptitudeconfigurequestions() {
 
           )}
         </div>
+        )}
       </div>
 
     </>

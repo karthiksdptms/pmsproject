@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect ,useRef} from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
@@ -396,29 +396,57 @@ function Accountsstudentaccounts() {
     startIdx,
     startIdx + rowsPerPage
   );
+// File Input Reference
+const fileInputRef = useRef(null);
 
-  const handleFileChange = (e) => {
+// Handle File Change
+const handleFileChange = (e) => {
+  if (e.target.files.length > 0) {
     setCsvFile(e.target.files[0]);
-  };
+    uploadCsv(e.target.files[0]); // Automatically upload after selecting
+  }
+};
 
-  const uploadCsv = async () => {
-    setShowInput(false)
-    const formData = new FormData();
-    formData.append("csvfile", csvFile);
+const [isLoading, setIsLoading] = useState(false);
 
-    try {
-      const response = await axios.post("http://localhost:3000/api/students/uploadcsv", formData, {
+const uploadCsv = async (file) => {
+  setShowInput(false);
+  const formData = new FormData();
+  formData.append("csvfile", file);
+
+  // Show loading screen
+  setIsLoading(true);
+
+  try {
+    const response = await axios.post(
+      "http://localhost:3000/api/students/uploadcsv",
+      formData,
+      {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      });
-      alert(response.data.message);
-    } catch (error) {
-      console.error("CSV Upload Error:", error);
-      alert("Failed to Upload CSV");
-    }
-  };
+      }
+    );
+
+    alert(response.data.message);
+    setIsLoading(false);
+  } catch (error) {
+    console.error("CSV Upload Error:", error);
+    setIsLoading(false);
+    alert("Failed to Upload CSV");
+  } finally {
+    // Hide loading screen
+    setIsLoading(false);
+  }
+};
+
+
+// Open File Explorer
+const openFileExplorer = () => {
+  fileInputRef.current.click(); // Trigger hidden file input
+};
+
   return (<>
 
     <div
@@ -470,31 +498,59 @@ function Accountsstudentaccounts() {
 
 
 
-            {!showInput && (
-              <button className="btn btn-primary " style={{ position: "relative", bottom: "78.5px", zIndex: "100", left: "1000px" }} onClick={() => setShowInput(true)}>
-                Upload
-              </button>
-            )}
+          <div>
+ 
+  {isLoading && (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "rgba(0, 0, 0, 0.7)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 9999,
+      }}
+    >
+      <div style={{ textAlign: "center", color: "#fff" }}>
+        <div
+          className="spinner-border text-light"
+          role="status"
+          style={{ width: "4rem", height: "4rem",fontWeight:"bolder" }}
+        >
+          <span className="visually-hidden">Uploading...</span>
+        </div>
+        <p style={{ marginTop: "12px", fontSize: "18px" }}>Uploading CSV... Please wait</p>
+      </div>
+    </div>
+  )}
 
+  <button
+    className="btn btn-primary"
+    style={{
+      position: "relative",
+      bottom: "78.5px",
+      zIndex: "100",
+      left: "1000px",
+    }}
+    onClick={openFileExplorer}
+  >
+    Upload
+  </button>
 
-            {showInput && (
+ 
+  <input
+    type="file"
+    ref={fileInputRef}
+    accept=".csv"
+    style={{ display: "none" }}
+    onChange={handleFileChange}
+  />
+</div>
 
-              <>
-                <div className="  p-1" style={{ position: "relative", bottom: "100px", zIndex: "100", backgroundColor: "rgb(235, 235, 235)", width: "420px", left: "600px", borderRadius: "10px" }}>
-                  <p onClick={() => setShowInput(false)} style={{ position: "relative", zIndex: "100", backgroundColor: "", left: "400px", width: "10px", fontSize: "20px" }}>x</p>
-                  <input
-                    type="file"
-                    accept=".csv"
-                    className=" mb-3 p-2"
-                    onChange={handleFileChange}
-                  />
-                  <button className="btn btn-success" onClick={uploadCsv}>
-                    Submit
-                  </button>
-                </div>
-
-              </>
-            )}
           </div></div>
 
 

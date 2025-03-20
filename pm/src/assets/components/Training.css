@@ -20,7 +20,7 @@
     text-align: center;
     width:230px ;
     height: 100px;
-    background-color:rgba(10,150,183,255);
+    background-color: rgb(173, 115, 176);
     border-radius: 10px;
 }
 .rep{
@@ -29,7 +29,7 @@
     text-align: center;
     width:230px ;
     height: 100px;
-    background-color:#ea4645;
+    background-color:rgb(200, 137, 170);
     border-radius: 10px;
 }
 .att{
@@ -38,6 +38,46 @@
     text-align: center;
     width:230px ;
     height: 100px;
-    background-color:#9bddaf;
+    background-color:rgb(145, 136, 211);
     border-radius: 10px;
 }
+.att {
+   
+    backdrop-filter: blur(10px);
+   
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+  
+  /* Hover Effect */
+  .att:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(58, 58, 58, 0.3);
+  }
+  
+.sce {
+   
+    backdrop-filter: blur(10px);
+   
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+  
+  /* Hover Effect */
+  .sce:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(58, 58, 58, 0.3);
+  }
+  
+.rep{
+   
+    backdrop-filter: blur(10px);
+   
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+  
+  /* Hover Effect */
+  .rep:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(58, 58, 58, 0.3);
+  }
+  
+  

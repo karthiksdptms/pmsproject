@@ -549,7 +549,7 @@ function Dashboard() {
 
                   </div>
                 </div>
-                <div className="lable1" style={{ position: "relative", left: "0px", bottom: "575px" }}>
+                <div className="lable1" style={{ position: "relative", left: "0px", bottom: "-0.25px" }}>
   <div>
     <label htmlFor="languageInput" style={{ fontSize: "23px" }}>Languages:</label>
     <input
