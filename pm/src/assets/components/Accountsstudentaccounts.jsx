@@ -7,6 +7,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { useAuth } from "../context/authContext";
 import Loading from "./Loading";
+import papa from "papaparse";
+import Swal from "sweetalert2";
 
 
 
@@ -131,7 +133,7 @@ function Accountsstudentaccounts() {
   const addOffer = () => {
     setStudent({
       ...student,
-      offers: [...student.offers, { offerno: "", company: "", designation: "", package: "", }],
+      offers: [...student.offers, { offerno: "", company: "", designation: "", package: "",offertype:"" }],
     });
   };
 
@@ -188,6 +190,8 @@ function Accountsstudentaccounts() {
       formData.append(`offers[${index}][company]`, offer.company);
       formData.append(`offers[${index}][designation]`, offer.designation);
       formData.append(`offers[${index}][package]`, offer.package);
+      formData.append(`offers[${index}][offertype]`, offer.offertype);
+
     });
 
     if (student.offerpdf) {
@@ -337,6 +341,8 @@ function Accountsstudentaccounts() {
       formData.append(`offers[${index}][company]`, offer.company);
       formData.append(`offers[${index}][designation]`, offer.designation);
       formData.append(`offers[${index}][package]`, offer.package);
+      
+      formData.append(`offers[${index}][offertype]`, offer.offertype);
     });
 
     if (student.offerpdf) {
@@ -436,15 +442,96 @@ const uploadCsv = async (file) => {
     setIsLoading(false);
     alert("Failed to Upload CSV");
   } finally {
-    // Hide loading screen
+    
     setIsLoading(false);
   }
 };
 
 
-
+const fileInputRef1 = useRef(null);
 const openFileExplorer = () => {
   fileInputRef.current.click(); 
+};
+
+
+
+
+const handleButtonClick = () => {
+  fileInputRef1.current.click(); 
+};
+
+
+
+const handleFileChangee = (e) => {
+  console.log("File selected:", e.target.files[0]);
+  const file = e.target.files[0];
+
+  if (file) {
+    if (file.type === "text/csv") {
+      parseAndUploadCSV(file); 
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid File Type",
+        text: "Please select a valid CSV file.",
+      });
+    }
+  }
+};
+
+const parseAndUploadCSV = (file) => {
+  setIsLoading(true);
+
+  papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: async function (results) {
+      if (results.data.length > 0) {
+        console.log("Parsed CSV Data:", results.data);
+        await updateStudentOffers(results.data);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "No Data Found",
+          text: "The CSV file is empty!",
+        });
+        setIsLoading(false);
+      }
+    },
+  });
+};
+
+
+const updateStudentOffers = async (csvData) => {
+  console.log(csvData)
+  try {
+    const response = await axios.post(
+      "http://localhost:3000/api/students/placementuploadcsv",
+      csvData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    Swal.fire({
+      icon: "success",
+      title: "Placement Details Uploaded!",
+      text: `${response.data.message}`,
+    });
+    window.location.reload()
+  } catch (error) {
+    console.error("CSV Upload Error:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Upload Failed",
+      text: "Failed to upload CSV data.",
+    });
+  } finally {
+    setIsLoading(false);
+  }
 };
 
   return (<>
@@ -492,14 +579,48 @@ const openFileExplorer = () => {
           </h2>
         </div>
       </Link>
+      
       <div className="">
         <div style={{ position: 'relative', height: '30px', top: "30px" }}>
           <button className="btn  " onClick={() => setShow(true)} style={{ marginRight: "50px", position: "relative", left: "1080px", top: "-20px" }}><i className="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "blue" }}></i></button><div className="">
 
 
 
-          <div>
+          <div style={{ position: "relative", right: "60px" }}>
  
+  <button
+    onClick={handleButtonClick} 
+    type="button"
+    style={{
+      color: "white",
+      border: "none",
+      margin: "20px",
+      height: "40px",
+      backgroundColor: "#4CAF50",
+      borderRadius: "8px",
+      position: "relative",
+      bottom: "98.5px",
+      zIndex: "100",
+      left: "800px",
+    }}
+  >
+    <span style={{ marginLeft: "10px" }}>Placement details</span>
+    <i
+      className="bi bi-upload"
+      style={{ marginRight: "15px", marginLeft: "10px" }}
+    ></i>
+  </button>
+
+  
+  <input
+    ref={fileInputRef1}
+    type="file"
+    accept=".csv"
+    style={{ display: "none" }}
+    onChange={handleFileChangee} 
+  />
+
+
   {isLoading && (
     <div
       style={{
@@ -532,13 +653,13 @@ const openFileExplorer = () => {
     className="btn btn-primary"
     style={{
       position: "relative",
-      bottom: "78.5px",
+      bottom: "98.5px",
       zIndex: "100",
-      left: "1000px",
+      left: "800px",
     }}
     onClick={openFileExplorer}
   >
-    Upload
+    Upload <i className="bi bi-upload" style={{marginLeft:"5px" }}></i>
   </button>
 
  
@@ -850,6 +971,11 @@ const openFileExplorer = () => {
                         <Col md={6}>
                           <label>Resume:</label>
                           <input type="file" className="form-control" name="resume" onChange={handleChange} accept=".pdf" />
+                          {student.resume&& (
+  <a href={`http://localhost:3000/${student.resume}`} target="_blank" rel="noopener noreferrer">
+    View Resume
+  </a>
+)}
                         </Col>
                         <Col md={6}>
                           <label>Placement:</label>
@@ -874,6 +1000,7 @@ const openFileExplorer = () => {
                         <input type="text" className="form-control mb-2" name="company" placeholder="Company" value={offer.company} onChange={(e) => handleOfferChange(index, e)} />
                         <input type="text" className="form-control mb-2" name="designation" placeholder="Designation" value={offer.designation} onChange={(e) => handleOfferChange(index, e)} />
                         <input type="text" className="form-control mb-2" name="package" placeholder="Package" value={offer.package} onChange={(e) => handleOfferChange(index, e)} />
+                        <input type="text" className="form-control mb-2" name="offertype" placeholder="offertype(Elite,Superdream,Dream,Fair)" value={offer.offertype} onChange={(e) => handleOfferChange(index, e)} />
 
                         <button type="button" className="btn  btn-sm" style={{ position: "relative", left: "650px" }} onClick={() => deleteOffer(index)}>
                           <i className="bi bi-x-circle" style={{ fontSize: "30px", color: "red" }}></i>
@@ -886,7 +1013,11 @@ const openFileExplorer = () => {
                     <br />
                     <label>Insert the offerletters(pdf,combine all letters as a single pdf):</label>
                     <input type="file" className="form-control" name="offerpdf" onChange={handleChange} accept="*" />
-
+                    {student.offerpdf && (
+  <a href={`http://localhost:3000/${student.offerpdf}`} target="_blank" rel="noopener noreferrer">
+    View Offer Letter
+  </a>
+)}
 
                     <div className="modal-footer">
 
@@ -1096,13 +1227,11 @@ const openFileExplorer = () => {
                           <div className="mb-3">
                             <label>Resume:</label>
                             <input type="file" className="form-control" name="resume" onChange={handleChange} accept=".pdf" />
-                            {student.resume && (
-                              <img
-                                src={`http://localhost:3000/${student.resume}`}
-                                alt=""
-                                style={{ width: "100px", height: "100px", objectFit: "cover", marginTop: "10px" }}
-                              />
-                            )}
+                            {student.resume&& (
+  <a href={`http://localhost:3000/${student.resume}`} target="_blank" rel="noopener noreferrer">
+    View Resume
+  </a>
+)}
                           </div>
                         </Col>
                         <Col md={6}>
@@ -1128,6 +1257,7 @@ const openFileExplorer = () => {
                         <input type="text" className="form-control mb-2" name="company" placeholder="Company" value={offer.company} onChange={(e) => handleOfferChange(index, e)} />
                         <input type="text" className="form-control mb-2" name="designation" placeholder="Designation" value={offer.designation} onChange={(e) => handleOfferChange(index, e)} />
                         <input type="text" className="form-control mb-2" name="package" placeholder="Package" value={offer.package} onChange={(e) => handleOfferChange(index, e)} />
+                        <input type="text" className="form-control mb-2" name="offertype" placeholder="offertype(Elite,Superdream,Dream,Fair)" value={offer.offertype} onChange={(e) => handleOfferChange(index, e)} />
 
                         <button type="button" className="btn  btn-sm" style={{ position: "relative", left: "650px" }} onClick={() => deleteOffer(index)}>
                           <i className="bi bi-x-circle" style={{ fontSize: "30px", color: "red" }}></i>
@@ -1142,12 +1272,10 @@ const openFileExplorer = () => {
                       <label>Insert the offerletters(pdf,combine all letters as a single pdf):</label>
                       <input type="file" className="form-control" name="offerpdf" onChange={handleChange} accept="*" />
                       {student.offerpdf && (
-                        <img
-                          src={`http://localhost:3000/${student.offerpdf}`}
-                          alt=""
-                          style={{ width: "100px", height: "100px", objectFit: "cover", marginTop: "10px" }}
-                        />
-                      )}
+  <a href={`http://localhost:3000/${student.offerpdf}`} target="_blank" rel="noopener noreferrer">
+    View Offer Letter
+  </a>
+)}
 
                     </div>
 

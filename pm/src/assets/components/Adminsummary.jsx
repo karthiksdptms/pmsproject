@@ -15,6 +15,7 @@ import axios from "axios"
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip);
 
 function Adminsummmary() {
+
   const [text, setText] = useState("");
   const [boxContent, setBoxContent] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -288,6 +289,56 @@ function Adminsummmary() {
     );
   }
 
+
+ 
+const API_URL = "http://localhost:3000/api/students";
+
+
+ const getStudentsWithScore = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/students-with-score`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching student records:", error);
+    throw error;
+  }
+};
+
+const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  const fetchStudents = async () => {
+    try {
+      const data = await getStudentsWithScore();
+      setStudents(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching student data:", error);
+      setLoading(false);
+    }
+  };
+
+   const [rowsPerPage, setRowsPerPage] = useState(10);
+    const handleRowsPerPageChange = (e) => {
+      const value = parseInt(e.target.value, 10);
+      if (value > 0) {
+        setRowsPerPage(value);
+        setCurrentPage(1);
+      }
+    };
+    const [currentPage, setCurrentPage] = useState(1);
+    const totalPages = Math.ceil(students.length / rowsPerPage);
+  
+    const startIdx = (currentPage - 1) * rowsPerPage;
+    const displayedData = students.slice(
+      startIdx,
+      startIdx + rowsPerPage
+    );
   return (
     
     <div className="toppp">
@@ -451,7 +502,7 @@ function Adminsummmary() {
 
       </div>
 
-      {/* + Button Below Main Div */}
+    
       <button 
       
         className="btn btn-primary mb-3"
@@ -556,7 +607,90 @@ function Adminsummmary() {
       </Modal>
     </div>
         </div>
+        
       </div>
+      <div className="container mt-5" style={{width:"608px",position:'relative',bottom:'250px',left:'200px'}} >
+          <div style={{position:'relative',width:"600px"}}>
+      <h5 className="text-center mb-4" style={{width:'300px',position:'relative',color:"rgb(117, 115, 115)",top:'10px',right:"70px"}} >Leader Boards</h5>
+
+      {loading ? (
+        <div className="text-center">Loading...</div>
+      ) : (
+        <div
+        style={{
+          position: "relative",
+          bottom: "60px",
+          overflowY: "auto",
+          maxHeight: "800px",
+          minWidth:'758px'
+        }}
+      >
+        <div
+          className="flex justify-right items-center gap-4 mt-4"
+          style={{ position: "relative", left: "300px", bottom: "20px" }}
+        >
+          <label htmlFor="rowsPerPage">No of records per page:</label>
+          <input
+            type="number"
+            id="rowsPerPage"
+            name="rowsPerPage"
+            value={rowsPerPage}
+            onChange={handleRowsPerPageChange}
+            style={{ width: "50px", padding: "5px", marginRight: "20px" }}
+          />
+    
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            className="btn"
+            disabled={currentPage === 1}
+          >
+            <i className="bi bi-chevron-double-left"></i>
+          </button>
+    
+          <span className="text-lg">Page {currentPage} of {totalPages}</span>
+    
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            className="btn"
+            disabled={currentPage === totalPages}
+          >
+            <i className="bi bi-chevron-double-right arr"></i>
+          </button>
+        </div>
+        <table className="table table-striped table-bordered" style={{width:"95%",position:"relative",left:'10px'}} >
+          <thead>
+            <tr>
+              <th>Registration No</th>
+              <th>Name</th>
+              <th>Department</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {students.length === 0 ? (
+              <tr>
+                <td colSpan="4" className="text-center">
+                  No records found
+                </td>
+              </tr>
+            ) : (
+              students.map((student) => (
+                <tr key={student._id}>
+                  <td>{student.registration_number}</td>
+                  <td>{student.name}</td>
+                  <td>{student.department}</td>
+                  <td>{student.score}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+        </div>
+      )}
+    </div>
+    </div>
     </div>
   );
 }

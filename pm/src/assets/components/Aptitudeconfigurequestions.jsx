@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Aptitudeconfigurequestions.css"
-import Topbar from './Topbar'
 import { IoIosArrowBack } from "react-icons/io";
 import { Link } from "react-router-dom";
 import axios from 'axios';

@@ -132,7 +132,7 @@ function Accountsapprovals() {
       const addOffer = () => {
         setStudent({
           ...student,
-          offers: [...student.offers, { offerno: "", company: "", designation: "", package: "", }],
+          offers: [...student.offers, { offerno: "", company: "", designation: "", package: "",offertype:""  }],
         });
       };
     
@@ -205,6 +205,8 @@ function Accountsapprovals() {
           formData.append(`offers[${index}][company]`, offer.company);
           formData.append(`offers[${index}][designation]`, offer.designation);
           formData.append(`offers[${index}][package]`, offer.package);
+          formData.append(`offers[${index}][offertype]`, offer.offertype);
+
         });
       
       
@@ -290,7 +292,7 @@ function Accountsapprovals() {
      );
      useEffect(() => {
       if (student.profileImage) {
-        setPreview(`http://localhost:3000/${student.profileImage}`); // Load stored image
+        setPreview(`http://localhost:3000/${student.profileImage}`); 
       }
     }, [student.profileImage]);
   return (
@@ -655,18 +657,16 @@ function Accountsapprovals() {
                           <div className="mb-3">
                             <label>Resume:</label>
                             <input type="file" className="form-control" name="resume" onChange={handleChange} accept=".pdf" />
-                            {student.resume && (
-                              <img
-                                src={`http://localhost:3000/${student.resume}`}
-                                alt=""
-                                style={{ width: "100px", height: "100px", objectFit: "cover", marginTop: "10px" }}
-                              />
-                            )}
+                            {student.resume&& (
+  <a href={`http://localhost:3000/${student.resume}`} target="_blank" rel="noopener noreferrer">
+    View Resume
+  </a>
+)}
                           </div>
                         </Col>
                         <Col md={6}>
                           <label>Placement:</label>
-                          <select className="form-control" name="placement" onChange={handleChange} >
+                          <select className="form-control" name="placement" onChange={handleChange} value={student.placement} >
                             <option value="">Select:</option>
                             <option value="Placed">Placed</option>
                             <option value="Not-placed">Not-placed</option>
@@ -687,7 +687,7 @@ function Accountsapprovals() {
                         <input type="text" className="form-control mb-2" name="company" placeholder="Company" value={offer.company} onChange={(e) => handleOfferChange(index, e)} />
                         <input type="text" className="form-control mb-2" name="designation" placeholder="Designation" value={offer.designation} onChange={(e) => handleOfferChange(index, e)} />
                         <input type="text" className="form-control mb-2" name="package" placeholder="Package" value={offer.package} onChange={(e) => handleOfferChange(index, e)} />
-
+                        <input type="text" className="form-control mb-2" name="offertype" placeholder="offertype(Elite,Superdream,Dream,Fair)" value={offer.offertype} onChange={(e) => handleOfferChange(index, e)} />
                         <button type="button" className="btn  btn-sm" style={{ position: "relative", left: "650px" }} onClick={() => deleteOffer(index)}>
                           <i className="bi bi-x-circle" style={{ fontSize: "30px", color: "red" }}></i>
                         </button>
@@ -701,12 +701,10 @@ function Accountsapprovals() {
                       <label>Insert the offerletters(pdf,combine all letters as a single pdf):</label>
                       <input type="file" className="form-control" name="offerpdf" onChange={handleChange} accept="*" />
                       {student.offerpdf && (
-                        <img
-                          src={`http://localhost:3000/${student.offerpdf}`}
-                          alt=""
-                          style={{ width: "100px", height: "100px", objectFit: "cover", marginTop: "10px" }}
-                        />
-                      )}
+  <a href={`http://localhost:3000/${student.offerpdf}`} target="_blank" rel="noopener noreferrer">
+    View Offer Letter
+  </a>
+)}
 
                     </div>
 

@@ -6,6 +6,7 @@ const offerSchema = new mongoose.Schema({
   company: { type: String },
   package: { type: String },
   designation: { type: String },
+  offertype: { type: String },
 });
 
 const examSchema = new mongoose.Schema({

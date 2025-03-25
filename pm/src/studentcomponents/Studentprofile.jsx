@@ -101,7 +101,7 @@ function Studentprofile() {
       const addOffer = () => {
         setStudent((prev) => ({
           ...prev,
-          offers: [...(prev.offers || []), { offerno: "", company: "", designation: "", package: "" }]
+          offers: [...(prev.offers || []), { offerno: "", company: "", designation: "", package: "",offertype:"" }]
         }));
       };
       
@@ -152,6 +152,8 @@ function Studentprofile() {
       formData.append(`offers[${index}][company]`, offer.company);
       formData.append(`offers[${index}][designation]`, offer.designation);
       formData.append(`offers[${index}][package]`, offer.package);
+      formData.append(`offers[${index}][offertype]`, offer.offertype);
+
     });
 
     if (student.offerpdf) {
@@ -647,7 +649,9 @@ function Studentprofile() {
                         <input type="text" className="form-control mb-2" name="company" placeholder="Company" value={offer.company} onChange={(e) => handleOfferChange(index, e)} />
                         <input type="text" className="form-control mb-2" name="designation" placeholder="Designation" value={offer.designation} onChange={(e) => handleOfferChange(index, e)} />
                         <input type="text" className="form-control mb-2" name="package" placeholder="Package" value={offer.package} onChange={(e) => handleOfferChange(index, e)} />
+                        <input type="text" className="form-control mb-2" name="offertype" placeholder="offertype(Elite,Superdream,Dream,Fair)" value={offer.offertype} onChange={(e) => handleOfferChange(index, e)} />
 
+                      
                         <button type="button" className="btn  btn-sm" style={{ position: "relative", left: "650px" }} onClick={() => deleteOffer(index)}>
                           <i className="bi bi-x-circle" style={{ fontSize: "30px", color: "red" }}></i>
                         </button>

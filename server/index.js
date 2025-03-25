@@ -17,6 +17,8 @@ import chartRoutes from "./routes/chartRoutes.js";
 import companyRoutes from "./routes/companyRoutes.js";
 import filteroutes from "./routes/filters.js"
 import AdminRoutes from "./routes/AdminRoutes.js"
+
+import { autoPostScheduler,autoDeleteScheduler } from "./autoPostScheduler.js";
 dotenv.config();
 connectDatabase();
 
@@ -39,7 +41,11 @@ app.use("/api/companies", companyRoutes);
 app.use("/api/filters", filteroutes);
 app.use("/api/admin", AdminRoutes);
 
-
+connectDatabase().then(() => {
+  autoPostScheduler();
+  autoDeleteScheduler(); 
+  console.log("✅ Auto Post and Auto Delete Schedulers are running...");
+});
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -116,14 +122,6 @@ app.post("/send-email", async (req, res) => {
 });
 
 
-app.get("/getstudents", async (req, res) => {
-  try {
-    const students = await FilterModel.find();
-    res.json(students);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 
 app.post("/addqp", async (req, res) => {

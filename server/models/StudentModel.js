@@ -6,6 +6,8 @@ const offerSchema = new mongoose.Schema({
   company: { type: String },
   package: { type: String },
   designation: { type: String },
+  offertype: { type: String },
+
 });
 
 const examSchema = new mongoose.Schema({
@@ -82,6 +84,7 @@ const studentSchema = new mongoose.Schema({
   offerpdf: { type: String },
   exams: [examSchema],
   results: [resultSchema],
+  score: { type: Number },
   placement_announce: [announcementSchema], 
 });
 

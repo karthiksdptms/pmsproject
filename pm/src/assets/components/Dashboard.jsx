@@ -26,6 +26,9 @@ const cgpaOptions = [
 ];
 const arrearsOptions = ["0", "1", "2", "3", "4", "5", "6"];
 const historyOfArrearsOptions = ["0", "1", "2", "3", "4", "5", "6"];
+const placementOptions = ["Placed","Not-placed"];
+const offertypeOptions = ["Elite","Dream","Superdream","Fair"];
+
 
 function Dashboard() {
   const [hoverVisible, setHoverVisible] = useState(false);
@@ -52,6 +55,8 @@ function Dashboard() {
     cgpa: "",
     arrears: "",
     historyOfArrears: "",
+    placement: "",
+    offertype: "",
     aoi: [],
     language: "",
     otherDepartment: "",
@@ -123,6 +128,15 @@ function Dashboard() {
         student.arrears?.toString() === filters.arrears) &&
       (filters.historyOfArrears === "" ||
         student.hoa?.toString() === filters.historyOfArrears) &&
+      (filters.placement === "" ||
+        student.placement?.toString() === filters.placement) &&
+      (filters.offertype === "" ||
+        (Array.isArray(student.offers) &&
+          student.offers.some(
+            (offer) =>
+              offer.offertype?.toString().toLowerCase() ===
+              filters.offertype.toLowerCase()
+          ))) &&
       (filters.aoi.length === 0 ||
         filters.aoi.includes(student.aoi) ||
         (showOtherAoi && student.aoi?.includes(filters.otherAoi))) &&
@@ -131,6 +145,7 @@ function Dashboard() {
           student.language.toLowerCase().includes(filters.language.toLowerCase())))
     );
   });
+  
   
 
 
@@ -245,6 +260,11 @@ const fetchAoiOptions = async () => {
 useEffect(() => {
   fetchAoiOptions();
 }, []);
+
+const profileImageUrl = selectedData.profileImage
+  ? `http://localhost:3000/${selectedData.profileImage}`
+  : null;
+
 
   return (
     <>
@@ -433,7 +453,7 @@ useEffect(() => {
       <option value="" disabled selected>
         Select CGPA:
       </option>
-      <option value="any">ANY</option>
+      <option value="">ANY</option>
       {cgpaOptions.map((cgpa) => (
         <option key={cgpa} value={cgpa.split(" ")[0]}>
           {cgpa}
@@ -463,7 +483,7 @@ useEffect(() => {
       <option value="" disabled selected>
         Select Arrears:
       </option>
-      <option value="any">ANY</option>
+      <option value="">ANY</option>
       {arrearsOptions.map((arr) => (
         <option key={arr} value={arr}>
           {arr}
@@ -492,7 +512,7 @@ useEffect(() => {
       <option value="" disabled selected>
         Select HOA:
       </option>
-      <option value="any">ANY</option>
+      <option value="">ANY</option>
       {historyOfArrearsOptions.map((hoa) => (
         <option key={hoa} value={hoa}>
           {hoa}
@@ -584,7 +604,63 @@ useEffect(() => {
       }}
     />
   </div>
+</div><div className="lable1">
+  <div>
+    <label htmlFor="placementSelect" style={{ fontSize: "23px" }}>
+      Placement_Details:
+    </label>
+    <select
+      id="placementSelect"
+      name="placement"
+      onChange={(e) => handleSelectChange(e, "placement")}
+      style={{
+        marginBottom: "10px",
+        padding: "8px",
+        width: "210px",
+        maxWidth: "300px",
+      }}
+    >
+      <option value="" disabled selected>
+        Select :
+      </option>
+      <option value="">ANY</option>
+      {placementOptions.map((hoa) => (
+        <option key={hoa} value={hoa}>
+          {hoa}
+        </option>
+      ))}
+    </select>
+  </div>
+ 
+
 </div>
+<div style={{position:'relative',left:'45px'}}>
+    <label htmlFor="offertypeSelect" style={{ fontSize: "23px" }}>
+    Select offertype:
+    </label>
+    <br />
+    <select
+      id="offertypeSelect"
+      name="offertype"
+      onChange={(e) => handleSelectChange(e, "offertype")}
+      style={{
+        marginBottom: "10px",
+        padding: "8px",
+        width: "210px",
+        maxWidth: "300px",
+      }}
+    >
+      <option value="" disabled selected>
+        Select :
+      </option>
+      <option value="">ANY</option>
+      {offertypeOptions.map((hoa) => (
+        <option key={hoa} value={hoa}>
+          {hoa}
+        </option>
+      ))}
+    </select>
+  </div>
 
               </div>
               <div
@@ -718,6 +794,8 @@ useEffect(() => {
             <th scope="col">AWARDS/ACHIEVMENTS</th>
             <th scope="col">AREA_OF_INTEREST</th>
             <th scope="col">PLACEMENT_INFO</th>
+            <th scope="col">OFFERS</th>
+
             <th>INFO</th>
           </tr>
         </thead>
@@ -751,6 +829,36 @@ useEffect(() => {
               <td>{item.aoi}</td>
               <td>{item.placement}</td>
               <td>
+      {item.offers?.length > 0 ? (
+        item.offers.map((offer, idx) => (
+          <span
+            
+          >
+            <i
+              className="bi bi-bookmark-check-fill"
+              style={{
+                color:
+                  offer.offertype === "Elite"
+                    ? "#00bfff"
+                    : offer.offertype === "Superdream"
+                    ?  "rgb(255, 215, 0)"
+                    : offer.offertype === "Dream"
+                    ? "#BCC6CC" 
+                    : offer.offertype === "Fair"
+                    ? "rgb(205, 127, 50)"
+                    : "#d3d3d3", 
+                marginRight: "5px",
+              }}
+            ></i>
+            {offer.offertype}
+          </span>
+        ))
+      ) : (
+        <span style={{ color: "red" }}>No Offers</span>
+      )}
+    </td>
+
+              <td>
                 <button
                   style={{
                     border: "none",
@@ -776,7 +884,7 @@ useEffect(() => {
             <td>
               {filteredStudents.length === 0 && (
                 <h5 style={{ color: "red" }}>
-                  <img src="norec.png" alt="" />
+                  <img src="/norec.png" alt="" />
                   No records found
                 </h5>
               )}
@@ -811,15 +919,31 @@ useEffect(() => {
                           }}
                         >
                           <h5 className="offcanvas-title" id="offcanvasRightLabel">
-                            <FaUserCircle
-                              style={{
-                                width: "200px",
-                                height: "200px",
-                                color: "rgb(205, 205, 205)",
-                                position: "relative",
-                                top: "15px",
-                              }}
-                            />
+                          {profileImageUrl ? (
+  <img
+    src={profileImageUrl}
+    alt="Profile"
+    style={{
+      width: "200px",
+      height: "200px",
+      borderRadius: "50%",
+      objectFit: "cover",
+      position: "relative",
+      top: "15px",
+    }}
+  />
+) : (
+  <FaUserCircle
+    style={{
+      width: "200px",
+      height: "200px",
+      color: "rgb(205, 205, 205)",
+      position: "relative",
+      top: "15px",
+    }}
+  />
+)}
+
                             <p
                               style={{
                                 position: "relative",
@@ -1326,46 +1450,59 @@ useEffect(() => {
                                   <h5 className="mx-3">Placement Status: {selectedData.placement}</h5>
 
 
-                                
-                                  {(() => {
-                                    const offers = [];
-                                    Object.keys(selectedData).forEach((key) => {
-                                      if (key.startsWith("OFFERS/")) {
-                                        const index = key.split("/")[1]; 
-                                        const field = key.split("/")[2]; 
+                                  {selectedData?.offers?.length > 0 ? (
+  <div className="row mx-2 d-flex justify-content-center">
+    {selectedData.offers.map((offer, index) => (
+      <div key={index} className="col-lg-4 col-md-6 mb-3">
+        <div className="offer-details card p-2 border rounded shadow-sm">
+          <h5
+            className="card-title p-1"
+            style={{
+              backgroundColor: "rgb(218, 216, 216)",
+              width: "112.5%",
+              position: "relative",
+              bottom: "8px",
+              right: "10px",
+              borderTopLeftRadius: "5px",
+              borderTopRightRadius: "5px",
+            }}
+          >
+            Offer {offer.offerno || index + 1}
+          </h5>
+          <h6>
+            <strong>Company:</strong> {offer.company || "N/A"}
+          </h6>
+          <p>
+            <strong>Designation:</strong> {offer.designation || "N/A"}
+          </p>
+          <p>
+            <strong>Package:</strong> {offer.package || "N/A"}
+          </p>
+          <p>
+            <strong>offertype:</strong> {offer.offertype || "N/A"}
+          </p>
+          
+        </div>
+        
+      </div>
+    ))}
+  </div>
+) : (
+  <p className="mx-3">No offers available.</p>
+)}
+{selectedData.offerpdf ? (
+            <a
+              href={`http://localhost:3000/${selectedData.offerpdf}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary btn-sm"
+            >
+              📄 Offer Letters
+            </a>
+          ) : (
+            <p className="text-muted">No offer letter available.</p>
+          )}
 
-                                        if (!offers[index]) {
-                                          offers[index] = {}; 
-                                        }
-                                        offers[index][field] = selectedData[key]; 
-                                      }
-                                    });
-
-
-                                    return (
-                                      <>
-                                        {offers.length > 0 ? (
-                                          <div className="row mx-2 d-flex justify-content-center">
-                                            {offers.map((offer, index) => (
-                                              <div key={index} className="col-lg-4 col-md-6 mb-3">
-                                                <div className="offer-details card p-2 border rounded shadow-sm ">
-                                                  <h5 className="card-title p-1 " style={{ backgroundColor: "rgb(218, 216, 216)", width: "112.5%", position: "relative", bottom: "8px", right: "10px", borderTopLeftRadius: "5px", borderTopRightRadius: "5px" }}> {offer.OFFERNO}</h5>
-                                                  <h6><strong>Company:</strong> {offer.company}</h6>
-                                                  <p><strong>Designation:</strong> {offer.designation}</p>
-                                                  <p><strong>Package:</strong> {offer.package}</p>
-                                                  <a href={offer.OFFER} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-sm">
-                                                    📄  Offer Letter
-                                                  </a>
-                                                </div>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        ) : (
-                                          <p className="mx-3">No offers available.</p>
-                                        )}
-                                      </>
-                                    );
-                                  })()}
                                 </div>
                               </div>
                             )}

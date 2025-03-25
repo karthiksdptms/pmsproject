@@ -4,7 +4,7 @@ import { addstudent, approveaddstudent,approvegetstudent,upload, getstudent, edi
     ,postQuestionPaper,postSpecificQuestionPaper,
     toggleAutoPost,
     approveeditstudent,getallstudents,
-    rejectStudent,getTexts,addText,deleteTextById
+    rejectStudent,getTexts,addText,deleteTextById,getStudentsWithScore,
 } from '../controllers/studentcontroller.js';
 import StudentModel from "../models/StudentModel.js"
 import AnswerModel from '../models/AnswerModel.js'
@@ -17,6 +17,7 @@ import UUser from "../models/UUsers.js";
 
 const router = express.Router();
 
+router.get("/students-with-score", getStudentsWithScore);
 router.post('/add', authMiddleware, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'resume', maxCount: 1 }, { name: 'offerpdf', maxCount: 1 }]), addstudent);
 router.get('/', authMiddleware, getstudent);
 router.get('/approved-students', approvegetstudent);
@@ -415,5 +416,47 @@ router.get("/placements/:id", async (req, res) => {
   router.post("/add-text", addText);
   router.delete("/delete-text/:id", deleteTextById);
 
+  router.post("/placementuploadcsv", async (req, res) => {
+    try {
+      const csvData = req.body; 
   
+    
+      for (const row of csvData) {
+        const {
+          registration_number,
+          offerno,
+          company,
+          package: pkg,
+          designation,
+          offertype,
+        } = row;
+  
+        
+        const student = await StudentModel.findOne({ registration_number });
+  
+        if (student) {
+          
+          const newOffer = {
+            offerno,
+            company,
+            package: pkg,
+            designation,
+            offertype,
+          };
+  
+          
+          student.offers.push(newOffer);
+  
+         
+          await student.save();
+        }
+      }
+  
+      res.status(200).json({ message: "Placement details updated successfully!" });
+    } catch (error) {
+      console.error("Error updating offers:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
 export default router;

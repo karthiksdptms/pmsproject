@@ -22,7 +22,21 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+export const getStudentsWithScore = async (req, res) => {
+  try {
+   
+    const students = await StudentModel.find({ score: { $exists: true } }).sort({ score: -1 });
 
+    if (students.length === 0) {
+      return res.status(404).json({ message: "No students with scores found" });
+    }
+
+    res.status(200).json(students);
+  } catch (error) {
+    console.error("Error fetching student records:", error);
+    res.status(500).json({ message: "Failed to fetch student records" });
+  }
+};
 
 export const getTexts = async (req, res) => {
   try {
@@ -126,6 +140,15 @@ const addstudent = async (req, res) => {
     
     const profileImage = req.files?.image ? req.files.image[0].filename : null;
 
+    
+    const score = calculateScore([
+      internships,
+      certifications,
+      patentspublications,
+      achievements,
+      aoi
+    ]);
+
     const newuser = new User({
       name,
       email,
@@ -172,7 +195,8 @@ const addstudent = async (req, res) => {
       profileImage,
       placement,
       offers: finalOffers,
-      offerpdf
+      offerpdf,
+      score
     });
 
     await student.save();
@@ -244,6 +268,13 @@ const profileImage = req.files && req.files["image"] ? req.files["image"][0].fil
 
 
   
+const score = calculateScore([
+  internships,
+  certifications,
+  patentspublications,
+  achievements,
+  aoi
+]);
     const finalOffers = Array.isArray(offers) ? offers : [];
 
     const newuser = new UUser({
@@ -294,6 +325,7 @@ const profileImage = req.files && req.files["image"] ? req.files["image"][0].fil
       offers: finalOffers,
       offerpdf,
       expassword:password,
+      score
     });
 
     await student.save();
@@ -364,6 +396,15 @@ export const approvegetstudent =async (req, res) => {
 };
 
 
+const calculateScore = (fields) => {
+  let score = 0;
+  fields.forEach((field) => {
+    if (field) {
+      score += field.split(",").filter((item) => item.trim() !== "").length;
+    }
+  });
+  return score;
+};
 
 const editstudent = async (req, res) => {
   try {
@@ -412,8 +453,7 @@ const editstudent = async (req, res) => {
     const profileImage = req.files?.image ? req.files.image[0].filename : student.profileImage;
     const resume = req.files?.resume ? req.files.resume[0].filename : student.resume;
     const offerpdf = req.files?.offerpdf ? req.files.offerpdf[0].filename : student.offerpdf;
-
-    const finalOffers = offers ? (typeof offers === "string" ? JSON.parse(offers) : offers) : student.offers;
+    const finalOffers = Array.isArray(offers) ? offers : [];
 
    
     let hashpassword = student.password; 
@@ -421,7 +461,13 @@ const editstudent = async (req, res) => {
       hashpassword = await bcrypt.hash(password, 10);
     }
 
-  
+    const score = calculateScore([
+      internships,
+      certifications,
+      patentspublications,
+      achievements,
+      aoi
+    ]);
     const updatedStudent = await StudentModel.findByIdAndUpdate(
       id,
       {
@@ -457,6 +503,7 @@ const editstudent = async (req, res) => {
         profileImage,
         resume,
         offerpdf,
+        score,
       },
       { new: true }
     );
@@ -561,6 +608,15 @@ export const approveeditstudent = async (req, res) => {
         : offers
       : student.offers;
 
+
+      
+    const score = calculateScore([
+      internships,
+      certifications,
+      patentspublications,
+      achievements,
+      aoi
+    ]);
     
     const updatedStudent = await StudentModel.findOneAndUpdate(
       { registration_number },
@@ -595,6 +651,7 @@ export const approveeditstudent = async (req, res) => {
         profileImage, 
         resume,
         offerpdf,
+        score
       },
       { new: true }
     );
@@ -808,6 +865,14 @@ const uploadCSV = async (req, res) => {
                 : offers
               : [];
 
+              
+    const score = calculateScore([
+      internships,
+      certifications,
+      patentspublications,
+      achievements,
+      aoi
+    ]);
            
             const student = new StudentModel({
               userId: savedUser._id.toString(),
@@ -840,6 +905,7 @@ const uploadCSV = async (req, res) => {
               aoi,
               placement,
               offers: finalOffers,
+              score
             });
 
             const savedStudent = await student.save();
