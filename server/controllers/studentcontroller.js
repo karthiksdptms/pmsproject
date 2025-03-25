@@ -41,10 +41,10 @@ export const addText = async (req, res) => {
   }
 
   try {
-    // Add createdAt field with the current date and time
+   
     const newText = new TextModel({
       text,
-      createdAt: new Date().toISOString(), // Save timestamp
+      createdAt: new Date().toISOString(), 
     });
 
     await newText.save();

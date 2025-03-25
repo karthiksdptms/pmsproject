@@ -32,6 +32,9 @@ import Accountsapprovals from './assets/components/Accountapprovals'
 import Studentactualtraining from './studentcomponents/Studentactualtraining'
 import Studenttrainingschedules from './studentcomponents/Studenttrainingschedules'
 import Studenttrainingattendance from './studentcomponents/Studenttrainingattendance'
+import Settings from './assets/components/Settings'
+import Settingsfilters from './assets/components/Settingsfilters'
+import Settingsstaffs from './assets/components/Settingsstaffs'
 
 
 
@@ -69,6 +72,12 @@ function App() {
             <Route path='/Maindashboard/Trainingattendence' element={<Trainingattendance />} />
            
             <Route path='/Maindashboard/Placementannounce' element={<Placementsannounce />} />
+            <Route path='/Maindashboard/Settings' element={<Settings />} />
+            <Route path='/Maindashboard/Settingsfilters' element={<Settingsfilters />} />
+
+            <Route path='/Maindashboard/Settingsstaffs' element={<Settingsstaffs />} />
+
+
             <Route path='/Maindashboard/Aptitudeconfigurequestions' element={<Aptitudeconfigurequestions />} />
             <Route path='/Maindashboard/Aptitudescores' element={<Aptitudescores />} />
             <Route path='/Maindashboard/Aptitudescheduleexam' element={<Aptitudescheduleexam />} />

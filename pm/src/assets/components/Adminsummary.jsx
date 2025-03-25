@@ -18,12 +18,14 @@ function Adminsummmary() {
   const [text, setText] = useState("");
   const [boxContent, setBoxContent] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showModall, setShowModall] = useState(false);
 
-  // Reference to the scrollable div
+
+  
   const boxRef = useRef(null);
   const scrollIntervalRef = useRef(null);
 
-  // Fetch data from the backend
+ 
   const fetchTexts = async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/students/texts");
@@ -33,13 +35,13 @@ function Adminsummmary() {
     }
   };
 
-  // Add new text to the database
+  
   const handleAddText = async () => {
     if (text.trim() !== "") {
       try {
         const response = await axios.post("http://localhost:3000/api/students/add-text", {
           text,
-          createdAt: new Date().toISOString(), // Add current timestamp
+          createdAt: new Date().toISOString(), 
         });
         setBoxContent([...boxContent, response.data]);
         setText("");
@@ -60,21 +62,21 @@ function Adminsummmary() {
   };
   
   
-  // Auto-scroll continuously to create a smooth scrolling effect
+ 
   const startAutoScroll = () => {
     if (boxRef.current) {
       scrollIntervalRef.current = setInterval(() => {
         if (boxRef.current.scrollTop < boxRef.current.scrollHeight - boxRef.current.clientHeight) {
-          boxRef.current.scrollTop += 1; // Scroll up smoothly from bottom to top
+          boxRef.current.scrollTop += 1;
         } else {
-          boxRef.current.scrollTop = 0; // Reset to bottom after reaching the top
+          boxRef.current.scrollTop = 0; 
         }
-      }, 50); // Smooth auto-scroll speed
+      }, 50); 
     }
   };
   
 
-  // Stop auto-scrolling when component unmounts
+  
   const stopAutoScroll = () => {
     if (scrollIntervalRef.current) {
       clearInterval(scrollIntervalRef.current);
@@ -111,7 +113,7 @@ function Adminsummmary() {
 
   const chartRef = useRef(null);
 
-  // Initial Chart State
+ 
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -132,7 +134,7 @@ function Adminsummmary() {
   const [newLabel, setNewLabel] = useState("");
   const [newValue, setNewValue] = useState("");
 
-  // Fetch Data from Database
+
   const fetchChartData = async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/charts/getChartData");
@@ -157,14 +159,13 @@ function Adminsummmary() {
     fetchChartData();
   }, []);
 
-  // Handle Input Change
+ 
   const handleChange = (index, value) => {
     const updatedData = [...editableData];
     updatedData[index] = parseInt(value) || 0;
     setEditableData(updatedData);
   };
 
-  // Add New Datapoint
   const addNewDatapoint = () => {
     if (newLabel && newValue) {
       setChartData((prevData) => ({
@@ -183,7 +184,7 @@ function Adminsummmary() {
     }
   };
 
-  // Delete Datapoint
+ 
   const deleteDatapoint = (index) => {
     const updatedLabels = [...chartData.labels];
     const updatedData = [...editableData];
@@ -204,7 +205,7 @@ function Adminsummmary() {
     setEditableData(updatedData);
   };
 
-  // Update Chart Data in DB
+ 
   const updateChartData = async () => {
     const updatedChartData = {
       labels: chartData.labels,
@@ -221,7 +222,7 @@ function Adminsummmary() {
       ],
     });
 
-    // Save to Database
+  
     try {
       await axios.post("http://localhost:3000/api/charts/saveChartData", updatedChartData);
       alert("Chart data saved successfully! ");
@@ -275,7 +276,7 @@ function Adminsummmary() {
     calendarDays.push(<span key={`empty-${i}`} className="calendar-day invisible"></span>);
   }
 
-  // Add actual days
+ 
   for (let day = 1; day <= daysInMonth; day++) {
     calendarDays.push(
       <span
@@ -454,26 +455,26 @@ function Adminsummmary() {
       <button 
       
         className="btn btn-primary mb-3"
-        onClick={() => setShowModal(true)}
+        onClick={() => setShowModall(true)}
         style={{ width: "30px", height: "30px", borderRadius: "50%", fontSize: "20px",position:"relative",left:'350px',bottom:"6px" }}
       >
        <span style={{position:'relative',right:"4px",bottom:"5px"}}>+</span>
       </button>
 
       {/* Modal using react-bootstrap */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+      <Modal show={showModall} onHide={() => setShowModall(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Add Text</Modal.Title>
+          <Modal.Title>Add Announcement</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group controlId="textInput">
-              <Form.Label>Enter text</Form.Label>
+            
               <Form.Control
                 type="text"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                placeholder="Enter text..."
+                placeholder="Enter message..."
               />
             </Form.Group>
           </Form>
@@ -500,13 +501,13 @@ function Adminsummmary() {
           <span style={{fontSize:'13px', position:'relative',bottom:'10px'}}>Edit</span>
         </button>
 
-      {/* 📊 Modal for Editing Data */}
+   
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Edit Chart Data</Modal.Title>
+          <Modal.Title>Edit placement Data</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h5>Edit Data Points:</h5>
+       
           {editableData.map((value, index) => (
             <div key={index} className="mb-2 d-flex align-items-center">
               <label className="me-2">{chartData.labels[index]}:</label>

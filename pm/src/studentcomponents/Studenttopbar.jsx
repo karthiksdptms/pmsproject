@@ -5,13 +5,12 @@ import { GrAchievement } from "react-icons/gr";
 import "./Studenttopbar.css";
 import { useAuth } from "../assets/context/authContext";
 
-
 function Studenttopbar() {
   const { user, logout } = useAuth();
 
   return (<>
     <div className="topbar">
-      <img src="/ritraja.jpg" className="img-fluid" alt="Responsive image" />
+     <img src="/ritraja.jpg"    alt="logo"/>
 
       <h6 style={{
 
@@ -114,7 +113,7 @@ function Studenttopbar() {
       <NavLink to="/Studentdashboard/Studentprofile" end>
   {({ isActive }) => (
     <button className={`btnn ${isActive ? "bgg" : ""}`}>
-      <i className="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
+      <i className="bi bi-person-circle" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
       My Profile
     </button>
   )}
@@ -141,7 +140,7 @@ function Studenttopbar() {
       <NavLink to="/Studentdashboard/Studenttraining" end>
   {({ isActive }) => (
     <button className={`btnn ${isActive ? "bgg" : ""}`}>
-      <i className="bi bi-funnel-fill" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
+      <i className="bi bi-pen-fill" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
       Assessments
     </button>
   )}
@@ -154,8 +153,7 @@ function Studenttopbar() {
       <NavLink to="/Studentdashboard/Studentplacement" end>
   {({ isActive }) => (
     <button className={`btnn ${isActive ? "bgg" : ""}`}>
-      <i className="bi bi-bullseye" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
-      Placement
+     <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"20px"}} />    Placement
     </button>
   )}
 </NavLink>
@@ -220,7 +218,7 @@ function Studenttopbar() {
     </div>
 
     <div className="rajalakshmibottomimg">
-      <img src="rajalakshmibottom.png" alt="" />
+    <img src="/rajbtm.png" alt="" />
     </div>
 
   </>)

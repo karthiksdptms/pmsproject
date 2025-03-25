@@ -58,18 +58,18 @@ function Aptitude() {
                    
                 <div  className=''>
             <Link to="/Maindashboard/Aptitudeconfigurequestions" style={{ textDecoration: "none", width: "250px" }} > <div className='cq'>
-              <h4 style={{ position: "relative", top: "30px", right: "30px" }}>Configure Questions</h4>
-              <i className="bi bi-calendar2-check-fill" style={{ fontSize: "50px", position: "relative", left: "120px", bottom: "30px", color:'rgb(132, 65, 136)' }}></i>
+              <h4 style={{ position: "relative", top: "30px", right: "30px" }}>Configure Qns</h4>
+              <i className="bi bi-question-diamond-fill" style={{ fontSize: "50px", position: "relative", left: "120px", bottom: "30px", color:'rgb(152, 80, 156)' }}></i>
             </div></Link></div>
           <div style={{marginRight:"30px"}}> <Link to="/Maindashboard/Aptitudescheduleexam" style={{ textDecoration: "none", width: "250px", }}> <div className='sc'>
             <h4 style={{ position: "relative", top: "30px", right: "40px" }}>Schedule Exam</h4>
-            <i className="bi bi-calendar2-check-fill" style={{ fontSize: "50px", position: "relative", left: "110px", bottom: "30px", color: 'rgb(117, 58, 89)' }}></i>
+            <i className="bi bi-calendar2-check-fill" style={{ fontSize: "50px", position: "relative", left: "110px", bottom: "30px", color: 'rgb(165, 98, 134)' }}></i>
           </div></Link></div>
           <div>
 
             <Link to="/Maindashboard/Aptitudescores" style={{ textDecoration: "none", width: "200px" }}> <div className='att'>
               <h4 style={{ position: "relative", top: "30px", right: "30px" }}>Scores</h4>
-              <i className="bi bi-calendar2-check-fill" style={{ fontSize: "50px", position: "relative", left: "80px", bottom: "30px", color: 'rgb(73, 67, 119)' }}></i>
+              <i className="bi bi-patch-check-fill" style={{ fontSize: "50px", position: "relative", left: "80px", bottom: "30px", color: 'rgb(100, 93, 153)' }}></i>
             </div></Link></div>
 
 

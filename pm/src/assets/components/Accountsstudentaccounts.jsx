@@ -442,9 +442,9 @@ const uploadCsv = async (file) => {
 };
 
 
-// Open File Explorer
+
 const openFileExplorer = () => {
-  fileInputRef.current.click(); // Trigger hidden file input
+  fileInputRef.current.click(); 
 };
 
   return (<>

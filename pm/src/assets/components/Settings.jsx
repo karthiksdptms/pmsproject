@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import './Aptitude.css';
+import "./Aptitude.css";
 import { IoIosArrowBack } from "react-icons/io";
 import { Link } from "react-router-dom";
+import { Modal, Button } from "react-bootstrap";
+import axios from "axios";
+import "./Settings.css"
+function Settings() {
+ 
 
-function Accounts() {
   return (
     <>
 
@@ -48,7 +51,7 @@ function Accounts() {
                 width: "100px",
               }}
             >
-              Accounts{" "}
+              Settings{" "}
             </h2>
           </div>
         </Link>
@@ -56,14 +59,16 @@ function Accounts() {
           
                     <div>
                       
-                      <Link to="/Maindashboard/Accountsstudentaccounts" style={{textDecoration:"none",width:"20px"}}> <div className='sce'>
-                                    <h4 style={{position:"relative",top:"30px",right:"40px"}}>Students</h4>
-                                    <i className="bi bi-person-circle" style={{fontSize:"40px",position:"relative",left:"80px",bottom:"20px",color:'rgb(132, 65, 136)'}}></i>
+                      <Link to="/Maindashboard/Settingsfilters" style={{textDecoration:"none",width:"20px"}}> <div className='sce'>
+                                    <h4 style={{position:"relative",top:"30px",right:"40px"}}>filters</h4>
+                                    <i className="bi bi-filter" style={{fontSize:"50px",position:"relative",left:"80px",bottom:"30px",color:'rgb(132, 65, 136)'}}></i>
                                 </div></Link></div>
-                                <div style={{fontSize:"50px",position:"relative",left:"20px",color:'rgba(11,132,164,255)'}}> <Link to="/Maindashboard/Accountapprovals" style={{textDecoration:"none",width:"250px"}}> <div className='att'>
-                                    <h4 style={{position:"relative",top:"30px",right:"40px"}}>Approvals</h4>
-                                    <i className="bi bi-bookmark-check-fill" style={{fontSize:"40px",position:"relative",left:"80px",bottom:"30px",color:"rgb(107, 100, 159)"}}></i>
+                                <div style={{fontSize:"50px",position:"relative",left:"20px",color:'rgba(11,132,164,255)'}}> <Link to="/Maindashboard/Settingsstaffs" style={{textDecoration:"none",width:"250px"}}> <div className='att'>
+                                    <h4 style={{position:"relative",top:"30px",right:"40px"}}>Staffs</h4>
+                                    <i className="bi bi-microsoft-teams" style={{fontSize:"50px",position:"relative",left:"80px",bottom:"30px",color:"rgb(114, 107, 169)"}}></i>
                                 </div></Link></div>
+                               
+                                
          
         </div>
       </div>
@@ -73,4 +78,4 @@ function Accounts() {
   );
 }
 
-export default Accounts;
+export default Settings;

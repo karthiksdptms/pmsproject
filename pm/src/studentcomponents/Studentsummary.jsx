@@ -23,11 +23,11 @@ function Studentsummary() {
   const [boxContent, setBoxContent] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-  // Reference to the scrollable div
+  
   const boxRef = useRef(null);
   const scrollIntervalRef = useRef(null);
 
-  // Fetch data from the backend
+  
   const fetchTexts = async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/students/texts");
@@ -37,13 +37,12 @@ function Studentsummary() {
     }
   };
 
-  // Add new text to the database
   const handleAddText = async () => {
     if (text.trim() !== "") {
       try {
         const response = await axios.post("http://localhost:3000/api/students/add-text", {
           text,
-          createdAt: new Date().toISOString(), // Add current timestamp
+          createdAt: new Date().toISOString(), 
         });
         setBoxContent([...boxContent, response.data]);
         setText("");
@@ -64,21 +63,20 @@ function Studentsummary() {
   };
   
   
-  // Auto-scroll continuously to create a smooth scrolling effect
+ 
   const startAutoScroll = () => {
     if (boxRef.current) {
       scrollIntervalRef.current = setInterval(() => {
         if (boxRef.current.scrollTop < boxRef.current.scrollHeight - boxRef.current.clientHeight) {
-          boxRef.current.scrollTop += 1; // Scroll up smoothly from bottom to top
+          boxRef.current.scrollTop += 1; 
         } else {
-          boxRef.current.scrollTop = 0; // Reset to bottom after reaching the top
+          boxRef.current.scrollTop = 0;
         }
-      }, 50); // Smooth auto-scroll speed
+      }, 50); 
     }
   };
   
 
-  // Stop auto-scrolling when component unmounts
   const stopAutoScroll = () => {
     if (scrollIntervalRef.current) {
       clearInterval(scrollIntervalRef.current);
@@ -87,8 +85,8 @@ function Studentsummary() {
 
   useEffect(() => {
     fetchTexts();
-    startAutoScroll(); // Start scrolling when the component loads
-    return () => stopAutoScroll(); // Stop scrolling on unmount
+    startAutoScroll();
+    return () => stopAutoScroll(); 
   }, []);
 
   const [hovered, setHovered] = useState(null);

@@ -399,8 +399,8 @@ function Studentprofile() {
                             <div className="phoneno" style={{ position: "relative", left: "30px", bottom: "20px" }}><p style={{ color: "rgb(101, 100, 100)", fontWeight: "900" }}>Phone Number</p>
                                 <p style={{ fontWeight: "2900", fontSize: "19px", backgroundColor: "rgb(237, 236, 236)", color: "rgb(45, 44, 44)", width: "250px", padding: "4px", borderRadius: "10px", paddingLeft: "25px" }}>{student.phoneno}</p></div>
 
-                            <div className="gphoneno" style={{ position: "relative", left: "400px", bottom: "106px", width: '300px' }}><p style={{ color: "rgb(101, 100, 100)", fontWeight: "900" }}>Gaurdian Number</p>
-                                <p style={{ fontWeight: "2900", fontSize: "19px", backgroundColor: "rgb(237, 236, 236)", color: "rgb(45, 44, 44)", width: "250px", padding: "4px", borderRadius: "10px", paddingLeft: "25px" }}>96662377892</p></div>
+                            <div className="gphoneno" style={{ position: "relative", left: "400px", bottom: "106px", width: '300px' }}><p style={{ color: "rgb(101, 100, 100)", fontWeight: "900" }}>Exams Left:</p>
+                                <p style={{ fontWeight: "2900", fontSize: "19px", backgroundColor: "rgb(237, 236, 236)", color: "rgb(45, 44, 44)", width: "250px", padding: "4px", borderRadius: "10px", paddingLeft: "25px" }}>{student.exams.length}</p></div>
 
                             <div className="place" style={{ width: "260px", height: "133px", position: "relative", bottom: "95px", left: "70px", borderRadius: "13px" }}>
                                 <h5 style={{ position: "relative", left: "90px", top: "16px", color: "rgb(45, 44, 44)" }}>Placement info</h5>

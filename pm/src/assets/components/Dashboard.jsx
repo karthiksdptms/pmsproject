@@ -13,19 +13,6 @@ import axios from "axios";
 import Loading from "./Loading";
 
 
-const departmentOptions = [
-  "AIDS",
-  "ECE",
-  "CCE",
-  "MECH",
-  "CSE",
-  "AIML",
-  "VLSI",
-  "CSBS",
-  "BIO-TECH",
-  "Others",
-];
-const batchOptions = ["2023-2027", "2022-2026", "2021-2025", "2020-2024", "2025-2028", "Others"];
 const cgpaOptions = [
   "9.5 and above",
   "9 and above",
@@ -39,17 +26,7 @@ const cgpaOptions = [
 ];
 const arrearsOptions = ["0", "1", "2", "3", "4", "5", "6"];
 const historyOfArrearsOptions = ["0", "1", "2", "3", "4", "5", "6"];
-const aoiOptions = [
-  "Full stack(react)",
-  "Symposium",
-  "Hackathon",
-  "IOT",
-  "WEB",
-  "Data Analyst",
-  "Frontend development",
-  "API Developer",
-  "Others",
-];
+
 function Dashboard() {
   const [hoverVisible, setHoverVisible] = useState(false);
   const [hoverVisiblee, setHoverVisiblee] = useState(false);
@@ -136,23 +113,25 @@ function Dashboard() {
       (filters.department.length === 0 ||
         filters.department.includes(student.department) ||
         (showOtherDepartment &&
-          student.department.includes(filters.otherDepartment))) &&
+          student.department?.includes(filters.otherDepartment))) &&
       (filters.batch.length === 0 ||
         filters.batch.includes(student.batch) ||
-        (showOtherBatch && student.batch.includes(filters.otherBatch))) &&
+        (showOtherBatch && student.batch?.includes(filters.otherBatch))) &&
       (filters.cgpa === "" ||
         parseFloat(student.cgpa) >= parseFloat(filters.cgpa)) &&
       (filters.arrears === "" ||
-        student.arrears.toString() === filters.arrears) &&
+        student.arrears?.toString() === filters.arrears) &&
       (filters.historyOfArrears === "" ||
-        student.hoa.toString() === filters.historyOfArrears) &&
+        student.hoa?.toString() === filters.historyOfArrears) &&
       (filters.aoi.length === 0 ||
         filters.aoi.includes(student.aoi) ||
-        (showOtherAoi && student.aoi.includes(filters.otherAoi))) &&
+        (showOtherAoi && student.aoi?.includes(filters.otherAoi))) &&
       (filters.language === "" ||
-        student.language.toLowerCase().includes(filters.language.toLowerCase()))
+        (student.language &&
+          student.language.toLowerCase().includes(filters.language.toLowerCase())))
     );
   });
+  
 
 
   const [showDiv, setShowDiv] = useState(false);
@@ -214,6 +193,58 @@ function Dashboard() {
   );
  
 
+  const [departmentOptions, setDepartmentOptions] = useState([]);
+
+const fetchDepartments = async () => {
+  try {
+    const res = await axios.get("http://localhost:3000/api/filters/getdepartments");
+    const departmentNames = res.data.map((dept) => dept.name);
+    setDepartmentOptions(departmentNames);
+  } catch (error) {
+    console.error("Error fetching departments:", error);
+  }
+};
+
+useEffect(() => {
+  fetchDepartments();
+}, []);
+
+const [batchOptions, setBatchOptions] = useState([]);
+
+
+const fetchBatches = async () => {
+  try {
+    const res = await axios.get("http://localhost:3000/api/filters/getbatch");
+    const batchNames = res.data.map((batch) => batch.batchName);
+    setBatchOptions([...batchNames, "Others"]); 
+  } catch (error) {
+    console.error("Error fetching batches:", error);
+  }
+};
+
+useEffect(() => {
+  fetchBatches();
+}, []);
+
+const [aoiOptions, setAoiOptions] = useState([]);
+
+const fetchAoiOptions = async () => {
+  try {
+    const res = await axios.get("http://localhost:3000/api/filters/getaoi");
+    console.log("AOI options received:", res.data);
+    const aoiNames = res.data.map((aoi) => aoi.aoiName); 
+    console.log("Mapped AOI Names:", aoiNames);
+    setAoiOptions(aoiNames);
+  } catch (error) {
+    console.error("Error fetching AOI options:", error);
+  }
+};
+
+
+
+useEffect(() => {
+  fetchAoiOptions();
+}, []);
 
   return (
     <>
@@ -297,37 +328,35 @@ function Dashboard() {
                                 All
                               </label>
                               {departmentOptions.map((dept) => (
-                                <div key={dept}>
-                                  <input
-                                    type="checkbox"
-                                    className="form-check-input"
-                                    value={dept}
-                                    checked={filters.department.includes(dept)}
-                                    onChange={(e) =>
-                                      handleCheckboxChange(e, "department")
-                                    }
-                                  />
-                                  {dept}
-                                </div>
-                              ))}
-                              {showOtherDepartment && (
-                                <div>
-                                  <input
-                                    style={{
-                                      marginBottom: "10px",
-                                      padding: "8px",
-                                      width: "100%",
-                                      maxWidth: "300px",
-                                    }}
-                                    type="text"
-                                    className="form-check-input"
-                                    placeholder="Enter Department"
-                                    onChange={(e) =>
-                                      handleInputChange(e, "otherDepartment")
-                                    }
-                                  />
-                                </div>
-                              )}
+  <div key={dept}>
+    <input
+      type="checkbox"
+      className="form-check-input"
+      value={dept}
+      checked={filters.department.includes(dept)}
+      onChange={(e) => handleCheckboxChange(e, "department")}
+    />
+    {dept}
+  </div>
+))}
+                            {showOtherDepartment && (
+                  <div>
+                    <input
+                      style={{
+                        marginBottom: "10px",
+                        padding: "8px",
+                        width: "100%",
+                        maxWidth: "300px",
+                      }}
+                      type="text"
+                      className="form-check-input"
+                      placeholder="Enter Department"
+                      onChange={(e) =>
+                        handleInputChange(e, "otherDepartment")
+                      }
+                    />
+                  </div>
+                )}
                             </div>
                           )}
                         </div>
@@ -365,36 +394,22 @@ function Dashboard() {
                               />
                               All
                             </label>
-                            {batchOptions.map((batch) => (
-                              <div key={batch}>
-                                <input
-                                  type="checkbox"
-                                  className="form-check-input"
-                                  value={batch}
-                                  checked={filters.batch.includes(batch)}
-                                  onChange={(e) =>
-                                    handleCheckboxChange(e, "batch")
-                                  }
-                                />{" "}
-                                {batch}
-                              </div>
-                            ))}
-                            {showOtherBatch && (
-                              <input
-                                style={{
-                                  marginBottom: "10px",
-                                  padding: "8px",
-                                  width: "100%",
-                                  maxWidth: "300px",
-                                }}
-                                className="form-check-input"
-                                type="text"
-                                placeholder="Enter Batch"
-                                onChange={(e) =>
-                                  handleInputChange(e, "otherBatch")
-                                }
-                              />
-                            )}
+                            {batchOptions
+  .filter((batch) => batch !== "Others")
+  .map((batch) => (
+    <div key={batch}>
+      <input
+        type="checkbox"
+        className="form-check-input"
+        value={batch}
+        checked={filters.batch.includes(batch)}
+        onChange={(e) => handleCheckboxChange(e, "batch")}
+      />{" "}
+      {batch}
+    </div>
+  ))}
+
+                           
                           </div>
                         )}
                       </div>
@@ -517,17 +532,18 @@ function Dashboard() {
                               All
                             </label>
                             {aoiOptions.map((aoi) => (
-                              <div key={aoi}>
-                                <input
-                                  className="form-check-input"
-                                  type="checkbox"
-                                  value={aoi}
-                                  checked={filters.aoi.includes(aoi)}
-                                  onChange={(e) => handleCheckboxChange(e, "aoi")}
-                                />{" "}
-                                {aoi}
-                              </div>
-                            ))}
+  <div key={aoi}>
+    <input
+      className="form-check-input"
+      type="checkbox"
+      value={aoi}
+      checked={filters.aoi.includes(aoi)}
+      onChange={(e) => handleCheckboxChange(e, "aoi")}
+    />{" "}
+    {aoi}
+  </div>
+))}
+
                             {showOtherAoi && (
                               <input
                                 style={{

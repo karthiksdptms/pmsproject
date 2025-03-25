@@ -6,6 +6,8 @@ import { IoIosArrowBack } from "react-icons/io";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Placementannounce.css";
+import Swal from "sweetalert2";
+import { Button, Modal, Form } from "react-bootstrap";
 
 import Loading from "./Loading";
 function Placementsannounce() {
@@ -208,21 +210,7 @@ useEffect(() => {
   }, [])
 
   
-
-  const departmentOptions = [
-    "AIDS",
-    "ECE",
-    "CCE",
-    "MECH",
-    "CSE",
-    "AIML",
-    "VLSI",
-    "CSBS",
-    "BIO-TECH",
-    "Others",
-  ];
-  const batchOptions = ["2023-2027", "2022-2026", "2021-2025", "2020-2024", "2025-2028", "Others"];
-  const cgpaOptions = [
+ const cgpaOptions = [
     "9.5 and above",
     "9 and above",
     "8.5 and above",
@@ -235,17 +223,7 @@ useEffect(() => {
   ];
   const arrearsOptions = ["0", "1", "2", "3", "4", "5", "6"];
   const historyOfArrearsOptions = ["0", "1", "2", "3", "4", "5", "6"];
-  const aoiOptions = [
-    "Full stack(react)",
-    "Symposium",
-    "Hackathon",
-    "IOT",
-    "WEB",
-    "Data Analyst",
-    "Frontend development",
-    "API Developer",
-    "Others",
-  ];
+  
 
  const [filters, setFilters] = useState({
     department: [],
@@ -295,27 +273,27 @@ useEffect(() => {
   const [hoverVisible, setHoverVisible] = useState(false);
   const [hoverVisiblee, setHoverVisiblee] = useState(false);
   const [hoverVisibleee, setHoverVisibleee] = useState(false);
-  
   const filteredStudents = getstudents.filter((student) => {
     return (
       (filters.department.length === 0 ||
         filters.department.includes(student.department) ||
         (showOtherDepartment &&
-          student.department.includes(filters.otherDepartment))) &&
+          student.department?.includes(filters.otherDepartment))) &&
       (filters.batch.length === 0 ||
         filters.batch.includes(student.batch) ||
-        (showOtherBatch && student.batch.includes(filters.otherBatch))) &&
+        (showOtherBatch && student.batch?.includes(filters.otherBatch))) &&
       (filters.cgpa === "" ||
         parseFloat(student.cgpa) >= parseFloat(filters.cgpa)) &&
       (filters.arrears === "" ||
-        student.arrears.toString() === filters.arrears) &&
+        student.arrears?.toString() === filters.arrears) &&
       (filters.historyOfArrears === "" ||
-        student.hoa.toString() === filters.historyOfArrears) &&
+        student.hoa?.toString() === filters.historyOfArrears) &&
       (filters.aoi.length === 0 ||
         filters.aoi.includes(student.aoi) ||
-        (showOtherAoi && student.aoi.includes(filters.otherAoi))) &&
+        (showOtherAoi && student.aoi?.includes(filters.otherAoi))) &&
       (filters.language === "" ||
-        student.language.toLowerCase().includes(filters.language.toLowerCase()))
+        (student.language &&
+          student.language.toLowerCase().includes(filters.language.toLowerCase())))
     );
   });
 
@@ -336,7 +314,158 @@ useEffect(() => {
     startIdx,
     startIdx + rowsPerPage
   );
+  const [show, setShow] = useState(false);
+  const [formData, setFormData] = useState({
+    COMPANYNAME: "",
+    content: "",
+  });
+  const [companyImg, setCompanyImg] = useState(null); 
 
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+ 
+  const handleFileChange = (e) => {
+    setCompanyImg(e.target.files[0]);
+  };
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("COMPANYNAME", formData.COMPANYNAME);
+      formDataToSend.append("content", formData.content);
+      if (companyImg) {
+        formDataToSend.append("COMPANYIMG", companyImg);
+      }
+
+ 
+      const res = await axios.post(
+        "http://localhost:3000/api/companies/addcompany",
+        formDataToSend
+      );
+
+      if (res.status === 201) {
+        Swal.fire("Success", "Company added successfully!", "success");
+        handleClose();
+        setFormData({
+          COMPANYNAME: "",
+          content: "",
+        });
+        setCompanyImg(null);
+        window.location.reload()
+      }
+    } catch (error) {
+      console.error("Error adding company:", error);
+      Swal.fire("Error", "Failed to add company!", "error");
+    }
+  };
+
+  // Modal handlers
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const [showw, setShoww] = useState(false);
+  const [companiess, setCompaniess] = useState([]);
+
+  // Fetch all companies
+  const fetchCompaniess = async () => {
+    try {
+      const res = await axios.get("http://localhost:3000/api/companies/get-companies");
+      setCompaniess(res.data);
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+    }
+  };
+
+  // Handle modal open/close
+  const handleShoww = () => {
+    fetchCompaniess();
+    setShoww(true);
+  };
+  const handleClosee = () => setShoww(false);
+
+  // Delete company
+  const handleDelete = async (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to delete this company?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(`http://localhost:3000/api/companies/deletecompany/${id}`);
+          fetchCompaniess(); 
+          window.location.reload()
+          Swal.fire("Deleted!", "Company deleted successfully.", "success");
+        } catch (error) {
+          console.error("Error deleting company:", error);
+          Swal.fire("Error", "Failed to delete company.", "error");
+        }
+      }
+    });
+  };
+
+  const [departmentOptions, setDepartmentOptions] = useState([]);
+
+  const fetchDepartments = async () => {
+    try {
+      const res = await axios.get("http://localhost:3000/api/filters/getdepartments");
+      const departmentNames = res.data.map((dept) => dept.name);
+      setDepartmentOptions(departmentNames);
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchDepartments();
+  }, []);
+  
+  const [batchOptions, setBatchOptions] = useState([]);
+  
+  
+  const fetchBatches = async () => {
+    try {
+      const res = await axios.get("http://localhost:3000/api/filters/getbatch");
+      const batchNames = res.data.map((batch) => batch.batchName);
+      setBatchOptions([...batchNames, "Others"]); 
+    } catch (error) {
+      console.error("Error fetching batches:", error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchBatches();
+  }, []);
+  
+  const [aoiOptions, setAoiOptions] = useState([]);
+  
+  const fetchAoiOptions = async () => {
+    try {
+      const res = await axios.get("http://localhost:3000/api/filters/getaoi");
+      console.log("AOI options received:", res.data);
+      const aoiNames = res.data.map((aoi) => aoi.aoiName); 
+      console.log("Mapped AOI Names:", aoiNames);
+      setAoiOptions(aoiNames);
+    } catch (error) {
+      console.error("Error fetching AOI options:", error);
+    }
+  };
+  
+  
+  
+  useEffect(() => {
+    fetchAoiOptions();
+  }, []);
+  
   return (
     <>
 
@@ -365,11 +494,51 @@ useEffect(() => {
           <h2 style={{ position: "relative", top: '45px', left: "30px", fontFamily: 'poppins', fontSize: "35px", width: '100px' }}>Companies</h2>
         </div>
       </Link>
+      <button className="btn  btn-primary " onClick={handleShoww} style={{ marginRight: "50px", position: "relative", left: "1130px", top: "-20px" }}>Edit</button>
+      <Modal show={showw} onHide={handleClosee} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Companies</Modal.Title>
+        </Modal.Header>
 
-        <div className="companies-grid" style={{ position: 'relative', top: "50px", marginBottom: '200px', marginTop: '40px' }}>
+        <Modal.Body>
+          
+          {companiess.length === 0 ? (
+            <p>No companies available to display.</p>
+          ) : (
+            companiess.map((company) => (
+              <div
+                className="d-flex align-items-center mb-2"
+                key={company._id}
+              >
+                <span style={{ width: "100px", fontWeight: "bold" }}>
+                  {company.COMPANYNAME}:
+                </span>
+                <Form.Control
+                  type="text"
+                  value={company.COMPANYNAME}
+                  readOnly
+                  style={{ width: "150px", marginRight: "10px" }}
+                />
+                <Button
+                  variant="danger"
+                  onClick={() => handleDelete(company._id)}
+                >
+                  Delete
+                </Button>
+              </div>
+            ))
+          )}
+        </Modal.Body>
+
+        <Modal.Footer>
+          
+        </Modal.Footer>
+      </Modal>
+      <button className="btn  " onClick={handleShow} style={{ marginRight: "50px", position: "relative", left: "1080px", top: "-20px" }}><i className="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "blue" }}></i></button>
+        <div className="companies-grid" style={{ position: 'relative', top: "-30px",left:'30px', marginBottom: '200px', marginTop: '40px' }}>
           {companies.map((company) => (
             <div key={company.ID} className="company-card" data-bs-toggle="offcanvas" data-bs-target="#companyDetails" onClick={() => openCompanyDetails(company)}>
-              <img src={`/images/${company.COMPANYIMG}`} alt={company.COMPANYNAME} className="company-logo" />
+              <img src={`http://localhost:3000/${company.COMPANYIMG}`} alt={company.COMPANYNAME} className="company-logo" />
               <h3 className="company-name">{company.COMPANYNAME}</h3>
               <p className="company-description">{company.content}</p>
             </div>
@@ -388,21 +557,21 @@ useEffect(() => {
               <div className="row mb-5">
   <div className="col-md-6">
     <label className="form-label">Date</label>
-    <input type="date" className="form-control" value={date} onChange={(e) => setDate(e.target.value)} />
+    <input type="date" className="form-control" value={date} onChange={(e) => setDate(e.target.value)}   style={{width:"100%"}}/>
   </div>
   <div className="col-md-6">
     <label className="form-label">Venue</label>
-    <input type="text" className="form-control" placeholder="Enter Venue" value={venue} onChange={(e) => setVenue(e.target.value)} />
+    <input type="text" className="form-control" placeholder="Enter Venue" value={venue} onChange={(e) => setVenue(e.target.value)}   style={{width:"100%"}}/>
   </div>
 </div>
 
               <div className="mb-3">
                 <label className="form-label">General Requirements/Info</label>
-                <textarea className="form-control" rows="3" placeholder="Enter requirements" value={requirements} onChange={(e) => setRequirements(e.target.value)} style={{minHeight:"200px"}}></textarea>
+                <textarea className="form-control" rows="3" placeholder="Enter requirements" value={requirements} onChange={(e) => setRequirements(e.target.value)} style={{minHeight:"200px",width:"100%"}}></textarea>
               </div>
               <div className="mb-3">
                 <label className="form-label">Skills Required</label>
-                <textarea className="form-control" rows="2" placeholder="Enter skills" value={skills} onChange={(e) => setSkills(e.target.value)} style={{minHeight:"100px"}}></textarea>
+                <textarea className="form-control" rows="2" placeholder="Enter skills" value={skills} onChange={(e) => setSkills(e.target.value)} style={{minHeight:"100px",width:"100%"}}></textarea>
               </div>
               <div className="d-flex justify-content-end">
                 <button className="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#studentFilterOffcanvas">
@@ -549,18 +718,20 @@ useEffect(() => {
                         />
                         All
                       </label>
-                      {batchOptions.map((batch) => (
-                        <div key={batch}>
-                          <input
-                            type="checkbox"
-                            className="form-check-input"
-                            value={batch}
-                            checked={filters.batch.includes(batch)}
-                            onChange={(e) => handleCheckboxChange(e, "batch")}
-                          />{" "}
-                          {batch}
-                        </div>
-                      ))}
+                      {batchOptions
+  .filter((batch) => batch !== "Others")
+  .map((batch) => (
+    <div key={batch}>
+      <input
+        type="checkbox"
+        className="form-check-input"
+        value={batch}
+        checked={filters.batch.includes(batch)}
+        onChange={(e) => handleCheckboxChange(e, "batch")}
+      />{" "}
+      {batch}
+    </div>
+  ))}
                       {showOtherBatch && (
                         <input
                           style={{
@@ -843,6 +1014,16 @@ useEffect(() => {
       </table>
 
       <div className="d-flex justify-content-end mt-3">
+      {loading && (
+        <div className="loading-overlay">
+          <div className="spinner-container">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="mt-3">Sending Emails... Please wait</p>
+          </div>
+        </div>
+      )}
         <button className="btn btn-primary" onClick={sendEmails} disabled={loading}>
           {loading ? "Sending..." : "Send Emails"}
         </button>
@@ -859,7 +1040,60 @@ useEffect(() => {
       </div>
 
 
+      <Modal show={show} onHide={handleClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Company</Modal.Title>
+        </Modal.Header>
 
+        <Modal.Body>
+          <Form onSubmit={handleSubmit} encType="multipart/form-data">
+            <Form.Group controlId="formCompanyIMG" className="mt-2">
+              <Form.Label>Company Image</Form.Label>
+              <Form.Control
+                type="file"
+                name="COMPANYIMG"
+                accept="image/*"
+                onChange={handleFileChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formCompanyName" className="mt-3">
+              <Form.Label>Company Name</Form.Label>
+              <Form.Control
+                type="text"
+                name="COMPANYNAME"
+                placeholder="Enter Company Name"
+                value={formData.COMPANYNAME}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formContent" className="mt-3">
+              <Form.Label>Content</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="content"
+                placeholder="Enter Content"
+                value={formData.content}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button variant="success" type="submit">
+                Add
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal.Body>
+      </Modal>
 
     </>
   );

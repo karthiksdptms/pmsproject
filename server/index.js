@@ -15,6 +15,8 @@ import answerkeyRouter from "./routes/answerkey.js"
 import StudentModel from "./models/StudentModel.js";
 import chartRoutes from "./routes/chartRoutes.js";
 import companyRoutes from "./routes/companyRoutes.js";
+import filteroutes from "./routes/filters.js"
+import AdminRoutes from "./routes/AdminRoutes.js"
 dotenv.config();
 connectDatabase();
 
@@ -34,6 +36,10 @@ app.use("/api/attendancestudent", attendanceStudentRoutes);
 app.use("/api/answerkey",answerkeyRouter)
 app.use("/api/charts", chartRoutes);
 app.use("/api/companies", companyRoutes);
+app.use("/api/filters", filteroutes);
+app.use("/api/admin", AdminRoutes);
+
+
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -43,7 +49,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Email Sending Route
+
 app.post("/send-email", async (req, res) => {
   const { studentIds, company, date, venue, requirements, skills } = req.body;
 
@@ -54,7 +60,7 @@ app.post("/send-email", async (req, res) => {
   }
 
   try {
-    // Fetch selected students from database
+    
     const students = await StudentModel.find({ _id: { $in: studentIds } });
 
     if (!students.length) {
@@ -65,14 +71,14 @@ app.post("/send-email", async (req, res) => {
       `📩 Sending emails to: ${students.map((s) => s.email).join(", ")}`
     );
 
-    // Prepare placement announcement data
+   
     const announcementData = {
       title: `Placement Announcement - ${company}`,
       description: `You are invited for a placement drive at ${company}.\n\nDate: ${date}\nVenue: ${venue}\nRequirements: ${requirements}\nSkills: ${skills}`,
       postedAt: new Date(),
     };
 
-    // Send emails and update placement_announce for each student
+    
     await Promise.all(
       students.map(async (student) => {
         let mailOptions = {
@@ -82,7 +88,7 @@ app.post("/send-email", async (req, res) => {
           text: `Dear ${student.name},\n\n${announcementData.description}\n\nBest regards,\nPlacement Team`,
         };
 
-        // Send email and log response
+      
         try {
           const info = await transporter.sendMail(mailOptions);
           console.log(`✅ Email sent to ${student.email}: ${info.response}`);

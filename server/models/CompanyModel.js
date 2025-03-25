@@ -1,12 +1,6 @@
-// models/Company.js
 import mongoose from "mongoose";
 
 const companySchema = new mongoose.Schema({
-  ID: {
-    type: Number,
-    required: true,
-    unique: true,
-  },
   COMPANYIMG: {
     type: String,
     required: true,
@@ -21,5 +15,5 @@ const companySchema = new mongoose.Schema({
   },
 });
 
-const Company = mongoose.model("companys", companySchema);
+const Company = mongoose.model("compannies", companySchema);
 export default Company;

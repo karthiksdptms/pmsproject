@@ -36,11 +36,11 @@ function Studenttraining() {
 
       <Link to="/Studentdashboard/Studenttrainingexams" style={{ textDecoration: "none", width: "250px" }}> <div className='sce'>
         <h4 style={{ position: "relative", top: "30px", right: "40px" }}>Exams</h4>
-        <i className="bi bi-calendar2-check-fill" style={{ fontSize: "50px", position: "relative", left: "70px", bottom: "30px", color: 'rgba(11,132,164,255)' }}></i>
+        <i className="bi bi-journal-bookmark" style={{ fontSize: "50px", position: "relative", left: "70px", bottom: "30px", color: 'rgb(132, 65, 136)' }}></i>
       </div></Link>
       <Link to="/Studentdashboard/Studenttrainingscores" style={{ textDecoration: "none", width: "250px" }}> <div className='att'>
         <h4 style={{ position: "relative", top: "30px", right: "40px" }}>Scores</h4>
-        <i className="bi bi-card-checklist" style={{ fontSize: "50px", position: "relative", left: "70px", bottom: "30px", color: "rgb(74, 109, 90)" }}></i>
+        <i className="bi bi-patch-check-fill" style={{ fontSize: "50px", position: "relative", left: "70px", bottom: "30px", color: "rgb(73, 67, 119)"}}></i>
       </div></Link>
 
 

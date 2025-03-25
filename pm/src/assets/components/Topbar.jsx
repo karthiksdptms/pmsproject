@@ -17,6 +17,16 @@ function Topbar() {
 
         <img src="/ritraja.jpg"    alt="logo"/>
 
+        <h6 style={{
+
+color: "white",
+position: "fixed",
+top: "49px",
+left: "250px",
+
+height: "15px",
+}}>welcome {user.name}!</h6>
+
         <h1 className="placementword">PLACEMENT AND TRAINING</h1>
         <h6
           style={{
@@ -44,7 +54,7 @@ function Topbar() {
               width: "110px",
               height: "40px",
               position: "relative",
-              left: "330px",
+              left: "380px",
               top: "13px",
               marginRight: "20px",
               boxShadow: "none !important",
@@ -55,10 +65,22 @@ function Topbar() {
             Logout
           </button>
        
-          <div className="profile1">
-   <h6 className="admin">{user && user.name}</h6>
-  <FaUser className="user1" />
-</div>
+         <div style={{ position: "fixed", right: '20px', top: "10px" }}>
+         
+                   {user.profileImage ? (
+                     <img
+                       src={`http://localhost:3000/${user.profileImage}`}
+                       alt="Profile"
+                       className="rounded-circle"
+                       style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                     />
+                   ) : (
+                     <FaUser
+                       size={50}
+                       style={{ color: "#999", borderRadius: "50%", padding: "10px", background: "#f4f4f4" }}
+                     />
+                   )}
+                 </div>
 
       </div>
        
@@ -115,7 +137,8 @@ function Topbar() {
           <NavLink to="/Maindashboard/Aptitude">
           {({ isActive }) => (
           <button className={`btnn ${isActive ? "bgg" : ""}`}>
-              <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"20px"}} />
+            <i class="bi bi-pen-fill" style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"15px"}}></i>
+            
               Assessments
             </button>
              )}
@@ -125,14 +148,23 @@ function Topbar() {
         <NavLink to="/Maindashboard/Accounts">
           {({ isActive }) => (
           <button className={`btnn ${isActive ? "bgg" : ""}`}>
-              <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"20px"}} />
+            <i class="bi bi-person-fill-gear" style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"17px"}}></i>
+              
               Accounts
             </button>
              )}
           </NavLink>
         </div>
         <div className="btnn">
-          <button className="btnn"></button>
+        <NavLink to="/Maindashboard/Settings">
+          {({ isActive }) => (
+          <button className={`btnn ${isActive ? "bgg" : ""}`}>
+            <i class="bi bi-gear" style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"17px"}}></i>
+              
+               Settings
+            </button>
+             )}
+          </NavLink>
         </div>
         <div className="btnn">
           <button className="btnn"></button>

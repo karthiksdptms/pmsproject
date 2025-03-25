@@ -45,7 +45,7 @@ body{
   
   /* Company Card */
   .company-card {
-    background: white;
+    background: rgb(162, 160, 160);
     border-radius: 12px;
     padding: 20px;
     text-align: center;
@@ -81,4 +81,32 @@ body{
     width: 80vw !important; 
     max-width: 1200px; 
   }
-  
+  /* Full-screen loading overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(63, 63, 63, 0.8);
+  z-index: 1050;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Spinner and text container */
+.spinner-container {
+  text-align: center;
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Spinner animation */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+/* Optional styles to enhance UI */

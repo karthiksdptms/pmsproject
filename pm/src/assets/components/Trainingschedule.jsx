@@ -9,21 +9,8 @@ import Swal from "sweetalert2";
 
 import { utils, writeFile } from 'xlsx';
 function Trainingschedule() {
-  const departments = ["CSE", "MECH", "ECE", "CCE", "AIDS", "AIML"];
-  const departmentOptions = [
-    "AIDS",
-    "ECE",
-    "CCE",
-    "MECH",
-    "CSE",
-    "AIML",
-    "VLSI",
-    "CSBS",
-    "BIO-TECH",
-    "Others",
-  ];
-  const batchOptions = ["2023-2027", "2022-2026", "2021-2025", "2020-2024", "2025-2028", "Others"];
-  const cgpaOptions = [
+  
+   const cgpaOptions = [
     "9.5 and above",
     "9 and above",
     "8.5 and above",
@@ -36,17 +23,7 @@ function Trainingschedule() {
   ];
   const arrearsOptions = ["0", "1", "2", "3", "4", "5", "6"];
   const historyOfArrearsOptions = ["0", "1", "2", "3", "4", "5", "6"];
-  const aoiOptions = [
-    "Full stack(react)",
-    "Symposium",
-    "Hackathon",
-    "IOT",
-    "WEB",
-    "Data Analyst",
-    "Frontend development",
-    "API Developer",
-    "Others",
-  ];
+  
 
   const [students, setstudents] = useState([])
   useEffect(() => {
@@ -293,6 +270,59 @@ const handleSave = async () => {
 
 
 
+const [departmentOptions, setDepartmentOptions] = useState([]);
+
+const fetchDepartments = async () => {
+  try {
+    const res = await axios.get("http://localhost:3000/api/filters/getdepartments");
+    const departmentNames = res.data.map((dept) => dept.name);
+    setDepartmentOptions(departmentNames);
+  } catch (error) {
+    console.error("Error fetching departments:", error);
+  }
+};
+
+useEffect(() => {
+  fetchDepartments();
+}, []);
+
+const [batchOptions, setBatchOptions] = useState([]);
+
+
+const fetchBatches = async () => {
+  try {
+    const res = await axios.get("http://localhost:3000/api/filters/getbatch");
+    const batchNames = res.data.map((batch) => batch.batchName);
+    setBatchOptions([...batchNames, "Others"]); 
+  } catch (error) {
+    console.error("Error fetching batches:", error);
+  }
+};
+
+useEffect(() => {
+  fetchBatches();
+}, []);
+
+const [aoiOptions, setAoiOptions] = useState([]);
+
+const fetchAoiOptions = async () => {
+  try {
+    const res = await axios.get("http://localhost:3000/api/filters/getaoi");
+    console.log("AOI options received:", res.data);
+    const aoiNames = res.data.map((aoi) => aoi.aoiName); 
+    console.log("Mapped AOI Names:", aoiNames);
+    setAoiOptions(aoiNames);
+  } catch (error) {
+    console.error("Error fetching AOI options:", error);
+  }
+};
+
+
+
+useEffect(() => {
+  fetchAoiOptions();
+}, []);
+
 
   
 
@@ -485,18 +515,21 @@ const handleSave = async () => {
                         />
                         All
                       </label>
-                      {batchOptions.map((batch) => (
-                        <div key={batch}>
-                          <input
-                            type="checkbox"
-                            className="form-check-input"
-                            value={batch}
-                            checked={filters.batch.includes(batch)}
-                            onChange={(e) => handleCheckboxChange(e, "batch")}
-                          />{" "}
-                          {batch}
-                        </div>
-                      ))}
+                      {batchOptions
+  .filter((batch) => batch !== "Others")
+  .map((batch) => (
+    <div key={batch}>
+      <input
+        type="checkbox"
+        className="form-check-input"
+        value={batch}
+        checked={filters.batch.includes(batch)}
+        onChange={(e) => handleCheckboxChange(e, "batch")}
+      />{" "}
+      {batch}
+    </div>
+  ))}
+
                       {showOtherBatch && (
                         <input
                           style={{

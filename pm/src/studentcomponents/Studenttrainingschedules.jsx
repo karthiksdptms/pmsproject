@@ -140,11 +140,11 @@ const [rowsPerPage, setRowsPerPage] = useState(10);
                 ) : (
     <div
     style={{
-      position: "relative",
+      position:"relative",
       bottom: "60px",
       overflowY: "auto",
       maxHeight: "800px",
-      position:"relative",
+      
       top:'50px'
     }}
   >
