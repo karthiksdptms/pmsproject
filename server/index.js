@@ -16,10 +16,12 @@ const app = express();
 app.use(cors(
   {
     origin:["https://pmsproject-pm.vercel.app"],
-    methods:["POST","GET"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials:true
   }
 ));
+app.options("*", cors());
 
 app.use(express.json());
 app.use('/api/auth',authRouter);
