@@ -15,7 +15,7 @@ connectDatabase();
 const app = express();
 app.use(cors(
   {
-    origin:[""],
+    origin:["https://pmsproject-pm.vercel.app/"],
     methods:["POST","GET"],
     credentials:true
   }
