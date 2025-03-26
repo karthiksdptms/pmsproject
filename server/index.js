@@ -12,7 +12,9 @@ import TrainingModel from './models/TrainingModel.js'
 connectDatabase();
 
 const app = express();
-app.use(cors());
+app.use(cors(
+  helo
+));
 app.use(express.json());
 app.use('/api/auth',authRouter);
 
