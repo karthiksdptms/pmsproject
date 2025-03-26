@@ -13,291 +13,293 @@ import { Modal, Button, Form, Row, Col, Container } from "react-bootstrap";
 
 
 function Accountsapprovals() {
-  
-    const [loading, setLoading] = useState(true);
-     const [getstudents, setgetstudents] = useState([])
-      const [showw, setShoww] = useState(false);
-      const [stdloading, setstdloading] = useState(false)
-      const [preview,setPreview]=useState("")
-     
-      
 
-   const [student, setStudent] = useState({
-       registration_number: "",
-       name: "",
-       department: "",
-       batch: "",
-       sslc: "",
-       hsc: "",
-       diploma: "",
-       sem1: "",
-       sem2: "",
-       sem3: "",
-       sem4: "",
-       sem5: "",
-       sem6: "",
-       sem7: "",
-       sem8: "",
-       cgpa: "",
-       arrears: "",
-       internships: "",
-       certifications: "",
-       patentspublications: "",
-       achievements: "",
-       hoa: "",
-       language: "",
-       aoi: "",
-       email: "",
-       address: "",
-       phoneno: "",
-       resume: null,
-       image: null,
-       offerpdf: null,
-       placement: "",
-       offers: [],
-       expassword:"",
-     });
-    
-    
-     useEffect(() => {
-        const fetchstudents = async () => {
-          setLoading(true)
-          try {
-            const responnse = await axios.get("http://localhost:3000/api/students/approved-students", {
-             
-            }
-            )
-    
-            if (responnse.data.success) {
-    
-              const data = await responnse.data.students.map((std, index) => ({
-                _id: std._id,
-                registration_number: std.registration_number,
-                name: std.name,
-                department: std.department,
-                batch: std.batch,
-                profileImage: std.userId.profileImage,
-                email: std.userId.email,
-                sslc: std.sslc,
-                hsc: std.hsc,
-                achievements: std.achievements,
-                index: index + 1,
-                diploma: std.diploma,
-                sem1: std.sem1,
-                sem2: std.sem2,
-                sem3: std.sem3,
-                sem4: std.sem4,
-                sem5: std.sem5,
-                sem6: std.sem6,
-                sem7: std.sem7,
-                sem8: std.sem8,
-                cgpa: std.cgpa,
-                arrears: std.arrears,
-                internships: std.internships,
-                certifications: std.certifications,
-                password: std.password,
-                role: std.role,
-                patentspublications: std.patentspublications,
-                hoa: std.hoa,
-                language: std.language,
-                aoi: std.aoi,
-                address: std.address,
-                phoneno: std.phoneno,
-                resume: std.resume,
-                offerpdf: std.offerpdf,
-                placement: std.placement,
-                offers: std.offers,
-                expassword:std.expassword,
-              
-    
-              }))
-              
-              setgetstudents(data)
-              setLoading(false)
-    
-            }
-    
-          } catch (error) {
-            if (error.response && !error.response.data.success) {
-              alert(error.response.data.error)
-            }
-          } finally {
-            setstdloading(false)
-          }
+  const [loading, setLoading] = useState(true);
+  const [getstudents, setgetstudents] = useState([])
+  const [showw, setShoww] = useState(false);
+  const [stdloading, setstdloading] = useState(false)
+  const [preview, setPreview] = useState("")
+
+
+
+  const [student, setStudent] = useState({
+    registration_number: "",
+    name: "",
+    department: "",
+    batch: "",
+    sslc: "",
+    hsc: "",
+    diploma: "",
+    sem1: "",
+    sem2: "",
+    sem3: "",
+    sem4: "",
+    sem5: "",
+    sem6: "",
+    sem7: "",
+    sem8: "",
+    cgpa: "",
+    arrears: "",
+    internships: "",
+    certifications: "",
+    patents: "",
+    publications: "",
+    achievements: "",
+    hoa: "",
+    language: "",
+    aoi: "",
+    email: "",
+    address: "",
+    phoneno: "",
+    resume: null,
+    image: null,
+    offerpdf: null,
+    placement: "",
+    offers: [],
+    expassword: "",
+  });
+
+
+  useEffect(() => {
+    const fetchstudents = async () => {
+      setLoading(true)
+      try {
+        const responnse = await axios.get("http://localhost:3000/api/students/approved-students", {
+
         }
-        fetchstudents()
-      }, [])
+        )
+
+        if (responnse.data.success) {
+
+          const data = await responnse.data.students.map((std, index) => ({
+            _id: std._id,
+            registration_number: std.registration_number,
+            name: std.name,
+            department: std.department,
+            batch: std.batch,
+            profileImage: std.userId.profileImage,
+            email: std.userId.email,
+            sslc: std.sslc,
+            hsc: std.hsc,
+            achievements: std.achievements,
+            index: index + 1,
+            diploma: std.diploma,
+            sem1: std.sem1,
+            sem2: std.sem2,
+            sem3: std.sem3,
+            sem4: std.sem4,
+            sem5: std.sem5,
+            sem6: std.sem6,
+            sem7: std.sem7,
+            sem8: std.sem8,
+            cgpa: std.cgpa,
+            arrears: std.arrears,
+            internships: std.internships,
+            certifications: std.certifications,
+            password: std.password,
+            role: std.role,
+            publications: std.publications,
+            patents: std.patents,
+            hoa: std.hoa,
+            language: std.language,
+            aoi: std.aoi,
+            address: std.address,
+            phoneno: std.phoneno,
+            resume: std.resume,
+            offerpdf: std.offerpdf,
+            placement: std.placement,
+            offers: std.offers,
+            expassword: std.expassword,
 
 
-      const addOffer = () => {
-        setStudent({
-          ...student,
-          offers: [...student.offers, { offerno: "", company: "", designation: "", package: "",offertype:""  }],
-        });
-      };
-    
-    
-      const deleteOffer = (index) => {
-        const updatedOffers = student.offers.filter((_, i) => i !== index);
-        setStudent({ ...student, offers: updatedOffers });
-      };
-    
-    
-    
-    
-      const handleOfferChange = (index, e) => {
-        const { name, value } = e.target;
-        const updatedOffers = [...student.offers];
-        updatedOffers[index][name] = value;
-        setStudent({ ...student, offers: updatedOffers });
-      };
+          }))
 
+          setgetstudents(data)
+          setLoading(false)
 
-      const handleEdit = (registration_number) => {
-        const selectedStudent = displayedData.find((student) => student.registration_number === registration_number);
-        if (selectedStudent) {
-          setStudent({
-            ...selectedStudent,
-            offers: selectedStudent.offers || [],
-          });
-          setShoww(true);
         }
-      };
-    
-      const handleChange = (e) => {
-        const { name, value, type, files } = e.target;
-    
-        setStudent((prevState) => ({
-          ...prevState,
-          [name]: type === "file" ? files[0] : value,
-        }));
-      };
 
-      const handleSubmitt = async (e) => {
-        e.preventDefault();
-      
-        const formData = new FormData();
-      
-        
-        Object.keys(student).forEach((key) => {
-          if (key !== "resume" && key !== "offers" && key !== "image" && key !== "offerpdf") {
-            formData.append(key, student[key]);
-          }
-        });
-      
-       
-        if (student.resume) {
-          formData.append("resume", student.resume);
-        } else {
-          formData.append("resume", "");
+      } catch (error) {
+        if (error.response && !error.response.data.success) {
+          alert(error.response.data.error)
         }
-      
-       
-        if (student.image) {
-          formData.append("image", student.image);
-        } else {
-          formData.append("image", "");
-        }
-      
-      
-        student.offers.forEach((offer, index) => {
-          formData.append(`offers[${index}][offerno]`, offer.offerno);
-          formData.append(`offers[${index}][company]`, offer.company);
-          formData.append(`offers[${index}][designation]`, offer.designation);
-          formData.append(`offers[${index}][package]`, offer.package);
-          formData.append(`offers[${index}][offertype]`, offer.offertype);
-
-        });
-      
-      
-        if (student.offerpdf) {
-          formData.append("offerpdf", student.offerpdf);
-        } else {
-          formData.append("offerpdf", "");
-        }
-      
-        console.log("Sending FormData:", Object.fromEntries(formData.entries()));
-      
-        try {
-          const token = localStorage.getItem("token");
-      
-         
-          const response = await axios.put(
-            "http://localhost:3000/api/students/approveedit", 
-            formData,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-      
-          if (response.data.success) {
-            alert("Student Updated Successfully");
-            setStudent(response.data.updatedStudent);
-            setShoww(false);
-            window.location.reload();
-          } else {
-            alert(response.data.message);
-          }
-        } catch (error) {
-          console.error("Edit Error:", error);
-          alert("Failed to Edit Student");
-        }
-      };
-      
-      const handleReject = async (email) => {
-        try {
-          const response = await axios.post(
-            "http://localhost:3000/api/students/reject", 
-            { email },
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
-      
-          if (response.data.success) {
-            alert("Student rejected and removed from approval data");
-            window.location.reload();
-           
-          } else {
-            alert(response.data.message);
-          }
-        } catch (error) {
-          console.error("Error rejecting student:", error);
-          alert("Failed to reject student");
-        }
-      };
-      
-
-
-
-   const [rowsPerPage, setRowsPerPage] = useState(10);
-     const handleRowsPerPageChange = (e) => {
-       const value = parseInt(e.target.value, 10);
-       if (value > 0) {
-         setRowsPerPage(value);
-         setCurrentPage(1);
-       }
-     };
-     const [currentPage, setCurrentPage] = useState(1);
-     const totalPages = Math.ceil(getstudents.length / rowsPerPage);
-   
-     const startIdx = (currentPage - 1) * rowsPerPage;
-     const displayedData = getstudents.slice(
-       startIdx,
-       startIdx + rowsPerPage
-     );
-     useEffect(() => {
-      if (student.profileImage) {
-        setPreview(`http://localhost:3000/${student.profileImage}`); 
+      } finally {
+        setstdloading(false)
       }
-    }, [student.profileImage]);
+    }
+    fetchstudents()
+  }, [])
+
+
+  const addOffer = () => {
+    setStudent({
+      ...student,
+      offers: [...student.offers, { offerno: "", company: "", designation: "", package: "", offertype: "" }],
+    });
+  };
+
+
+  const deleteOffer = (index) => {
+    const updatedOffers = student.offers.filter((_, i) => i !== index);
+    setStudent({ ...student, offers: updatedOffers });
+  };
+
+
+
+
+  const handleOfferChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedOffers = [...student.offers];
+    updatedOffers[index][name] = value;
+    setStudent({ ...student, offers: updatedOffers });
+  };
+
+
+  const handleEdit = (registration_number) => {
+    const selectedStudent = displayedData.find((student) => student.registration_number === registration_number);
+    if (selectedStudent) {
+      setStudent({
+        ...selectedStudent,
+        offers: selectedStudent.offers || [],
+      });
+      setShoww(true);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+
+    setStudent((prevState) => ({
+      ...prevState,
+      [name]: type === "file" ? files[0] : value,
+    }));
+  };
+
+  const handleSubmitt = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+
+
+    Object.keys(student).forEach((key) => {
+      if (key !== "resume" && key !== "offers" && key !== "image" && key !== "offerpdf") {
+        formData.append(key, student[key]);
+      }
+    });
+
+
+    if (student.resume) {
+      formData.append("resume", student.resume);
+    } else {
+      formData.append("resume", "");
+    }
+
+
+    if (student.image) {
+      formData.append("image", student.image);
+    } else {
+      formData.append("image", "");
+    }
+
+
+    student.offers.forEach((offer, index) => {
+      formData.append(`offers[${index}][offerno]`, offer.offerno);
+      formData.append(`offers[${index}][company]`, offer.company);
+      formData.append(`offers[${index}][designation]`, offer.designation);
+      formData.append(`offers[${index}][package]`, offer.package);
+      formData.append(`offers[${index}][offertype]`, offer.offertype);
+
+    });
+
+
+    if (student.offerpdf) {
+      formData.append("offerpdf", student.offerpdf);
+    } else {
+      formData.append("offerpdf", "");
+    }
+
+    console.log("Sending FormData:", Object.fromEntries(formData.entries()));
+
+    try {
+      const token = localStorage.getItem("token");
+
+
+      const response = await axios.put(
+        "http://localhost:3000/api/students/approveedit",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        alert("Student Updated Successfully");
+        setStudent(response.data.updatedStudent);
+        setShoww(false);
+        window.location.reload();
+      } else {
+        alert(response.data.message);
+      }
+    } catch (error) {
+      console.error("Edit Error:", error);
+      alert("Failed to Edit Student");
+    }
+  };
+
+  const handleReject = async (email) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/students/reject",
+        { email },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        alert("Student rejected and removed from approval data");
+        window.location.reload();
+
+      } else {
+        alert(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error rejecting student:", error);
+      alert("Failed to reject student");
+    }
+  };
+
+
+
+
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const handleRowsPerPageChange = (e) => {
+    const value = parseInt(e.target.value, 10);
+    if (value > 0) {
+      setRowsPerPage(value);
+      setCurrentPage(1);
+    }
+  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(getstudents.length / rowsPerPage);
+
+  const startIdx = (currentPage - 1) * rowsPerPage;
+  const displayedData = getstudents.slice(
+    startIdx,
+    startIdx + rowsPerPage
+  );
+  useEffect(() => {
+    if (student.profileImage) {
+      setPreview(`http://localhost:3000/${student.profileImage}`);
+    }
+  }, [student.profileImage]);
   return (
     <>
-     
+
       <div
         style={{
           position: "relative",
@@ -342,140 +344,140 @@ function Accountsapprovals() {
           </div>
         </Link>
         {loading ? (
-                    <Loading />
-                ) : (
-        <div className="table-responsive" style={{ position: "relative", top: '60px' }}>
+          <Loading />
+        ) : (
+          <div className="table-responsive" style={{ position: "relative", top: '60px' }}>
 
 
-              <h4 className="" style={{ width: "350px", position: "relative", top: "20px" }}>
-                Total Approvals Pending: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 4px', borderRadius: '4px', color: "white", zIndex: "100" }}>{getstudents.flat().length}</span>
-              </h4>
-              <div
-                className="flex justify-right items-center gap-4 mt-4 "
-                style={{ position: "relative", left: "700px", bottom: "20PX" }}
+            <h4 className="" style={{ width: "350px", position: "relative", top: "20px" }}>
+              Total Approvals Pending: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 4px', borderRadius: '4px', color: "white", zIndex: "100" }}>{getstudents.flat().length}</span>
+            </h4>
+            <div
+              className="flex justify-right items-center gap-4 mt-4 "
+              style={{ position: "relative", left: "700px", bottom: "20PX" }}
+            >
+              <label>
+                {" "}
+                No of records per page:{" "}
+                <input
+                  type="number"
+                  value={rowsPerPage}
+                  onChange={handleRowsPerPageChange}
+                  style={{ width: "50px", padding: "5px", marginRight: "20PX" }}
+                />
+              </label>
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) => Math.max(prev - 1, 1))
+                }
+                className="btn"
+                disabled={currentPage === 1}
               >
-                <label>
-                  {" "}
-                  No of records per page:{" "}
-                  <input
-                    type="number"
-                    value={rowsPerPage}
-                    onChange={handleRowsPerPageChange}
-                    style={{ width: "50px", padding: "5px", marginRight: "20PX" }}
-                  />
-                </label>
-                <button
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
-                  className="btn"
-                  disabled={currentPage === 1}
-                >
-                  <i className="bi bi-chevron-double-left"></i>
-                </button>
+                <i className="bi bi-chevron-double-left"></i>
+              </button>
 
-                <span className="text-lg">
-                  Page {currentPage} of {totalPages}
-                </span>
+              <span className="text-lg">
+                Page {currentPage} of {totalPages}
+              </span>
 
-                <button
-                  onClick={() =>
-                    setCurrentPage((prev) =>
-                      Math.min(prev + 1, totalPages)
-                    )
-                  }
-                  className="btn"
-                  disabled={currentPage === totalPages}
-                >
-                  <i className="bi bi-chevron-double-right arr"></i>
-                </button>
-              </div>
-              <table className="table table-striped table-bordered table-hover" style={{
-                position: "relative",
-                left: "12px",
-                bottom: "0px",
-              }}>
-                <thead className="thead-dark">
-                  <tr>
-                    <th>#</th>
-                    <th>Profile</th>
-                    <th>Registration Number</th>
-                    <th>Name</th>
-                    <th>Department</th>
-                    <th>Batch</th>
-                    <th>Email</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-  {displayedData.length === 0 ? (
-    <tr>
-      <td colSpan="8" className="text-center " style={{color:"red"}}>
-        No approvals pending
-      </td>
-    </tr>
-  ) : (
-    displayedData.map((student) => (
-      <tr key={student._id}>
-        <td>{student.index}</td>
-        <td>
-          {student.profileImage ? (
-            <img
-              src={`http://localhost:3000/${student.profileImage}`}
-              alt="Profile"
-              className="rounded-circle"
-              style={{ width: "40px", height: "40px", objectFit: "cover" }}
-            />
-          ) : (
-            <img
-              src="/default-avatar.png"
-              alt="Default Profile"
-              className="rounded-circle"
-              style={{ width: "40px", height: "40px", objectFit: "cover" }}
-            />
-          )}
-        </td>
-        <td>{student.registration_number}</td>
-        <td>{student.name}</td>
-        <td>{student.department}</td>
-        <td>{student.batch}</td>
-        <td>{student.email}</td>
-        <td>
-          <button
-            className="btn btn-primary btn-sm me-2"
-            onClick={() => handleEdit(student.registration_number)}
-          >
-            Check
-          </button>
-          <button
-            className="btn btn-danger btn-sm"
-            onClick={() => handleReject(student.email)}
-          >
-            Reject
-          </button>
-        </td>
-      </tr>
-    ))
-  )}
-</tbody>
-
-              </table>
-
-            
-
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) =>
+                    Math.min(prev + 1, totalPages)
+                  )
+                }
+                className="btn"
+                disabled={currentPage === totalPages}
+              >
+                <i className="bi bi-chevron-double-right arr"></i>
+              </button>
             </div>
-            )}
-            {showw && student && (
+            <table className="table table-striped table-bordered table-hover" style={{
+              position: "relative",
+              left: "12px",
+              bottom: "0px",
+            }}>
+              <thead className="thead-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Profile</th>
+                  <th>Registration Number</th>
+                  <th>Name</th>
+                  <th>Department</th>
+                  <th>Batch</th>
+                  <th>Email</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {displayedData.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="text-center " style={{ color: "red" }}>
+                      No approvals pending
+                    </td>
+                  </tr>
+                ) : (
+                  displayedData.map((student) => (
+                    <tr key={student._id}>
+                      <td>{student.index}</td>
+                      <td>
+                        {student.profileImage ? (
+                          <img
+                            src={`http://localhost:3000/${student.profileImage}`}
+                            alt="Profile"
+                            className="rounded-circle"
+                            style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                          />
+                        ) : (
+                          <img
+                            src="/default-avatar.png"
+                            alt="Default Profile"
+                            className="rounded-circle"
+                            style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                          />
+                        )}
+                      </td>
+                      <td>{student.registration_number}</td>
+                      <td>{student.name}</td>
+                      <td>{student.department}</td>
+                      <td>{student.batch}</td>
+                      <td>{student.email}</td>
+                      <td>
+                        <button
+                          className="btn btn-primary btn-sm me-2"
+                          onClick={() => handleEdit(student.registration_number)}
+                        >
+                          Check
+                        </button>
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => handleReject(student.email)}
+                        >
+                          Reject
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+
+            </table>
+
+
+
+          </div>
+        )}
+        {showw && student && (
           <div className="modal d-block" tabIndex="-1" key={student._id}>
             <div className="modal-dialog modal-lg">
-              <div className="modal-content" style={{minWidth:"100%"}}>
+              <div className="modal-content" style={{ minWidth: "100%" }}>
                 <div className="modal-header">
                   <h5 className="modal-title">Add Student Details To Create Account</h5>
                   <button type="button" className="btn-close" onClick={() => setShoww(false)}></button>
                 </div>
                 <div className="modal-body">
                   <form encType="multipart/form-data" onSubmit={handleSubmitt}>
-                    
+
                     <Row>
                       <Col md={6}>
                         <label>Registration Number:<span style={{ color: "red" }}>*</span></label>
@@ -487,7 +489,7 @@ function Accountsapprovals() {
                       </Col>
                     </Row>
 
-                  
+
                     <Row>
                       <Col md={6}>
                         <label>Department:<span style={{ color: "red" }}>*</span></label>
@@ -499,7 +501,7 @@ function Accountsapprovals() {
                       </Col>
                     </Row>
 
-                   
+
                     <Row>
                       <Col md={4}>
                         <label>SSLC(%):<span style={{ color: "red" }}>*</span></label>
@@ -517,7 +519,7 @@ function Accountsapprovals() {
 
                     <h6>Enter Semester wise CGPA:</h6>
 
-                    
+
                     <Row>
                       {["sem1", "sem2", "sem3", "sem4"].map((sem, index) => (
                         <Col md={3} key={index}>
@@ -533,7 +535,7 @@ function Accountsapprovals() {
                       ))}
                     </Row>
 
-                   
+
                     <Row>
                       {["sem5", "sem6", "sem7", "sem8"].map((sem, index) => (
                         <Col md={3} key={index}>
@@ -549,7 +551,7 @@ function Accountsapprovals() {
                       ))}
                     </Row>
 
-                   
+
                     <Row>
                       <Col md={4}>
                         <label>CGPA:</label>
@@ -565,7 +567,7 @@ function Accountsapprovals() {
                       </Col>
                     </Row>
 
-                 
+
                     <Row>
                       <Col md={6}>
                         <label>Internships Attended:</label>
@@ -577,11 +579,15 @@ function Accountsapprovals() {
                       </Col>
                     </Row>
 
-                  
+
                     <Row>
                       <Col md={6}>
-                        <label>Patents/Publications Filed:</label>
-                        <input type="text" className="form-control" name="patentspublications" onChange={handleChange} value={student.patentspublications} />
+                        <label>Patents Field:</label>
+                        <input type="text" className="form-control" name="patents" onChange={handleChange} value={student.patents} />
+                      </Col>
+                      <Col md={6}>
+                        <label>Publications Field:</label>
+                        <input type="text" className="form-control" name="publications" onChange={handleChange} value={student.publications} />
                       </Col>
                       <Col md={6}>
                         <label>Achievements:</label>
@@ -589,7 +595,7 @@ function Accountsapprovals() {
                       </Col>
                     </Row>
 
-                   
+
                     <Row>
                       <Col md={6}>
                         <label>Enter Additional Languages Known:</label>
@@ -601,7 +607,7 @@ function Accountsapprovals() {
                       </Col>
                     </Row>
 
-                   
+
                     <div className="mb-3">
                       <label>Email:<span style={{ color: "red" }}>*</span></label>
                       <input type="email" className="form-control" name="email" onChange={handleChange} required value={student.email} readOnly />
@@ -613,15 +619,15 @@ function Accountsapprovals() {
                     <div className="mb-3">
                       <label>role:<span style={{ color: "red" }}>*</span></label>
                       <select className="form-control" name="role" onChange={handleChange} required value={student.role}>
-                       
-                      <option value="">Select Role</option>
+
+                        <option value="">Select Role</option>
                         <option value="student">student</option>
                       </select>
                     </div>
                     <div className="mb-3">
                       <label>Profile Image:</label>
                       <input
-                        
+
                         type="file"
                         className="form-control"
                         name="image"
@@ -650,18 +656,18 @@ function Accountsapprovals() {
                       </Row>
                     </div>
 
-                   
+
                     <div className="mb-3">
                       <Row>
                         <Col md={6}>
                           <div className="mb-3">
                             <label>Resume:</label>
                             <input type="file" className="form-control" name="resume" onChange={handleChange} accept=".pdf" />
-                            {student.resume&& (
-  <a href={`http://localhost:3000/${student.resume}`} target="_blank" rel="noopener noreferrer">
-    View Resume
-  </a>
-)}
+                            {student.resume && (
+                              <a href={`http://localhost:3000/${student.resume}`} target="_blank" rel="noopener noreferrer">
+                                View Resume
+                              </a>
+                            )}
                           </div>
                         </Col>
                         <Col md={6}>
@@ -701,10 +707,10 @@ function Accountsapprovals() {
                       <label>Insert the offerletters(pdf,combine all letters as a single pdf):</label>
                       <input type="file" className="form-control" name="offerpdf" onChange={handleChange} accept="*" />
                       {student.offerpdf && (
-  <a href={`http://localhost:3000/${student.offerpdf}`} target="_blank" rel="noopener noreferrer">
-    View Offer Letter
-  </a>
-)}
+                        <a href={`http://localhost:3000/${student.offerpdf}`} target="_blank" rel="noopener noreferrer">
+                          View Offer Letter
+                        </a>
+                      )}
 
                     </div>
 
@@ -726,7 +732,7 @@ function Accountsapprovals() {
           </div>
         )}
       </div>
-      
+
     </>
   );
 }

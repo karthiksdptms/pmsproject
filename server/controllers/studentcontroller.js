@@ -22,6 +22,51 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+
+import Categories from "../models/CategoriesModel.js";
+const calculateScore = async (fields) => {
+  let score = 0;
+
+  
+  const categories = await Categories.find();
+
+ 
+  const categoryMap = {};
+  categories.forEach((category) => {
+  
+    categoryMap[category.name.toLowerCase().replace(/\s+/g, "")] = category.scoreValue;
+  });
+
+  for (const [fieldName, fieldValue] of Object.entries(fields)) {
+    if (fieldValue) {
+      
+      const items = fieldValue
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item !== "");
+
+   
+      const limitedItems = items.slice(0, 4);
+
+     
+      const normalizedFieldName = fieldName.toLowerCase().replace(/\s+/g, "");
+
+     
+      if (categoryMap[normalizedFieldName] !== undefined) {
+        const calculatedScore = limitedItems.length * parseFloat(categoryMap[normalizedFieldName]);
+
+        
+        score += Math.min(calculatedScore, 2);
+      }
+    }
+  }
+
+  return parseFloat(score.toFixed(2)); 
+};
+
+
+
+
 export const getStudentsWithScore = async (req, res) => {
   try {
    
@@ -107,7 +152,8 @@ const addstudent = async (req, res) => {
       hoa,
       internships,
       certifications,
-      patentspublications,
+      patents,
+      publications,
       achievements,
       language,
       aoi,
@@ -140,14 +186,14 @@ const addstudent = async (req, res) => {
     
     const profileImage = req.files?.image ? req.files.image[0].filename : null;
 
-    
-    const score = calculateScore([
+    const score = await calculateScore({
       internships,
       certifications,
-      patentspublications,
+      patents,
+      publications,
       achievements,
-      aoi
-    ]);
+    });
+    
 
     const newuser = new User({
       name,
@@ -184,7 +230,8 @@ const addstudent = async (req, res) => {
       hoa,
       internships,
       certifications,
-      patentspublications,
+      patents,
+      publications,
       achievements,
       language,
       aoi,
@@ -236,7 +283,8 @@ export const approveaddstudent = async (req, res) => {
       hoa,
       internships,
       certifications,
-      patentspublications,
+      patents,
+      publications,
       achievements,
       language,
       aoi,
@@ -267,14 +315,14 @@ const offerpdf = req.files && req.files["offerpdf"] ? req.files["offerpdf"][0].f
 const profileImage = req.files && req.files["image"] ? req.files["image"][0].filename : null;
 
 
-  
-const score = calculateScore([
+const score = await calculateScore({
   internships,
   certifications,
-  patentspublications,
+  patents,
+  publications,
   achievements,
-  aoi
-]);
+});
+
     const finalOffers = Array.isArray(offers) ? offers : [];
 
     const newuser = new UUser({
@@ -312,7 +360,7 @@ const score = calculateScore([
       hoa,
       internships,
       certifications,
-      patentspublications,
+      patents,publications,
       achievements,
       language,
       aoi,
@@ -395,17 +443,6 @@ export const approvegetstudent =async (req, res) => {
     }
 };
 
-
-const calculateScore = (fields) => {
-  let score = 0;
-  fields.forEach((field) => {
-    if (field) {
-      score += field.split(",").filter((item) => item.trim() !== "").length;
-    }
-  });
-  return score;
-};
-
 const editstudent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -430,7 +467,7 @@ const editstudent = async (req, res) => {
       hoa,
       internships,
       certifications,
-      patentspublications,
+      patents,publications,
       achievements,
       language,
       aoi,
@@ -440,7 +477,7 @@ const editstudent = async (req, res) => {
       placement,
       offers,
       role,
-      password
+      password,
     } = req.body;
 
    
@@ -449,25 +486,27 @@ const editstudent = async (req, res) => {
       return res.status(404).json({ success: false, message: "Student not found" });
     }
 
-    
+
     const profileImage = req.files?.image ? req.files.image[0].filename : student.profileImage;
     const resume = req.files?.resume ? req.files.resume[0].filename : student.resume;
     const offerpdf = req.files?.offerpdf ? req.files.offerpdf[0].filename : student.offerpdf;
     const finalOffers = Array.isArray(offers) ? offers : [];
 
    
-    let hashpassword = student.password; 
+    let hashpassword = student.password;
     if (password) {
       hashpassword = await bcrypt.hash(password, 10);
     }
 
-    const score = calculateScore([
+    const score = await calculateScore({
       internships,
       certifications,
-      patentspublications,
+      patents,
+      publications,
       achievements,
-      aoi
-    ]);
+    });
+    
+    
     const updatedStudent = await StudentModel.findByIdAndUpdate(
       id,
       {
@@ -491,7 +530,8 @@ const editstudent = async (req, res) => {
         hoa,
         internships,
         certifications,
-        patentspublications,
+        patents,
+        publications,
         achievements,
         language,
         aoi,
@@ -508,12 +548,12 @@ const editstudent = async (req, res) => {
       { new: true }
     );
 
-    
+   
     await User.findByIdAndUpdate(
       student.userId,
       {
         name,
-        ...(password && { password: hashpassword }), 
+        ...(password && { password: hashpassword }),
         role,
         profileImage,
       },
@@ -533,6 +573,9 @@ const editstudent = async (req, res) => {
     });
   }
 };
+
+
+
 export const approveeditstudent = async (req, res) => {
   try {
     const { email, registration_number } = req.body;
@@ -557,7 +600,7 @@ export const approveeditstudent = async (req, res) => {
       hoa,
       internships,
       certifications,
-      patentspublications,
+      patents,publications,
       achievements,
       language,
       aoi,
@@ -601,22 +644,17 @@ export const approveeditstudent = async (req, res) => {
         : pendingStudent?.offerpdf
         ? pendingStudent.offerpdf
         : student.offerpdf;
-
-    const finalOffers = offers
-      ? typeof offers === "string"
-        ? JSON.parse(offers)
-        : offers
-      : student.offers;
+    const finalOffers = Array.isArray(offers) ? offers : [];
 
 
-      
-    const score = calculateScore([
+    const score = await calculateScore({
       internships,
       certifications,
-      patentspublications,
+      patents,
+      publications,
       achievements,
-      aoi
-    ]);
+    });
+    
     
     const updatedStudent = await StudentModel.findOneAndUpdate(
       { registration_number },
@@ -640,7 +678,7 @@ export const approveeditstudent = async (req, res) => {
         hoa,
         internships,
         certifications,
-        patentspublications,
+        patents,publications,
         achievements,
         language,
         aoi,
@@ -659,8 +697,10 @@ export const approveeditstudent = async (req, res) => {
     console.log("Updated Student Data in StudentModel:", updatedStudent);
 
    
-    const hashpassword = password ? await bcrypt.hash(password, 10) : student.password;
-
+    let hashpassword = student.password;
+    if (password) {
+      hashpassword = await bcrypt.hash(password, 10);
+    }
    
     await User.findOneAndUpdate(
       { email },
@@ -671,7 +711,7 @@ export const approveeditstudent = async (req, res) => {
         profileImage: profileImage,
       },
       { new: true }
-    );
+    )
 
     
     await ApprovestudentModel.findOneAndDelete({ registration_number });
@@ -813,7 +853,7 @@ const uploadCSV = async (req, res) => {
               hoa,
               internships,
               certifications,
-              patentspublications,
+              patents,publications,
               achievements,
               language,
               aoi,
@@ -865,14 +905,14 @@ const uploadCSV = async (req, res) => {
                 : offers
               : [];
 
+              const score = await calculateScore({
+                internships,
+                certifications,
+                patents,
+                publications,
+                achievements,
+              });
               
-    const score = calculateScore([
-      internships,
-      certifications,
-      patentspublications,
-      achievements,
-      aoi
-    ]);
            
             const student = new StudentModel({
               userId: savedUser._id.toString(),
@@ -899,7 +939,7 @@ const uploadCSV = async (req, res) => {
               hoa,
               internships,
               certifications,
-              patentspublications,
+              patents,publications,
               achievements,
               language,
               aoi,

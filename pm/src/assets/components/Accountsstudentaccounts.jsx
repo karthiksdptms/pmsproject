@@ -66,7 +66,9 @@ function Accountsstudentaccounts() {
             certifications: std.certifications,
             password: std.password,
             role: std.role,
-            patentspublications: std.patentspublications,
+            publications: std.publications,
+            patents: std.patents,
+
             hoa: std.hoa,
             language: std.language,
             aoi: std.aoi,
@@ -114,7 +116,8 @@ function Accountsstudentaccounts() {
     arrears: "",
     internships: "",
     certifications: "",
-    patentspublications: "",
+    patents:"",
+    publications: "",
     achievements: "",
     hoa: "",
     language: "",
@@ -240,7 +243,7 @@ function Accountsstudentaccounts() {
           arrears: "",
           internships: "",
           certifications: "",
-          patentspublications: "",
+          patents:"",publications: "",
           achievements: "",
           hoa: "",
           language: "",
@@ -402,14 +405,14 @@ function Accountsstudentaccounts() {
     startIdx,
     startIdx + rowsPerPage
   );
-// File Input Reference
+
 const fileInputRef = useRef(null);
 
-// Handle File Change
+
 const handleFileChange = (e) => {
   if (e.target.files.length > 0) {
     setCsvFile(e.target.files[0]);
-    uploadCsv(e.target.files[0]); // Automatically upload after selecting
+    uploadCsv(e.target.files[0]); 
   }
 };
 
@@ -420,7 +423,7 @@ const uploadCsv = async (file) => {
   const formData = new FormData();
   formData.append("csvfile", file);
 
-  // Show loading screen
+  
   setIsLoading(true);
 
   try {
@@ -905,8 +908,12 @@ const updateStudentOffers = async (csvData) => {
                     
                     <Row>
                       <Col md={6}>
-                        <label>Patents/Publications Filed:</label>
-                        <input type="text" className="form-control" name="patentspublications" onChange={handleChange} />
+                        <label>Patents Field:</label>
+                        <input type="text" className="form-control" name="patents" onChange={handleChange} />
+                      </Col>
+                      <Col md={6}>
+                        <label>Publications Field:</label>
+                        <input type="text" className="form-control" name="publications" onChange={handleChange} />
                       </Col>
                       <Col md={6}>
                         <label>Achievements:</label>
@@ -1151,8 +1158,12 @@ const updateStudentOffers = async (csvData) => {
                   
                     <Row>
                       <Col md={6}>
-                        <label>Patents/Publications Filed:</label>
-                        <input type="text" className="form-control" name="patentspublications" onChange={handleChange} value={student.patentspublications} />
+                        <label>Patents Field:</label>
+                        <input type="text" className="form-control" name="patents" onChange={handleChange} value={student.patents} />
+                      </Col>
+                      <Col md={6}>
+                        <label>Publications Field:</label>
+                        <input type="text" className="form-control" name="publications" onChange={handleChange} value={student.publications} />
                       </Col>
                       <Col md={6}>
                         <label>Achievements:</label>

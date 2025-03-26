@@ -70,7 +70,9 @@ const studentSchema = new mongoose.Schema({
   arrears: Number,
   internships: { type: String },
   certifications: { type: String },
-  patentspublications: { type: String },
+  patents: { type: String },
+  publications: { type: String },
+
   achievements: { type: String },
   hoa: { type: String },
   language: { type: String },

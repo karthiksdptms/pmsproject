@@ -17,6 +17,7 @@ import chartRoutes from "./routes/chartRoutes.js";
 import companyRoutes from "./routes/companyRoutes.js";
 import filteroutes from "./routes/filters.js"
 import AdminRoutes from "./routes/AdminRoutes.js"
+import Categories from "./routes/categories.js";
 
 import { autoPostScheduler,autoDeleteScheduler } from "./autoPostScheduler.js";
 dotenv.config();
@@ -40,6 +41,8 @@ app.use("/api/charts", chartRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/filters", filteroutes);
 app.use("/api/admin", AdminRoutes);
+app.use("/api/category", Categories);
+
 
 connectDatabase().then(() => {
   autoPostScheduler();
