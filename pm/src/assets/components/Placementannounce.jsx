@@ -220,7 +220,7 @@ function Placementsannounce() {
     };
     const [students,setstudents]=useState([])
   useEffect(() => {
-    axios.get("http://localhost:3000/getstudents")
+    axios.get("https://pmsproject-api.vercel.app/getstudents")
       .then(response => setstudents(response.data))
       .catch(error => console.error("Error fetching students:", error));
     }, []);

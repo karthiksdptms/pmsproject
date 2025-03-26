@@ -95,7 +95,7 @@ function Aptitudeconfigurequestions() {
         return;
       }
   
-      axios.put(`http://localhost:3000/updateqp/${paperId}`, questionPaperData)
+      axios.put(`https://pmsproject-api.vercel.app/updateqp/${paperId}`, questionPaperData)
         .then((result) => {
           console.log("Updated successfully", result.data);
   
@@ -109,7 +109,7 @@ function Aptitudeconfigurequestions() {
         })
         .catch((err) => console.error("Error updating:", err));
     } else {
-      axios.post('http://localhost:3000/addqp', questionPaperData)
+      axios.post('https://pmsproject-api.vercel.app/addqp', questionPaperData)
         .then((result) => {
           console.log("Created successfully", result.data);
           setQuestionPapers([...questionPapers, result.data]); 
@@ -140,7 +140,7 @@ function Aptitudeconfigurequestions() {
   
   useEffect(() => {
 
-    axios.get('http://localhost:3000/getqp')
+    axios.get('https://pmsproject-api.vercel.app/getqp')
       .then(result => setQuestionPapers(result.data))
       .catch(err => console.log(err))
   }, [])
@@ -148,7 +148,7 @@ function Aptitudeconfigurequestions() {
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this record?")) {
       axios
-        .delete(`http://localhost:3000/delqp/${id}`)
+        .delete(`https://pmsproject-api.vercel.app/delqp/${id}`)
         .then((response) => {
           alert("Record deleted successfully!");
           setQuestionPapers(questionPapers.filter((paper) => paper._id !== id)); // Remove from UI

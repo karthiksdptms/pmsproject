@@ -14,7 +14,7 @@ function Trainingreports() {
 
   useEffect(() => {
 
-    axios.get('http://localhost:3000')
+    axios.get('https://pmsproject-api.vercel.app')
       .then(result => setTrainings(result.data))
       .catch(err => console.log(err))
   }, [])
@@ -106,7 +106,7 @@ function Trainingreports() {
 
     if (trtype != '' && trainee != '' && fromdate != '' && todate != '' && duration != '' && batch != '' && department != '' && participated != 0) {
       axios
-        .post("http://localhost:3000/createUser", {
+        .post("https://pmsproject-api.vercel.app/createUser", {
           trtype,
           trainee,
           fromdate: new Date(fromdate).toLocaleDateString("en-CA"),
@@ -162,7 +162,7 @@ function Trainingreports() {
     e.preventDefault();
 
     axios
-      .put(`http://localhost:3000/updateUser/${editData._id}`, editData)
+      .put(`https://pmsproject-api.vercel.app/updateUser/${editData._id}`, editData)
       .then((result) => {
         console.log("Updated Successfully:", result.data);
         window.location.reload();  // Refresh table after update
@@ -173,7 +173,7 @@ function Trainingreports() {
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this record?")) {
       axios
-        .delete(`http://localhost:3000/deleteUser/${id}`)
+        .delete(`https://pmsproject-api.vercel.app/deleteUser/${id}`)
         .then((response) => {
           alert("Record deleted successfully!");
           setTrainings(trainings.filter((training) => training._id !== id)); // Remove from UI
