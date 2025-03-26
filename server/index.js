@@ -7,14 +7,20 @@ import connectDatabase from "./db/db.js";
 import FilterModel from "./models/FilterModel.js";
 import QpModel from "./models/QpModel.js";
 import TrainingModel from './models/TrainingModel.js'
+import mongoose from "mongoose";
 
 
 connectDatabase();
 
 const app = express();
 app.use(cors(
-  helo
+  {
+    origin:[""],
+    methods:["POST","GET"],
+    credentials:true
+  }
 ));
+
 app.use(express.json());
 app.use('/api/auth',authRouter);
 
