@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 import Loading from "./Loading";
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const cgpaOptions = [
   "9.5 and above",
@@ -26,8 +26,8 @@ const cgpaOptions = [
 ];
 const arrearsOptions = ["0", "1", "2", "3", "4", "5", "6"];
 const historyOfArrearsOptions = ["0", "1", "2", "3", "4", "5", "6"];
-const placementOptions = ["Placed","Not-placed"];
-const offertypeOptions = ["Elite","Dream","Superdream","Fair"];
+const placementOptions = ["Placed", "Not-placed"];
+const offertypeOptions = ["Elite", "Dream", "Superdream", "Fair"];
 
 
 function Dashboard() {
@@ -90,26 +90,26 @@ function Dashboard() {
     setFilters((prev) => ({ ...prev, [key]: e.target.value }));
   };
 
-  
+
   const handleAllCheckboxChange = (e, key) => {
     const isChecked = e.target.checked;
     if (isChecked) {
       setFilters((prev) => ({ ...prev, [key]: [] }));
     }
-  };const [students, setStudents] = useState([]);
-  const [loading, setLoading] = useState(true); 
-  
+  }; const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    setLoading(true); 
+    setLoading(true);
     axios
-      .get("http://localhost:3000/api/students/getstudents")
+      .get(`${API_BASE_URL}/api/students/getstudents`)
       .then((response) => {
         console.log("Fetched Students:", response.data);
         setStudents(response.data.students || []);
       })
       .catch((error) => console.error("Error fetching students:", error))
       .finally(() => {
-        setLoading(false); 
+        setLoading(false);
       });
   }, []);
 
@@ -145,8 +145,8 @@ function Dashboard() {
           student.language.toLowerCase().includes(filters.language.toLowerCase())))
     );
   });
-  
-  
+
+
 
 
   const [showDiv, setShowDiv] = useState(false);
@@ -206,64 +206,64 @@ function Dashboard() {
     startIdx,
     startIdx + rowsPerPage
   );
- 
+
 
   const [departmentOptions, setDepartmentOptions] = useState([]);
 
-const fetchDepartments = async () => {
-  try {
-    const res = await axios.get("http://localhost:3000/api/filters/getdepartments");
-    const departmentNames = res.data.map((dept) => dept.name);
-    setDepartmentOptions(departmentNames);
-  } catch (error) {
-    console.error("Error fetching departments:", error);
-  }
-};
+  const fetchDepartments = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/filters/getdepartments`);
+      const departmentNames = res.data.map((dept) => dept.name);
+      setDepartmentOptions(departmentNames);
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
 
-useEffect(() => {
-  fetchDepartments();
-}, []);
+  useEffect(() => {
+    fetchDepartments();
+  }, []);
 
-const [batchOptions, setBatchOptions] = useState([]);
-
-
-const fetchBatches = async () => {
-  try {
-    const res = await axios.get("http://localhost:3000/api/filters/getbatch");
-    const batchNames = res.data.map((batch) => batch.batchName);
-    setBatchOptions([...batchNames, "Others"]); 
-  } catch (error) {
-    console.error("Error fetching batches:", error);
-  }
-};
-
-useEffect(() => {
-  fetchBatches();
-}, []);
-
-const [aoiOptions, setAoiOptions] = useState([]);
-
-const fetchAoiOptions = async () => {
-  try {
-    const res = await axios.get("http://localhost:3000/api/filters/getaoi");
-    console.log("AOI options received:", res.data);
-    const aoiNames = res.data.map((aoi) => aoi.aoiName); 
-    console.log("Mapped AOI Names:", aoiNames);
-    setAoiOptions(aoiNames);
-  } catch (error) {
-    console.error("Error fetching AOI options:", error);
-  }
-};
+  const [batchOptions, setBatchOptions] = useState([]);
 
 
+  const fetchBatches = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/filters/getbatch`);
+      const batchNames = res.data.map((batch) => batch.batchName);
+      setBatchOptions([...batchNames, "Others"]);
+    } catch (error) {
+      console.error("Error fetching batches:", error);
+    }
+  };
 
-useEffect(() => {
-  fetchAoiOptions();
-}, []);
+  useEffect(() => {
+    fetchBatches();
+  }, []);
 
-const profileImageUrl = selectedData.profileImage
-  ? `http://localhost:3000/${selectedData.profileImage}`
-  : null;
+  const [aoiOptions, setAoiOptions] = useState([]);
+
+  const fetchAoiOptions = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/filters/getaoi`);
+      console.log("AOI options received:", res.data);
+      const aoiNames = res.data.map((aoi) => aoi.aoiName);
+      console.log("Mapped AOI Names:", aoiNames);
+      setAoiOptions(aoiNames);
+    } catch (error) {
+      console.error("Error fetching AOI options:", error);
+    }
+  };
+
+
+
+  useEffect(() => {
+    fetchAoiOptions();
+  }, []);
+
+  const profileImageUrl = selectedData.profileImage
+    ? `${API_BASE_URL}/${selectedData.profileImage}`
+    : null;
 
 
   return (
@@ -348,35 +348,35 @@ const profileImageUrl = selectedData.profileImage
                                 All
                               </label>
                               {departmentOptions.map((dept) => (
-  <div key={dept}>
-    <input
-      type="checkbox"
-      className="form-check-input"
-      value={dept}
-      checked={filters.department.includes(dept)}
-      onChange={(e) => handleCheckboxChange(e, "department")}
-    />
-    {dept}
-  </div>
-))}
-                            {showOtherDepartment && (
-                  <div>
-                    <input
-                      style={{
-                        marginBottom: "10px",
-                        padding: "8px",
-                        width: "100%",
-                        maxWidth: "300px",
-                      }}
-                      type="text"
-                      className="form-check-input"
-                      placeholder="Enter Department"
-                      onChange={(e) =>
-                        handleInputChange(e, "otherDepartment")
-                      }
-                    />
-                  </div>
-                )}
+                                <div key={dept}>
+                                  <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    value={dept}
+                                    checked={filters.department.includes(dept)}
+                                    onChange={(e) => handleCheckboxChange(e, "department")}
+                                  />
+                                  {dept}
+                                </div>
+                              ))}
+                              {showOtherDepartment && (
+                                <div>
+                                  <input
+                                    style={{
+                                      marginBottom: "10px",
+                                      padding: "8px",
+                                      width: "100%",
+                                      maxWidth: "300px",
+                                    }}
+                                    type="text"
+                                    className="form-check-input"
+                                    placeholder="Enter Department"
+                                    onChange={(e) =>
+                                      handleInputChange(e, "otherDepartment")
+                                    }
+                                  />
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>
@@ -415,21 +415,21 @@ const profileImageUrl = selectedData.profileImage
                               All
                             </label>
                             {batchOptions
-  .filter((batch) => batch !== "Others")
-  .map((batch) => (
-    <div key={batch}>
-      <input
-        type="checkbox"
-        className="form-check-input"
-        value={batch}
-        checked={filters.batch.includes(batch)}
-        onChange={(e) => handleCheckboxChange(e, "batch")}
-      />{" "}
-      {batch}
-    </div>
-  ))}
+                              .filter((batch) => batch !== "Others")
+                              .map((batch) => (
+                                <div key={batch}>
+                                  <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    value={batch}
+                                    checked={filters.batch.includes(batch)}
+                                    onChange={(e) => handleCheckboxChange(e, "batch")}
+                                  />{" "}
+                                  {batch}
+                                </div>
+                              ))}
 
-                           
+
                           </div>
                         )}
                       </div>
@@ -437,90 +437,90 @@ const profileImageUrl = selectedData.profileImage
                   </div>
                 </div>
                 <div className="lable1">
-  <div>
-    <label htmlFor="cgpaSelect" style={{ fontSize: "23px" }}>CGPA:</label><br />
-    <select
-      id="cgpaSelect"
-      name="cgpa"
-      onChange={(e) => handleSelectChange(e, "cgpa")}
-      style={{
-        marginBottom: "10px",
-        padding: "8px",
-        width: "100%",
-        maxWidth: "300px",
-      }}
-    >
-      <option value="" disabled selected>
-        Select CGPA:
-      </option>
-      <option value="">ANY</option>
-      {cgpaOptions.map((cgpa) => (
-        <option key={cgpa} value={cgpa.split(" ")[0]}>
-          {cgpa}
-        </option>
-      ))}
-    </select>
-  </div>
-</div>
+                  <div>
+                    <label htmlFor="cgpaSelect" style={{ fontSize: "23px" }}>CGPA:</label><br />
+                    <select
+                      id="cgpaSelect"
+                      name="cgpa"
+                      onChange={(e) => handleSelectChange(e, "cgpa")}
+                      style={{
+                        marginBottom: "10px",
+                        padding: "8px",
+                        width: "100%",
+                        maxWidth: "300px",
+                      }}
+                    >
+                      <option value="" disabled selected>
+                        Select CGPA:
+                      </option>
+                      <option value="">ANY</option>
+                      {cgpaOptions.map((cgpa) => (
+                        <option key={cgpa} value={cgpa.split(" ")[0]}>
+                          {cgpa}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
                 <div className="lable1">
-  <div>
-    <label htmlFor="arrearsSelect" style={{ fontSize: "23px" }}>
-      Arrears:
-    </label>
-    <br />
-    <select
-      id="arrearsSelect"
-      name="arrears"
-      onChange={(e) => handleSelectChange(e, "arrears")}
-      style={{
-        marginBottom: "10px",
-        padding: "8px",
-        width: "100%",
-        maxWidth: "300px",
-      }}
-    >
-      <option value="" disabled selected>
-        Select Arrears:
-      </option>
-      <option value="">ANY</option>
-      {arrearsOptions.map((arr) => (
-        <option key={arr} value={arr}>
-          {arr}
-        </option>
-      ))}
-    </select>
-  </div>
-</div>
+                  <div>
+                    <label htmlFor="arrearsSelect" style={{ fontSize: "23px" }}>
+                      Arrears:
+                    </label>
+                    <br />
+                    <select
+                      id="arrearsSelect"
+                      name="arrears"
+                      onChange={(e) => handleSelectChange(e, "arrears")}
+                      style={{
+                        marginBottom: "10px",
+                        padding: "8px",
+                        width: "100%",
+                        maxWidth: "300px",
+                      }}
+                    >
+                      <option value="" disabled selected>
+                        Select Arrears:
+                      </option>
+                      <option value="">ANY</option>
+                      {arrearsOptions.map((arr) => (
+                        <option key={arr} value={arr}>
+                          {arr}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
-<div className="lable1">
-  <div>
-    <label htmlFor="hoaSelect" style={{ fontSize: "23px" }}>
-      History of Arrears:
-    </label>
-    <select
-      id="hoaSelect"
-      name="historyOfArrears"
-      onChange={(e) => handleSelectChange(e, "historyOfArrears")}
-      style={{
-        marginBottom: "10px",
-        padding: "8px",
-        width: "210px",
-        maxWidth: "300px",
-      }}
-    >
-      <option value="" disabled selected>
-        Select HOA:
-      </option>
-      <option value="">ANY</option>
-      {historyOfArrearsOptions.map((hoa) => (
-        <option key={hoa} value={hoa}>
-          {hoa}
-        </option>
-      ))}
-    </select>
-  </div>
-</div>
+                <div className="lable1">
+                  <div>
+                    <label htmlFor="hoaSelect" style={{ fontSize: "23px" }}>
+                      History of Arrears:
+                    </label>
+                    <select
+                      id="hoaSelect"
+                      name="historyOfArrears"
+                      onChange={(e) => handleSelectChange(e, "historyOfArrears")}
+                      style={{
+                        marginBottom: "10px",
+                        padding: "8px",
+                        width: "210px",
+                        maxWidth: "300px",
+                      }}
+                    >
+                      <option value="" disabled selected>
+                        Select HOA:
+                      </option>
+                      <option value="">ANY</option>
+                      {historyOfArrearsOptions.map((hoa) => (
+                        <option key={hoa} value={hoa}>
+                          {hoa}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
                 <div
                   className="lable1"
@@ -552,17 +552,17 @@ const profileImageUrl = selectedData.profileImage
                               All
                             </label>
                             {aoiOptions.map((aoi) => (
-  <div key={aoi}>
-    <input
-      className="form-check-input"
-      type="checkbox"
-      value={aoi}
-      checked={filters.aoi.includes(aoi)}
-      onChange={(e) => handleCheckboxChange(e, "aoi")}
-    />{" "}
-    {aoi}
-  </div>
-))}
+                              <div key={aoi}>
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  value={aoi}
+                                  checked={filters.aoi.includes(aoi)}
+                                  onChange={(e) => handleCheckboxChange(e, "aoi")}
+                                />{" "}
+                                {aoi}
+                              </div>
+                            ))}
 
                             {showOtherAoi && (
                               <input
@@ -586,81 +586,81 @@ const profileImageUrl = selectedData.profileImage
                   </div>
                 </div>
                 <div className="lable1" style={{ position: "relative", left: "0px", bottom: "-0.25px" }}>
-  <div>
-    <label htmlFor="languageInput" style={{ fontSize: "23px" }}>Languages:</label>
-    <input
-      id="languageInput"
-      type="text"
-      name="language"
-      placeholder="Enter Language"
-      onChange={(e) => handleInputChange(e, "language")}
-      style={{
-        marginBottom: "10px",
-        padding: "8px",
-        width: "100%",
-        maxWidth: "300px",
-        border: "1px solid #ccc",
-        borderRadius: "5px"
-      }}
-    />
-  </div>
-</div><div className="lable1">
-  <div>
-    <label htmlFor="placementSelect" style={{ fontSize: "23px" }}>
-      Placement_Details:
-    </label>
-    <select
-      id="placementSelect"
-      name="placement"
-      onChange={(e) => handleSelectChange(e, "placement")}
-      style={{
-        marginBottom: "10px",
-        padding: "8px",
-        width: "210px",
-        maxWidth: "300px",
-      }}
-    >
-      <option value="" disabled selected>
-        Select :
-      </option>
-      <option value="">ANY</option>
-      {placementOptions.map((hoa) => (
-        <option key={hoa} value={hoa}>
-          {hoa}
-        </option>
-      ))}
-    </select>
-  </div>
- 
+                  <div>
+                    <label htmlFor="languageInput" style={{ fontSize: "23px" }}>Languages:</label>
+                    <input
+                      id="languageInput"
+                      type="text"
+                      name="language"
+                      placeholder="Enter Language"
+                      onChange={(e) => handleInputChange(e, "language")}
+                      style={{
+                        marginBottom: "10px",
+                        padding: "8px",
+                        width: "100%",
+                        maxWidth: "300px",
+                        border: "1px solid #ccc",
+                        borderRadius: "5px"
+                      }}
+                    />
+                  </div>
+                </div><div className="lable1">
+                  <div>
+                    <label htmlFor="placementSelect" style={{ fontSize: "23px" }}>
+                      Placement_Details:
+                    </label>
+                    <select
+                      id="placementSelect"
+                      name="placement"
+                      onChange={(e) => handleSelectChange(e, "placement")}
+                      style={{
+                        marginBottom: "10px",
+                        padding: "8px",
+                        width: "210px",
+                        maxWidth: "300px",
+                      }}
+                    >
+                      <option value="" disabled selected>
+                        Select :
+                      </option>
+                      <option value="">ANY</option>
+                      {placementOptions.map((hoa) => (
+                        <option key={hoa} value={hoa}>
+                          {hoa}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-</div>
-<div style={{position:'relative',left:'45px'}}>
-    <label htmlFor="offertypeSelect" style={{ fontSize: "23px" }}>
-    Select offertype:
-    </label>
-    <br />
-    <select
-      id="offertypeSelect"
-      name="offertype"
-      onChange={(e) => handleSelectChange(e, "offertype")}
-      style={{
-        marginBottom: "10px",
-        padding: "8px",
-        width: "210px",
-        maxWidth: "300px",
-      }}
-    >
-      <option value="" disabled selected>
-        Select :
-      </option>
-      <option value="">ANY</option>
-      {offertypeOptions.map((hoa) => (
-        <option key={hoa} value={hoa}>
-          {hoa}
-        </option>
-      ))}
-    </select>
-  </div>
+
+                </div>
+                <div style={{ position: 'relative', left: '45px' }}>
+                  <label htmlFor="offertypeSelect" style={{ fontSize: "23px" }}>
+                    Select offertype:
+                  </label>
+                  <br />
+                  <select
+                    id="offertypeSelect"
+                    name="offertype"
+                    onChange={(e) => handleSelectChange(e, "offertype")}
+                    style={{
+                      marginBottom: "10px",
+                      padding: "8px",
+                      width: "210px",
+                      maxWidth: "300px",
+                    }}
+                  >
+                    <option value="" disabled selected>
+                      Select :
+                    </option>
+                    <option value="">ANY</option>
+                    {offertypeOptions.map((hoa) => (
+                      <option key={hoa} value={hoa}>
+                        {hoa}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
               </div>
               <div
@@ -677,7 +677,7 @@ const profileImageUrl = selectedData.profileImage
                     onClick={downloadExcel}
                     type="button"
                     className=" "
-                   
+
                     style={{
                       color: "white",
                       border: "none",
@@ -706,195 +706,197 @@ const profileImageUrl = selectedData.profileImage
                       Total Records: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{filteredStudents.flat().length}</span>
                     </h4>
                     {loading ? (
-  <div >
-    
-  <Loading/>
-  </div>
-) : (
-  <div
-    style={{
-      position: "relative",
-      bottom: "60px",
-      overflowY: "auto",
-      maxHeight: "800px",
-    }}
-  >
-    <div
-      className="flex justify-right items-center gap-4 mt-4"
-      style={{ position: "relative", left: "800px", bottom: "20px" }}
-    >
-      <label htmlFor="rowsPerPage">No of records per page:</label>
-      <input
-        type="number"
-        id="rowsPerPage"
-        name="rowsPerPage"
-        value={rowsPerPage}
-        onChange={handleRowsPerPageChange}
-        style={{ width: "50px", padding: "5px", marginRight: "20px" }}
-      />
+                      <div >
 
-      <button
-        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-        className="btn"
-        disabled={currentPage === 1}
-      >
-        <i className="bi bi-chevron-double-left"></i>
-      </button>
+                        <Loading />
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          position: "relative",
+                          bottom: "60px",
+                          overflowY: "auto",
+                          maxHeight: "800px",
+                        }}
+                      >
+                        <div
+                          className="flex justify-right items-center gap-4 mt-4"
+                          style={{ position: "relative", left: "800px", bottom: "20px" }}
+                        >
+                          <label htmlFor="rowsPerPage">No of records per page:</label>
+                          <input
+                            type="number"
+                            id="rowsPerPage"
+                            name="rowsPerPage"
+                            value={rowsPerPage}
+                            onChange={handleRowsPerPageChange}
+                            style={{ width: "50px", padding: "5px", marginRight: "20px" }}
+                          />
 
-      <span className="text-lg">Page {currentPage} of {totalPages}</span>
+                          <button
+                            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                            className="btn"
+                            disabled={currentPage === 1}
+                          >
+                            <i className="bi bi-chevron-double-left"></i>
+                          </button>
 
-      <button
-        onClick={() =>
-          setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-        }
-        className="btn"
-        disabled={currentPage === totalPages}
-      >
-        <i className="bi bi-chevron-double-right arr"></i>
-      </button>
-    </div>
+                          <span className="text-lg">Page {currentPage} of {totalPages}</span>
 
-    <div>
-      <table
-        border="1"
-        className="table table-striped table-hover tabl"
-        id="my-table"
-        style={{
-          position: "relative",
-          left: "0px",
-          bottom: "0px",
-          minWidth: "3500px",
-        }}
-      >
-        <thead>
-          <tr>
-            <th scope="col">s.no</th>
-            <th scope="col">REGISTRATION_NO</th>
-            <th scope="col">NAME</th>
-            <th scope="col">DEPARTMENT</th>
-            <th scope="col">BATCH(YEAR)</th>
-            <th scope="col">SSLC(%)</th>
-            <th scope="col">HSC(%)</th>
-            <th scope="col">Diploma(%)</th>
-            <th scope="col">Sem 1</th>
-            <th scope="col">Sem 2</th>
-            <th scope="col">Sem 3</th>
-            <th scope="col">Sem 4</th>
-            <th scope="col">Sem 5</th>
-            <th scope="col">Sem 6</th>
-            <th scope="col">Sem 7</th>
-            <th scope="col">Sem 8</th>
-            <th scope="col">CGPA</th>
-            <th scope="col">ARREARS</th>
-            <th scope="col">HISTORY_OF_ARREARS</th>
-            <th scope="col">ADDITIONAL_LANGUAGES</th>
-            <th scope="col">INTERNSHIPS</th>
-            <th scope="col">CERTIFICATIONS</th>
-            <th scope="col">PATENTS/PUBLICATIONS</th>
-            <th scope="col">AWARDS/ACHIEVMENTS</th>
-            <th scope="col">AREA_OF_INTEREST</th>
-            <th scope="col">PLACEMENT_INFO</th>
-            <th scope="col">OFFERS</th>
+                          <button
+                            onClick={() =>
+                              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                            }
+                            className="btn"
+                            disabled={currentPage === totalPages}
+                          >
+                            <i className="bi bi-chevron-double-right arr"></i>
+                          </button>
+                        </div>
 
-            <th>INFO</th>
-          </tr>
-        </thead>
-        <tbody>
-          {displayedData.map((item, index) => (
-            <tr key={item.registration_number}>
-              <td>{index + 1}</td>
-              <td>{item.registration_number}</td>
-              <td>{item.name}</td>
-              <td>{item.department}</td>
-              <td>{item.batch}</td>
-              <td>{item.sslc}</td>
-              <td>{item.hsc}</td>
-              <td>{item.diploma}</td>
-              <td>{item.sem1}</td>
-              <td>{item.sem2}</td>
-              <td>{item.sem3}</td>
-              <td>{item.sem4}</td>
-              <td>{item.sem5}</td>
-              <td>{item.sem6}</td>
-              <td>{item.sem7}</td>
-              <td>{item.sem8}</td>
-              <td>{item.cgpa}</td>
-              <td>{item.arrears}</td>
-              <td>{item.hoa}</td>
-              <td>{item.language}</td>
-              <td>{item.internships}</td>
-              <td>{item.certifications}</td>
-              <td>{item.patentspublications}</td>
-              <td>{item.achievements}</td>
-              <td>{item.aoi}</td>
-              <td>{item.placement}</td>
-              <td>
-      {item.offers?.length > 0 ? (
-        item.offers.map((offer, idx) => (
-          <span
-            
-          >
-            <i
-              className="bi bi-bookmark-check-fill"
-              style={{
-                color:
-                  offer.offertype === "Elite"
-                    ? "#00bfff"
-                    : offer.offertype === "Superdream"
-                    ?  "rgb(255, 215, 0)"
-                    : offer.offertype === "Dream"
-                    ? "#BCC6CC" 
-                    : offer.offertype === "Fair"
-                    ? "rgb(205, 127, 50)"
-                    : "#d3d3d3", 
-                marginRight: "5px",
-              }}
-            ></i>
-            {offer.offertype}
-          </span>
-        ))
-      ) : (
-        <span style={{ color: "red" }}>No Offers</span>
-      )}
-    </td>
+                        <div>
+                          <table
+                            border="1"
+                            className="table table-striped table-hover tabl"
+                            id="my-table"
+                            style={{
+                              position: "relative",
+                              left: "0px",
+                              bottom: "0px",
+                              minWidth: "3900px",
+                            }}
+                          >
+                            <thead>
+                              <tr>
+                                <th scope="col">s.no</th>
+                                <th scope="col">REGISTRATION_NO</th>
+                                <th scope="col">NAME</th>
+                                <th scope="col">DEPARTMENT</th>
+                                <th scope="col">BATCH(YEAR)</th>
+                                <th scope="col">SSLC(%)</th>
+                                <th scope="col">HSC(%)</th>
+                                <th scope="col">Diploma(%)</th>
+                                <th scope="col">Sem 1</th>
+                                <th scope="col">Sem 2</th>
+                                <th scope="col">Sem 3</th>
+                                <th scope="col">Sem 4</th>
+                                <th scope="col">Sem 5</th>
+                                <th scope="col">Sem 6</th>
+                                <th scope="col">Sem 7</th>
+                                <th scope="col">Sem 8</th>
+                                <th scope="col">CGPA</th>
+                                <th scope="col">ARREARS</th>
+                                <th scope="col">HISTORY_OF_ARREARS</th>
+                                <th scope="col">ADDITIONAL_LANGUAGES</th>
+                                <th scope="col">INTERNSHIPS</th>
+                                <th scope="col">CERTIFICATIONS</th>
+                                <th scope="col">PATENTS</th>
+                                <th scope="col">PUBLICATIONS</th>
+                                <th scope="col">AWARDS/ACHIEVMENTS</th>
+                                <th scope="col">AREA_OF_INTEREST</th>
+                                <th scope="col">PLACEMENT_INFO</th>
+                                <th scope="col">OFFERS</th>
 
-              <td>
-                <button
-                  style={{
-                    border: "none",
-                    width: "50px",
-                    fontSize: "20px",
-                    borderRadius: "50%",
-                    backgroundColor: "transparent",
-                  }}
-                  type="button"
-                  data-bs-toggle="offcanvas"
-                  data-bs-target="#offcanvasRight"
-                  aria-controls="offcanvasRight"
-                  onClick={() => handleClick(item)}
-                >
-                  <i className="bi bi-info-circle"></i>
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          <tr className="norec">
-            <td>
-              {filteredStudents.length === 0 && (
-                <h5 style={{ color: "red" }}>
-                  <img src="/norec.png" alt="" />
-                  No records found
-                </h5>
-              )}
-            </td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-  </div>
-)}
+                                <th>INFO</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {displayedData.map((item, index) => (
+                                <tr key={item.registration_number}>
+                                  <td>{index + 1}</td>
+                                  <td>{item.registration_number}</td>
+                                  <td>{item.name}</td>
+                                  <td>{item.department}</td>
+                                  <td>{item.batch}</td>
+                                  <td>{item.sslc}</td>
+                                  <td>{item.hsc}</td>
+                                  <td>{item.diploma}</td>
+                                  <td>{item.sem1}</td>
+                                  <td>{item.sem2}</td>
+                                  <td>{item.sem3}</td>
+                                  <td>{item.sem4}</td>
+                                  <td>{item.sem5}</td>
+                                  <td>{item.sem6}</td>
+                                  <td>{item.sem7}</td>
+                                  <td>{item.sem8}</td>
+                                  <td>{item.cgpa}</td>
+                                  <td>{item.arrears}</td>
+                                  <td>{item.hoa}</td>
+                                  <td>{item.language}</td>
+                                  <td>{item.internships}</td>
+                                  <td>{item.certifications}</td>
+                                  <td>{item.patents}</td>
+                                  <td>{item.publications}</td>
+                                  <td>{item.achievements}</td>
+                                  <td>{item.aoi}</td>
+                                  <td>{item.placement}</td>
+                                  <td>
+                                    {item.offers?.length > 0 ? (
+                                      item.offers.map((offer, idx) => (
+                                        <span
+
+                                        >
+                                          <i
+                                            className="bi bi-bookmark-check-fill"
+                                            style={{
+                                              color:
+                                                offer.offertype === "Elite"
+                                                  ? "#00bfff"
+                                                  : offer.offertype === "Superdream"
+                                                    ? "rgb(255, 215, 0)"
+                                                    : offer.offertype === "Dream"
+                                                      ? "#BCC6CC"
+                                                      : offer.offertype === "Fair"
+                                                        ? "rgb(205, 127, 50)"
+                                                        : "#d3d3d3",
+                                              marginRight: "5px",
+                                            }}
+                                          ></i>
+                                          {offer.offertype}
+                                        </span>
+                                      ))
+                                    ) : (
+                                      <span style={{ color: "red" }}>No Offers</span>
+                                    )}
+                                  </td>
+
+                                  <td>
+                                    <button
+                                      style={{
+                                        border: "none",
+                                        width: "50px",
+                                        fontSize: "20px",
+                                        borderRadius: "50%",
+                                        backgroundColor: "transparent",
+                                      }}
+                                      type="button"
+                                      data-bs-toggle="offcanvas"
+                                      data-bs-target="#offcanvasRight"
+                                      aria-controls="offcanvasRight"
+                                      onClick={() => handleClick(item)}
+                                    >
+                                      <i className="bi bi-info-circle"></i>
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                            <tfoot>
+                              <tr className="norec">
+                                <td>
+                                  {filteredStudents.length === 0 && (
+                                    <h5 style={{ color: "red" }}>
+                                      <img src="/norec.png" alt="" />
+                                      No records found
+                                    </h5>
+                                  )}
+                                </td>
+                              </tr>
+                            </tfoot>
+                          </table>
+                        </div>
+                      </div>
+                    )}
 
 
                     {selectedData && (
@@ -919,37 +921,37 @@ const profileImageUrl = selectedData.profileImage
                           }}
                         >
                           <h5 className="offcanvas-title" id="offcanvasRightLabel">
-                          {profileImageUrl ? (
-  <img
-    src={profileImageUrl}
-    alt="Profile"
-    style={{
-      width: "200px",
-      height: "200px",
-      borderRadius: "50%",
-      objectFit: "cover",
-      position: "relative",
-      top: "15px",
-    }}
-  />
-) : (
-  <FaUserCircle
-    style={{
-      width: "200px",
-      height: "200px",
-      color: "rgb(205, 205, 205)",
-      position: "relative",
-      top: "15px",
-    }}
-  />
-)}
+                            {profileImageUrl ? (
+                              <img
+                                src={profileImageUrl}
+                                alt="Profile"
+                                style={{
+                                  width: "200px",
+                                  height: "200px",
+                                  borderRadius: "50%",
+                                  objectFit: "cover",
+                                  position: "relative",
+                                  top: "15px",
+                                }}
+                              />
+                            ) : (
+                              <FaUserCircle
+                                style={{
+                                  width: "200px",
+                                  height: "200px",
+                                  color: "rgb(205, 205, 205)",
+                                  position: "relative",
+                                  top: "15px",
+                                }}
+                              />
+                            )}
 
                             <p
                               style={{
                                 position: "relative",
                                 bottom: "100px",
                                 left: "240px",
-                                fontSize:'25px'
+                                fontSize: '25px'
                               }}
                             >
                               {selectedData.name}
@@ -1001,7 +1003,7 @@ const profileImageUrl = selectedData.profileImage
                               }}
                               className="btn btn-outline-primary"
                               onClick={closeDivs}
-                              htmlFor="btnradio1" 
+                              htmlFor="btnradio1"
                             >
                               {" "}
                               1
@@ -1021,7 +1023,7 @@ const profileImageUrl = selectedData.profileImage
                               }}
                               className="btn btn-outline-primary"
                               onClick={handleButtonClick}
-                              htmlFor="btnradio2" 
+                              htmlFor="btnradio2"
                             >
                               {" "}
                               2
@@ -1041,7 +1043,7 @@ const profileImageUrl = selectedData.profileImage
                               }}
                               className="btn btn-outline-primary"
                               onClick={handleButtonnClick}
-                              htmlFor="btnradio3" 
+                              htmlFor="btnradio3"
                             >
                               {" "}
                               3
@@ -1060,7 +1062,7 @@ const profileImageUrl = selectedData.profileImage
                               }}
                               className="btn btn-outline-primary"
                               onClick={handleButtonnnClick}
-                              htmlFor="btnradio4" 
+                              htmlFor="btnradio4"
                             >
                               {" "}
                               4
@@ -1109,7 +1111,7 @@ const profileImageUrl = selectedData.profileImage
                                     onClick={closeDivs}
                                   >
                                     <a
-                                     
+
                                       href="#"
                                       className="acolor"
                                     >
@@ -1131,7 +1133,7 @@ const profileImageUrl = selectedData.profileImage
                                     onClick={handleButtonClick}
                                   >
                                     <a
-                                     
+
                                       href="#"
                                       className="acolor"
                                     >
@@ -1153,7 +1155,7 @@ const profileImageUrl = selectedData.profileImage
                                     onClick={handleButtonnClick}
                                   >
                                     <a
-                                   
+
                                       href="#"
                                       className="acolor"
                                     >
@@ -1175,7 +1177,7 @@ const profileImageUrl = selectedData.profileImage
                                     onClick={handleButtonnnClick}
                                   >
                                     <a
-                                    
+
                                       href="#"
                                       className="acolor"
                                     >
@@ -1341,6 +1343,24 @@ const profileImageUrl = selectedData.profileImage
                                         </li>
                                       </ul>
                                     </div>
+                                    <div
+                                      style={{
+                                        position: "relative",
+                                        top: "150px",
+                                      }}
+                                    >
+                                      <h6 className="hpatent">Publications:</h6>
+
+                                      <div>
+                                        <ul>
+                                          <li>
+                                            <h5 className="ul">
+                                              {selectedData.publications}
+                                            </h5>{" "}
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    </div>
                                   </div>
                                   <div className="rightproj2">
                                     <div className="projhead">
@@ -1365,7 +1385,7 @@ const profileImageUrl = selectedData.profileImage
                                         <ul>
                                           <li>
                                             <h5 className="ul">
-                                              {selectedData.patentspublications}
+                                              {selectedData.patents}
                                             </h5>{" "}
                                           </li>
                                         </ul>
@@ -1451,75 +1471,75 @@ const profileImageUrl = selectedData.profileImage
 
 
                                   {selectedData?.offers?.length > 0 ? (
-  <div className="row mx-2 d-flex justify-content-center">
-    {selectedData.offers.map((offer, index) => (
-      <div key={index} className="col-lg-4 col-md-6 mb-3">
-        <div className="offer-details card p-2 border rounded shadow-sm">
-          <h5
-            className="card-title p-1"
-            style={{
-              backgroundColor: "rgb(218, 216, 216)",
-              width: "112.5%",
-              position: "relative",
-              bottom: "8px",
-              right: "10px",
-              borderTopLeftRadius: "5px",
-              borderTopRightRadius: "5px",
-            }}
-          >
-            Offer {offer.offerno || index + 1}
-          </h5>
-          <h6>
-            <strong>Company:</strong> {offer.company || "N/A"}
-          </h6>
-          <p>
-            <strong>Designation:</strong> {offer.designation || "N/A"}
-          </p>
-          <p>
-            <strong>Package:</strong> {offer.package || "N/A"}
-          </p>
-          <p>
-            <strong>offertype:</strong> {offer.offertype || "N/A"}
-          </p>
-          
-        </div>
-        
-      </div>
-    ))}
-  </div>
-) : (
-  <p className="mx-3">No offers available.</p>
-)}
-{selectedData.offerpdf ? (
-            <a
-              href={`http://localhost:3000/${selectedData.offerpdf}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-primary btn-sm"
-            >
-              📄 Offer Letters
-            </a>
-          ) : (
-            <p className="text-muted">No offer letter available.</p>
-          )}
+                                    <div className="row mx-2 d-flex justify-content-center">
+                                      {selectedData.offers.map((offer, index) => (
+                                        <div key={index} className="col-lg-4 col-md-6 mb-3">
+                                          <div className="offer-details card p-2 border rounded shadow-sm">
+                                            <h5
+                                              className="card-title p-1"
+                                              style={{
+                                                backgroundColor: "rgb(218, 216, 216)",
+                                                width: "112.5%",
+                                                position: "relative",
+                                                bottom: "8px",
+                                                right: "10px",
+                                                borderTopLeftRadius: "5px",
+                                                borderTopRightRadius: "5px",
+                                              }}
+                                            >
+                                              Offer {offer.offerno || index + 1}
+                                            </h5>
+                                            <h6>
+                                              <strong>Company:</strong> {offer.company || "N/A"}
+                                            </h6>
+                                            <p>
+                                              <strong>Designation:</strong> {offer.designation || "N/A"}
+                                            </p>
+                                            <p>
+                                              <strong>Package:</strong> {offer.package || "N/A"}
+                                            </p>
+                                            <p>
+                                              <strong>offertype:</strong> {offer.offertype || "N/A"}
+                                            </p>
 
-                                </div>
+                                          </div>
+
+                                        </div>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <p className="mx-3">No offers available.</p>
+                                  )}
+                                  {selectedData.offerpdf ? (
+                                    <a
+                                      href={`${API_BASE_URL}/${selectedData.offerpdf}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="btn btn-primary btn-sm"
+                                    >
+                                  📄 Offer Letters
+                                </a>
+                                ) : (
+                                <p className="text-muted">No offer letter available.</p>
+                                  )}
+
+                              </div>
                               </div>
                             )}
 
 
 
-                          </div>
                         </div>
                       </div>
+                      </div>
                     )}
-                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div >
     </>
   );
 }

@@ -47,7 +47,7 @@ app.use("/api/category", Categories);
 connectDatabase().then(() => {
   autoPostScheduler();
   autoDeleteScheduler(); 
-  console.log("✅ Auto Post and Auto Delete Schedulers are running...");
+  console.log(" Auto Post and Auto Delete Schedulers are running...");
 });
 
 const transporter = nodemailer.createTransport({

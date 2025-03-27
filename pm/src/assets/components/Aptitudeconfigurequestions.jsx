@@ -5,11 +5,11 @@ import "./Aptitudeconfigurequestions.css"
 import { IoIosArrowBack } from "react-icons/io";
 import { Link } from "react-router-dom";
 import axios from 'axios';
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 import Loading from "./Loading";
 function Aptitudeconfigurequestions() {
-  
-    const [loading, setLoading] = useState(true);
+
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [instructions, setInstructions] = useState("");
   const [qpcode, setqpcode] = useState("");
@@ -105,7 +105,7 @@ function Aptitudeconfigurequestions() {
         return;
       }
 
-      axios.put(`http://localhost:3000/updateqp/${paperId}`, questionPaperData)
+      axios.put(`${API_BASE_URL}/updateqp/${paperId}`, questionPaperData)
         .then((result) => {
           console.log("Updated successfully", result.data);
 
@@ -119,7 +119,7 @@ function Aptitudeconfigurequestions() {
         })
         .catch((err) => console.error("Error updating:", err));
     } else {
-      axios.post('http://localhost:3000/addqp', questionPaperData)
+      axios.post(`${API_BASE_URL}/addqp`, questionPaperData)
         .then((result) => {
           console.log("Created successfully", result.data);
           setQuestionPapers([...questionPapers, result.data]);
@@ -150,16 +150,16 @@ function Aptitudeconfigurequestions() {
 
   useEffect(() => {
     setLoading(true)
-    axios.get('http://localhost:3000/getqp')
-      .then(result => setQuestionPapers(result.data),setLoading(false))
-      
+    axios.get(`${API_BASE_URL}/getqp`)
+      .then(result => setQuestionPapers(result.data), setLoading(false))
+
       .catch(err => console.log(err))
   }, [])
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this record?")) {
       axios
-        .delete(`http://localhost:3000/delqp/${id}`)
+        .delete(`${ API_BASE_URL } / delqp / ${ id }`)
         .then((response) => {
           alert("Record deleted successfully!");
           setQuestionPapers(questionPapers.filter((paper) => paper._id !== id));
@@ -190,76 +190,76 @@ function Aptitudeconfigurequestions() {
   const checkQpCode = async (code) => {
     if (code.trim() !== "") {
       try {
-        const response = await fetch(`http://localhost:3000/api/answerkey/check-qpcode/${code}`);
-        const data = await response.json();
-        if (data.exists) {
-          setIsQpCodeTaken(true);
-          alert("This Question Paper Code is already taken!");
-        } else {
-          setIsQpCodeTaken(false);
-        }
-      } catch (error) {
-        console.error("Error checking Question Paper Code:", error);
+        const response = await fetch(`${API_BASE_URL}/api/answerkey/check-qpcode/${code}`);
+      const data = await response.json();
+      if (data.exists) {
+        setIsQpCodeTaken(true);
+        alert("This Question Paper Code is already taken!");
+      } else {
+        setIsQpCodeTaken(false);
       }
+    } catch (error) {
+      console.error("Error checking Question Paper Code:", error);
     }
-  };
+  }
+};
 
-  return (
-    <>
-      <div
-        style={{
-          position: "relative",
-          top: "00px",
-          left: "250px",
-          marginTop: "0",
-          margin: "0px"
-        }}
+return (
+  <>
+    <div
+      style={{
+        position: "relative",
+        top: "00px",
+        left: "250px",
+        marginTop: "0",
+        margin: "0px"
+      }}
+    >
+      <Link
+        to="/Maindashboard/Aptitude"
+        style={{ textDecoration: "none", color: "black" }}
       >
-        <Link
-          to="/Maindashboard/Aptitude"
-          style={{ textDecoration: "none", color: "black" }}
-        >
-          <div>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              style={{
-                marginLeft: "20px",
-                border: "none",
-                position: "relative",
-                top: "95px",
-                right: "40px",
-                fontSize: "35px",
-                color: "black",
-                backgroundColor: "transparent",
-                zIndex: "100"
-              }}
-            >
-              <IoIosArrowBack />
-            </button>
-            <h2
-              style={{
-                zIndex: "100",
-                position: "relative",
-                top: "45px",
-                left: "30px",
-                fontFamily: "poppins",
-                fontSize: "35px",
-                width: "450px",
-              }}
-            >
-              Configure Questions{" "}
-            </h2>
-          </div>
-        </Link>
-        {loading ? (
-                    <Loading />
-                ) : (
+        <div>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            style={{
+              marginLeft: "20px",
+              border: "none",
+              position: "relative",
+              top: "95px",
+              right: "40px",
+              fontSize: "35px",
+              color: "black",
+              backgroundColor: "transparent",
+              zIndex: "100"
+            }}
+          >
+            <IoIosArrowBack />
+          </button>
+          <h2
+            style={{
+              zIndex: "100",
+              position: "relative",
+              top: "45px",
+              left: "30px",
+              fontFamily: "poppins",
+              fontSize: "35px",
+              width: "450px",
+            }}
+          >
+            Configure Questions{" "}
+          </h2>
+        </div>
+      </Link>
+      {loading ? (
+        <Loading />
+      ) : (
         <div className="container mt-4" style={{ position: "relative", top: "-35px", }}>
           {!showQuestionPaper ? (
             <>
 
-            
+
 
 
               <button className="btn  " onClick={() => setShowModal(true)} style={{ marginRight: "50px", position: "relative", left: "1080px", top: "50px" }}><i className="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "blue" }}></i></button>
@@ -723,11 +723,11 @@ function Aptitudeconfigurequestions() {
 
           )}
         </div>
-        )}
-      </div>
+      )}
+    </div>
 
-    </>
-  )
+  </>
+)
 }
 
 export default Aptitudeconfigurequestions

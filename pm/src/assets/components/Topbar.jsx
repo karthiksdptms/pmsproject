@@ -6,6 +6,7 @@ import { GrAchievement } from "react-icons/gr";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Topbar() {
   const { user, logout } = useAuth();
@@ -69,16 +70,16 @@ function Topbar() {
 
           {user.profileImage ? (
             <img
-              src={`http://localhost:3000/${user.profileImage}`}
-              alt="Profile"
-              className="rounded-circle"
-              style={{ width: "50px", height: "50px", objectFit: "cover" }}
+              src={`${API_BASE_URL}/${user.profileImage}`}
+          alt="Profile"
+          className="rounded-circle"
+          style={{ width: "50px", height: "50px", objectFit: "cover" }}
             />
           ) : (
-            <FaUser
-              size={50}
-              style={{ color: "#999", borderRadius: "50%", padding: "10px", background: "#f4f4f4" }}
-            />
+          <FaUser
+            size={50}
+            style={{ color: "#999", borderRadius: "50%", padding: "10px", background: "#f4f4f4" }}
+          />
           )}
         </div>
 

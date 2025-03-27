@@ -6,7 +6,7 @@ import { useAuth } from "../assets/context/authContext";
 import './Studenttrainingexams.css'
 import Swal from "sweetalert2";
 import Loading from "../assets/components/Loading";
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 function Studenttrainingexams() {
   const { user } = useAuth();
   const [questionPapers, setQuestionPapers] = useState([]);
@@ -33,7 +33,7 @@ function Studenttrainingexams() {
     if (user?._id) {
       setstdloading(true);
       axios
-        .get(`http://localhost:3000/api/students/training-exams/${user._id}`)
+        .get(`${API_BASE_URL}/api/students/training-exams/${user._id}`)
         .then((result) => {
           console.log("API Response:", result.data);
           setQuestionPapers((result.data.exams || []).reverse());
@@ -56,8 +56,8 @@ function Studenttrainingexams() {
 
 
   const calculateDuration = (startTime, endTime) => {
-    const start = new Date(`2000-01-01T${startTime}`);
-    const end = new Date(`2000-01-01T${endTime}`);
+    const start = new Date(`2000-01-01T${ startTime }`);
+    const end = new Date(`2000-01-01T${ endTime }`);
     return Math.floor((end - start) / 1000);
   };
 
@@ -82,16 +82,16 @@ function Studenttrainingexams() {
     setAnswerStatus(Array(selectedPaper.questions.length).fill(""));
     setRemainingTime(calculateDuration(selectedPaper.startTime, selectedPaper.endTime));
     setExamStarted(true);
-  
- 
+
+
     const elem = document.documentElement;
     if (elem.requestFullscreen) {
       elem.requestFullscreen();
-    } else if (elem.mozRequestFullScreen) { 
+    } else if (elem.mozRequestFullScreen) {
       elem.mozRequestFullScreen();
-    } else if (elem.webkitRequestFullscreen) { 
+    } else if (elem.webkitRequestFullscreen) {
       elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) { 
+    } else if (elem.msRequestFullscreen) {
       elem.msRequestFullscreen();
     }
   };
@@ -99,7 +99,7 @@ function Studenttrainingexams() {
   useEffect(() => {
     const preventExitFullscreen = () => {
       if (!document.fullscreenElement) {
-         handleSubmit()
+        handleSubmit()
         Swal.fire({
           title: "Full-Screen Mode Disabled!",
           text: "Autosubmitted as you exited full-screen mode during the exam.",
@@ -107,8 +107,8 @@ function Studenttrainingexams() {
           timer: 5000,
           showConfirmButton: false,
         });
-  
-      
+
+
         const elem = document.documentElement;
         if (elem.requestFullscreen) {
           elem.requestFullscreen();
@@ -121,17 +121,17 @@ function Studenttrainingexams() {
         }
       }
     };
-  
+
     if (examStarted) {
       document.addEventListener("fullscreenchange", preventExitFullscreen);
     }
-  
+
     return () => {
       document.removeEventListener("fullscreenchange", preventExitFullscreen);
     };
   }, [examStarted]);
-  
-  
+
+
   const exitFullScreen = () => {
     if (document.exitFullscreen) {
       document.exitFullscreen();
@@ -148,12 +148,12 @@ function Studenttrainingexams() {
       const timer = setInterval(() => {
         setRemainingTime((prev) => prev - 1);
       }, 1000);
-  
+
       return () => {
         clearInterval(timer);
       };
     }
-  
+
     if (examStarted && remainingTime === 0) {
       Swal.fire({
         title: "Time Over ⏰",
@@ -162,7 +162,7 @@ function Studenttrainingexams() {
         showConfirmButton: false,
         timer: 3000,
       }).then(() => {
-        exitFullScreen(); 
+        exitFullScreen();
         handleSubmit();
         setShowQuestionPaper(false);
       });
@@ -225,12 +225,12 @@ function Studenttrainingexams() {
 
   const handleSubmit = async () => {
     const resultArray = [];
-  
+
     questions.forEach((q, index) => {
       if (selectedAnswers[index] !== undefined) {
         const selectedOptionIndex = selectedAnswers[index];
         const optionAlphabet = String.fromCharCode(65 + selectedOptionIndex);
-  
+
         resultArray.push({
           question: index + 1,
           answer: optionAlphabet,
@@ -238,281 +238,281 @@ function Studenttrainingexams() {
         });
       }
     });
-  
+
     try {
-      const response = await axios.post('http://localhost:3000/api/answerkey/submitans', {
+      const response = await axios.post(`${API_BASE_URL}/api/answerkey/submitans`, {
         userId: user._id,
-        qpcode: qpcode,
-        title: title,
-        answers: resultArray,
+          qpcode: qpcode,
+          title: title,
+          answers: resultArray,
       });
-  
-      setShowQuestionPaper(false);
-  
-      Swal.fire({
-        icon: "success",
-        title: "Answers Submitted Successfully 🎯",
-        showConfirmButton: true,
-        timer: 3000,
-      }).then(() => {
-        
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
-  
-        window.location.reload();
-      });
-  
-      setSelectedAnswers({});
-      setShowQuestionPaper(false);
-    } catch (err) {
 
-      console.error("Submit Error", err);
-      Swal.fire({
-        icon: "error",
-        title: "Submission Failed ❌",
-        text: "Please try again later",
-      });
+  setShowQuestionPaper(false);
+
+  Swal.fire({
+    icon: "success",
+    title: "Answers Submitted Successfully 🎯",
+    showConfirmButton: true,
+    timer: 3000,
+  }).then(() => {
+
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
     }
+
+    window.location.reload();
+  });
+
+  setSelectedAnswers({});
+  setShowQuestionPaper(false);
+} catch (err) {
+
+  console.error("Submit Error", err);
+  Swal.fire({
+    icon: "error",
+    title: "Submission Failed ❌",
+    text: "Please try again later",
+  });
+}
   };
-  
-
-
-  return (
-    <>
-      <div className="hea">
-        <Link to="/Studentdashboard/Studenttraining" style={{ textDecoration: 'none', color: "black" }}>
-          <div>
-            <button type="button" className="btn btn-secondary"
-              style={{ marginLeft: "20px", border: "none", position: "relative", top: "95px", right: '40px', fontSize: "35px", color: "black", backgroundColor: "transparent" }}>
-              <IoIosArrowBack />
-            </button>
-            <h2 style={{ position: "relative", top: '45px', left: "30px", fontFamily: 'poppins', fontSize: "35px", width: '100px' }}>Exams</h2>
-          </div>
-        </Link>
-      </div>
-
-      {stdloading ? (
-        <Loading />
-      ) : (
-        <div className="mt-4" style={{ position: "relative", left: "270px" }}>
-          <h4 className="mb-4" style={{ position: "relative", top: "50px", left: "50px", width: '350px' }}>
-            Total exams to attend: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{totalRecords}</span>
-          </h4>
-
-          <div className="flex justify-right items-center gap-4 mt-4" style={{ position: "relative", left: "800px", bottom: "20PX", width: '450px' }}>
-            <label>
-              No of records per page:
-              <input type="number" value={rowsPerPage} onChange={(e) => {
-                const value = parseInt(e.target.value, 10);
-                if (value > 0) {
-                  setRowsPerPage(value);
-                  setCurrentPage(1);
-                }
-              }} style={{ width: "50px", padding: "5px", marginRight: "20PX" }} />
-            </label>
-            <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} className="btn" disabled={currentPage === 1}>
-              <i className="bi bi-chevron-double-left"></i>
-            </button>
-            <span className="text-lg">Page {currentPage} of {totalPages}</span>
-            <button onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} className="btn" disabled={currentPage === totalPages}>
-              <i className="bi bi-chevron-double-right arr"></i>
-            </button>
-          </div>
-
-          <div style={{ position: "relative", top: "20px", left: "-30px", overflowY: "auto", maxHeight: "800px" }}>
-            <table className="table table-striped table-hover" style={{ position: "relative", minWidth: '1370px', right: "0px", left: "25px", top: "20px", marginBottom: '50px', marginRight: '50px' }}>
-              <thead>
-                <tr>
-                  <th>Question paper code</th>
-                  <th>Title</th>
-                  <th>Academic year</th>
-                  <th>Department</th>
-                  <th>Batch</th>
-                  <th>Negative Marking</th>
-                  <th>Exam Date</th>
-                  <th>Start Time</th>
-                  <th>End Time</th>
-                  <th>Semester</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {displayedData.length > 0 ? (
-                  displayedData.map((paper, index) => (
-                    <tr key={index}>
-                      <td>{paper.qpcode}</td>
-                      <td>{paper.title}</td>
-                      <td>{paper.academicYear}</td>
-                      <td>{paper.department}</td>
-                      <td>{paper.batch}</td>
-                      <td>{paper.negativeMarking}</td>
-                      <td>{new Date(paper.examDate).toLocaleDateString("en-GB")}</td>
-                      <td>{paper.startTime}</td>
-                      <td>{paper.endTime}</td>
-                      <td>{paper.semesterType}</td>
-                      <td>
-                        <button className="btn btn-primary me-2" onClick={() => handleStartTest(index)}>
-                          Take Test
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="10" style={{ textAlign: "center", fontWeight: "bold", color: "red", fontSize: "20px" }}>
-                      No Exams Left
-                    </td>
-                    <td></td>
-                  </tr>
-                )}
-              </tbody>
-
-            </table>
-          </div>
-        </div>)}
 
 
 
-      {showQuestionPaper && selectedPaperIndex !== null && (
+return (
+  <>
+    <div className="hea">
+      <Link to="/Studentdashboard/Studenttraining" style={{ textDecoration: 'none', color: "black" }}>
         <div>
-          <div className="border p-4 mt-3 " style={{ position: "relative", bottom: "310px", left: "240px", backgroundColor: "rgb(177, 177, 177)", width: "1275px", height: '650px' }}>
+          <button type="button" className="btn btn-secondary"
+            style={{ marginLeft: "20px", border: "none", position: "relative", top: "95px", right: '40px', fontSize: "35px", color: "black", backgroundColor: "transparent" }}>
+            <IoIosArrowBack />
+          </button>
+          <h2 style={{ position: "relative", top: '45px', left: "30px", fontFamily: 'poppins', fontSize: "35px", width: '100px' }}>Exams</h2>
+        </div>
+      </Link>
+    </div>
+
+    {stdloading ? (
+      <Loading />
+    ) : (
+      <div className="mt-4" style={{ position: "relative", left: "270px" }}>
+        <h4 className="mb-4" style={{ position: "relative", top: "50px", left: "50px", width: '350px' }}>
+          Total exams to attend: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{totalRecords}</span>
+        </h4>
+
+        <div className="flex justify-right items-center gap-4 mt-4" style={{ position: "relative", left: "800px", bottom: "20PX", width: '450px' }}>
+          <label>
+            No of records per page:
+            <input type="number" value={rowsPerPage} onChange={(e) => {
+              const value = parseInt(e.target.value, 10);
+              if (value > 0) {
+                setRowsPerPage(value);
+                setCurrentPage(1);
+              }
+            }} style={{ width: "50px", padding: "5px", marginRight: "20PX" }} />
+          </label>
+          <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} className="btn" disabled={currentPage === 1}>
+            <i className="bi bi-chevron-double-left"></i>
+          </button>
+          <span className="text-lg">Page {currentPage} of {totalPages}</span>
+          <button onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} className="btn" disabled={currentPage === totalPages}>
+            <i className="bi bi-chevron-double-right arr"></i>
+          </button>
+        </div>
+
+        <div style={{ position: "relative", top: "20px", left: "-30px", overflowY: "auto", maxHeight: "800px" }}>
+          <table className="table table-striped table-hover" style={{ position: "relative", minWidth: '1370px', right: "0px", left: "25px", top: "20px", marginBottom: '50px', marginRight: '50px' }}>
+            <thead>
+              <tr>
+                <th>Question paper code</th>
+                <th>Title</th>
+                <th>Academic year</th>
+                <th>Department</th>
+                <th>Batch</th>
+                <th>Negative Marking</th>
+                <th>Exam Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Semester</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {displayedData.length > 0 ? (
+                displayedData.map((paper, index) => (
+                  <tr key={index}>
+                    <td>{paper.qpcode}</td>
+                    <td>{paper.title}</td>
+                    <td>{paper.academicYear}</td>
+                    <td>{paper.department}</td>
+                    <td>{paper.batch}</td>
+                    <td>{paper.negativeMarking}</td>
+                    <td>{new Date(paper.examDate).toLocaleDateString("en-GB")}</td>
+                    <td>{paper.startTime}</td>
+                    <td>{paper.endTime}</td>
+                    <td>{paper.semesterType}</td>
+                    <td>
+                      <button className="btn btn-primary me-2" onClick={() => handleStartTest(index)}>
+                        Take Test
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="10" style={{ textAlign: "center", fontWeight: "bold", color: "red", fontSize: "20px" }}>
+                    No Exams Left
+                  </td>
+                  <td></td>
+                </tr>
+              )}
+            </tbody>
+
+          </table>
+        </div>
+      </div>)}
 
 
-            <div className="title" style={{ width: "104.5%", height: "55px", backgroundColor: "rgb(216, 216, 216)", position: "relative", right: "25px", bottom: '30px ' }}>  <h3 className="text-center">{title}</h3>
 
+    {showQuestionPaper && selectedPaperIndex !== null && (
+      <div>
+        <div className="border p-4 mt-3 " style={{ position: "relative", bottom: "310px", left: "240px", backgroundColor: "rgb(177, 177, 177)", width: "1275px", height: '650px' }}>
+
+
+          <div className="title" style={{ width: "104.5%", height: "55px", backgroundColor: "rgb(216, 216, 216)", position: "relative", right: "25px", bottom: '30px ' }}>  <h3 className="text-center">{title}</h3>
+
+          </div>
+          <p className="text-center">
+            Academic Year: {academicYear} |Department:{department}|Batch:{batch}<br /> Semester: {semesterType} | Exam Date: {new Date(examDate).toLocaleDateString("en-GB")}
+
+          </p>
+
+
+          <div
+            className="timer-box"
+            style={{ backgroundColor: remainingTime <= 600 ? "red" : "#222", width: "100px" }}
+          >
+            <h4 className="timer-text">
+              {Math.floor(remainingTime / 60)}:{String(remainingTime % 60).padStart(2, "0")}
+            </h4>
+          </div>
+
+
+
+          <div className="instructions-container ic">
+
+            <div className="instructions-content">
+
+              <div className="int"><h5>Instructions:</h5></div>
+
+
+              <p className="text-left">Start Time: {startTime} | End Time: {endTime}</p>
+              <p>{instructions}</p>
             </div>
-            <p className="text-center">
-              Academic Year: {academicYear} |Department:{department}|Batch:{batch}<br /> Semester: {semesterType} | Exam Date: {new Date(examDate).toLocaleDateString("en-GB")}
-
-            </p>
 
 
-            <div
-              className="timer-box"
-              style={{ backgroundColor: remainingTime <= 600 ? "red" : "#222", width: "100px" }}
-            >
-              <h4 className="timer-text">
-                {Math.floor(remainingTime / 60)}:{String(remainingTime % 60).padStart(2, "0")}
-              </h4>
+            <div className="divider"></div>
+
+
+            <div className="question-circles">
+              {questions.map((_, index) => (
+                <div
+                  key={index}
+                  className={`circle ${answerStatus[index]}`}
+                  onClick={() => setCurrentQuestionIndex(index)}
+                >
+                  {index + 1}
+                </div>
+              ))}
             </div>
 
+          </div>
+          <button className="btn btn-primary" style={{ position: "relative", left: "1000px" }} onClick={handleSubmit}> Submit</button>
 
 
-            <div className="instructions-container ic">
 
-              <div className="instructions-content">
-
-                <div className="int"><h5>Instructions:</h5></div>
-
-
-                <p className="text-left">Start Time: {startTime} | End Time: {endTime}</p>
-                <p>{instructions}</p>
-              </div>
-
-
-              <div className="divider"></div>
+          <div className="iic qq" >
+            <div style={{ position: "relative", bottom: "50px" }} className="">
+              <div className="mb-3 ">
+                {questions.length > 0 && questions[currentQuestionIndex] && (
+                  <h5 className="text-wrap">
+                    Q{currentQuestionIndex + 1}: {questions[currentQuestionIndex].question} ({questions[currentQuestionIndex].marks} Marks)
+                  </h5>
+                )}
+                <br />
 
 
-              <div className="question-circles">
-                {questions.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`circle ${answerStatus[index]}`}
-                    onClick={() => setCurrentQuestionIndex(index)}
-                  >
-                    {index + 1}
+
+                {questions[currentQuestionIndex].options.map((opt, i) => (
+                  <div key={i} className="form-check">
+                    <input
+                      type="radio"
+                      className="form-check-input"
+                      name={`question-${currentQuestionIndex}`}
+                      value={i}
+                      checked={selectedAnswers[currentQuestionIndex] === i}
+                      onChange={() => {
+                        setSelectedAnswers(prev => ({
+                          ...prev,
+                          [currentQuestionIndex]: i
+                        }));
+
+
+                        const newStatus = [...answerStatus];
+                        newStatus[currentQuestionIndex] = "answered";
+                        setAnswerStatus(newStatus);
+                      }}
+                    />
+
+                    <label className="form-check-label">
+                      <strong>{String.fromCharCode(65 + i)}.</strong> {opt}
+                    </label>
                   </div>
                 ))}
+
+
+
               </div>
 
-            </div>
-            <button className="btn btn-primary" style={{ position: "relative", left: "1000px" }} onClick={handleSubmit}> Submit</button>
 
+              <button
+                className="btn btn-secondary me-2"
+                disabled={currentQuestionIndex === 0}
+                onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
+              >
+                Previous
+              </button>
 
-
-            <div className="iic qq" >
-              <div style={{ position: "relative", bottom: "50px" }} className="">
-                <div className="mb-3 ">
-                  {questions.length > 0 && questions[currentQuestionIndex] && (
-                    <h5 className="text-wrap">
-                      Q{currentQuestionIndex + 1}: {questions[currentQuestionIndex].question} ({questions[currentQuestionIndex].marks} Marks)
-                    </h5>
-                  )}
-                  <br />
-
-
-
-                  {questions[currentQuestionIndex].options.map((opt, i) => (
-                    <div key={i} className="form-check">
-                      <input
-                        type="radio"
-                        className="form-check-input"
-                        name={`question-${currentQuestionIndex}`}
-                        value={i}
-                        checked={selectedAnswers[currentQuestionIndex] === i}
-                        onChange={() => {
-                          setSelectedAnswers(prev => ({
-                            ...prev,
-                            [currentQuestionIndex]: i
-                          }));
-
-
-                          const newStatus = [...answerStatus];
-                          newStatus[currentQuestionIndex] = "answered";
-                          setAnswerStatus(newStatus);
-                        }}
-                      />
-
-                      <label className="form-check-label">
-                        <strong>{String.fromCharCode(65 + i)}.</strong> {opt}
-                      </label>
-                    </div>
-                  ))}
-
-
-
-                </div>
-
-
-                <button
-                  className="btn btn-secondary me-2"
-                  disabled={currentQuestionIndex === 0}
-                  onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
-                >
-                  Previous
-                </button>
-
-                <button
-                  className="btn btn-primary"
-                  disabled={currentQuestionIndex === questions.length - 1}
-                  onClick={() => {
-                    if (!selectedAnswers[currentQuestionIndex]) {
-                      const newStatus = [...answerStatus];
-                      newStatus[currentQuestionIndex] = "skipped";
-                      setAnswerStatus(newStatus);
-                    }
-                    setCurrentQuestionIndex(currentQuestionIndex + 1);
-                  }}
-                >
-                  Next
-                </button>
-
-              </div>
+              <button
+                className="btn btn-primary"
+                disabled={currentQuestionIndex === questions.length - 1}
+                onClick={() => {
+                  if (!selectedAnswers[currentQuestionIndex]) {
+                    const newStatus = [...answerStatus];
+                    newStatus[currentQuestionIndex] = "skipped";
+                    setAnswerStatus(newStatus);
+                  }
+                  setCurrentQuestionIndex(currentQuestionIndex + 1);
+                }}
+              >
+                Next
+              </button>
 
             </div>
 
           </div>
+
         </div>
-      )}
-    </>
-  );
+      </div>
+    )}
+  </>
+);
 }
 
 export default Studenttrainingexams;

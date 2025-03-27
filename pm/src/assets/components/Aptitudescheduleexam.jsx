@@ -7,6 +7,7 @@ import axios from 'axios';
 import "./Aptitudescheduleexam.css"
 import Papa from "papaparse";
 import Loading from './Loading';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Aptitudescheduleexam() {
 
@@ -18,7 +19,7 @@ function Aptitudescheduleexam() {
   useEffect(() => {
     setstdloading(true)
 
-    axios.get('http://localhost:3000/getqp')
+    axios.get(`${API_BASE_URL}/getqp`)
       .then(result => {
         setQuestionPapers(result.data);
         const autoPostData = {};
@@ -30,8 +31,8 @@ function Aptitudescheduleexam() {
         setstdloading(false)
       })
       .catch(err => console.log(err));
-   
-    axios.get("http://localhost:3000/api/answerkey/getuploadedanswerkeys")
+
+    axios.get(`${API_BASE_URL}/api/answerkey/getuploadedanswerkeys`)
       .then((res) => {
         const uploadedData = {};
         res.data.forEach((item) => {
@@ -76,7 +77,7 @@ function Aptitudescheduleexam() {
         console.log("CSV Parsed Data: ", questionsArray);
 
         try {
-          const response = await axios.post(`http://localhost:3000/api/answerkey/uploadanswerkey/${qpcode}`, {
+          const response = await axios.post(`${API_BASE_URL}/api/answerkey/uploadanswerkey/${qpcode}`, {
             qpcode: qpcode,
             answerKey: questionsArray,
           });
@@ -102,48 +103,48 @@ function Aptitudescheduleexam() {
     console.log("Toggling Auto Post for:", qpcode, "New Status:", newStatus);
 
     try {
-      await axios.post(`http://localhost:3000/api/students/autopost/${qpcode}`, {
-        autoPost: newStatus,
-      });
+      await axios.post(`${API_BASE_URL}/api/students/autopost/${qpcode}`, {
+            autoPost: newStatus,
+          });
 
-      setAutoPostStatus((prev) => ({
-        ...prev,
-        [qpcode]: newStatus,
-      }));
+          setAutoPostStatus((prev) => ({
+            ...prev,
+            [qpcode]: newStatus,
+          }));
 
-      alert(`Auto Post ${newStatus ? "Enabled" : "Disabled"} Successfully`);
+          alert(`Auto Post ${newStatus ? "Enabled" : "Disabled"} Successfully`);
+        } catch (err) {
+          console.error("Auto Post Error:", err.response?.data || err.message);
+          alert("Failed to update auto post");
+        }
+      };
+
+
+
+      const [isLoading, setIsLoading] = useState(false);
+      const handlePostQuestionPaper = async (qpcode) => {
+        // Show loading screen
+        setIsLoading(true);
+
+        try {
+          const response = await axios.post(
+            `${API_BASE_URL}/api/students/postquestionpaper/${qpcode}`
+      );
+
+      if (response.status === 200) {
+
+        alert("Question Paper Posted Successfully");
+        setIsLoading(false);
+      }
     } catch (err) {
-      console.error("Auto Post Error:", err.response?.data || err.message);
-      alert("Failed to update auto post");
-    }
-  };
-
-
-
-const [isLoading, setIsLoading] = useState(false);
-const handlePostQuestionPaper = async (qpcode) => {
-  // Show loading screen
-  setIsLoading(true);
-
-  try {
-    const response = await axios.post(
-      `http://localhost:3000/api/students/postquestionpaper/${qpcode}`
-    );
-
-    if (response.status === 200) {
-
-      alert("Question Paper Posted Successfully");
+      console.error("Error posting question paper:", err);
+      setIsLoading(false);
+      alert(err.response?.data?.message || "Failed to post question paper");
+    } finally {
+      // Hide loading screen
       setIsLoading(false);
     }
-  } catch (err) {
-    console.error("Error posting question paper:", err);
-    setIsLoading(false);
-    alert(err.response?.data?.message || "Failed to post question paper");
-  } finally {
-    // Hide loading screen
-    setIsLoading(false);
-  }
-};
+  };
 
 
   const [showModal, setShowModal] = useState(false);
@@ -163,55 +164,55 @@ const handlePostQuestionPaper = async (qpcode) => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/students/postspecific/",
+        `${API_BASE_URL}/api/students/postspecific`,
         {
-          registerNumbers: registerNumbers.split(",").map((num) => num.trim()),
-          qpcode: selectedQpcode,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+              registerNumbers: registerNumbers.split(",").map((num) => num.trim()),
+              qpcode: selectedQpcode,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (response.status === 200) {
+            alert("Question Paper Posted to Specific Students Successfully");
+            setIsLoading(false);
+            setShowModal(false);
+            setRegisterNumbers("");
+          }
+        } catch (error) {
+          console.error(error);
+          setIsLoading(false);
+          alert(error.response.data.message || "Failed to Post Question Paper");
         }
+      };
+
+
+
+      const totalRecords = questionPapers.length;
+      const [currentPage, setCurrentPage] = useState(1);
+      const [rowsPerPage, setRowsPerPage] = useState(10);
+      const handleRowsPerPageChange = (e) => {
+        const value = parseInt(e.target.value, 10);
+        if (value > 0) {
+          setRowsPerPage(value);
+          setCurrentPage(1);
+        }
+      };
+
+      const totalPages = Math.ceil(questionPapers.length / rowsPerPage);
+
+      const startIdx = (currentPage - 1) * rowsPerPage;
+      const displayedData = questionPapers.slice(
+        startIdx,
+        startIdx + rowsPerPage
       );
 
-      if (response.status === 200) {
-        alert("Question Paper Posted to Specific Students Successfully");
-        setIsLoading(false);
-        setShowModal(false);
-        setRegisterNumbers("");
-      }
-    } catch (error) {
-      console.error(error);
-      setIsLoading(false);
-      alert(error.response.data.message || "Failed to Post Question Paper");
-    }
-  };
 
 
-
-  const totalRecords = questionPapers.length;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const handleRowsPerPageChange = (e) => {
-    const value = parseInt(e.target.value, 10);
-    if (value > 0) {
-      setRowsPerPage(value);
-      setCurrentPage(1);
-    }
-  };
-
-  const totalPages = Math.ceil(questionPapers.length / rowsPerPage);
-
-  const startIdx = (currentPage - 1) * rowsPerPage;
-  const displayedData = questionPapers.slice(
-    startIdx,
-    startIdx + rowsPerPage
-  );
-
-
-
-  return (
+      return(
     <>
       <div
         style={{
@@ -376,46 +377,46 @@ const handlePostQuestionPaper = async (qpcode) => {
                             {autoPostStatus[paper.qpcode] ? "On" : "Off"}
                           </button></td>
                         <td>
-                        
 
-  {isLoading && (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        backgroundColor: "rgba(47, 47, 47, 0.7)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 9999,
-      }}
-    >
-      <div style={{ textAlign: "center", color: "#fff" }}>
-        <div
-          className="spinner-border text-light"
-          role="status"
-          style={{ width: "4rem", height: "4rem" }}
-        >
-          <span className="visually-hidden">Processing...</span>
-        </div>
-        <p style={{ marginTop: "12px", fontSize: "18px" }}>
-          Posting Question Paper... Please wait
-        </p>
-      </div>
-    </div>
-  )}
 
- 
-  <button
-    style={{ marginRight: "20px" }}
-    className="btn btn-primary me-2"
-    onClick={() => handlePostQuestionPaper(paper.qpcode)}
-  >
-    Post
-  </button>
+                          {isLoading && (
+                            <div
+                              style={{
+                                position: "fixed",
+                                top: 0,
+                                left: 0,
+                                width: "100vw",
+                                height: "100vh",
+                                backgroundColor: "rgba(47, 47, 47, 0.7)",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                zIndex: 9999,
+                              }}
+                            >
+                              <div style={{ textAlign: "center", color: "#fff" }}>
+                                <div
+                                  className="spinner-border text-light"
+                                  role="status"
+                                  style={{ width: "4rem", height: "4rem" }}
+                                >
+                                  <span className="visually-hidden">Processing...</span>
+                                </div>
+                                <p style={{ marginTop: "12px", fontSize: "18px" }}>
+                                  Posting Question Paper... Please wait
+                                </p>
+                              </div>
+                            </div>
+                          )}
+
+
+                          <button
+                            style={{ marginRight: "20px" }}
+                            className="btn btn-primary me-2"
+                            onClick={() => handlePostQuestionPaper(paper.qpcode)}
+                          >
+                            Post
+                          </button>
 
 
 
@@ -438,7 +439,7 @@ const handlePostQuestionPaper = async (qpcode) => {
           </div>)}
       </div>
 
-      {showModal && (
+      { showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
             <h5>Post Question Paper to Specific Students</h5>

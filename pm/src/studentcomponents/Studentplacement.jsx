@@ -5,6 +5,7 @@ import axios from "axios";
 import { useAuth } from "../assets/context/authContext";
 
 import Loading from "../assets/components/Loading";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Studentplacement() {
   const { user } = useAuth();
@@ -47,18 +48,18 @@ function Studentplacement() {
   const [loading, setLoading] = useState(true);
   const [announcements, setAnnouncements] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2; // Display 2 announcements per page
+  const itemsPerPage = 2; 
 
-  // ✅ Fetch Student Data
+ 
   const fetchStudent = async () => {
-    if (!user?._id) return; // Ensure user ID is available
+    if (!user?._id) return;
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://localhost:3000/api/students/getone/${user._id}`,
+        `${API_BASE_URL}/api/students/getone/${user._id}`,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${ token }`,
           },
         }
       );
@@ -70,13 +71,13 @@ function Studentplacement() {
     }
   };
 
-  // ✅ Fetch Placement Announcements
+ 
   const fetchAnnouncements = async () => {
     setLoading(true)
     if (!student?._id) return;
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/students/placements/${student._id}`
+        `${API_BASE_URL}/api/students/placements/${student._id}`
       );
       const reversedAnnouncements =
         (response.data.placement_announce || []).reverse();
@@ -90,19 +91,19 @@ function Studentplacement() {
     }
   };
 
-  // ✅ Fetch Student Data on Component Mount
+ 
   useEffect(() => {
     fetchStudent();
   }, [user._id]);
 
-  // ✅ Fetch Announcements Only When student._id is Available
+ 
   useEffect(() => {
     if (student._id) {
       fetchAnnouncements();
     }
   }, [student._id]);
 
-  // ✅ Pagination Logic
+  
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentAnnouncements = announcements.slice(
@@ -114,7 +115,7 @@ function Studentplacement() {
 
   return (
     <>
-      {/* Back Button and Header */}
+    
       <div className="hea">
         <Link
           to="/Studentdashboard"
@@ -157,87 +158,87 @@ function Studentplacement() {
       </div>
 
       {loading ? (
-                    <Loading />
-                ) : (
-      <div
-        style={{
-          position: "relative",
-          left: "250px",
-          margin: "50px auto",
-          width: "80%",
-          padding: "20px",
-          backgroundColor: "#f9f9f9",
-          borderRadius: "10px",
-          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <h3 style={{ marginBottom: "20px", fontFamily: "poppins" }}></h3>
-        {currentAnnouncements.length > 0 ? (
-          <ul
-            style={{
-              listStyleType: "none",
-              padding: "0",
-            }}
-          >
-            {currentAnnouncements.map((announce, index) => (
-              <li
-                key={index}
-                style={{
-                  marginBottom: "20px",
-                  padding: "15px",
-                  backgroundColor: "#fff",
-                  borderRadius: "8px",
-                  boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
-                }}
-              >
-                <h4 style={{ margin: "0", fontSize: "20px" }}>
-                  {announce.title}
-                </h4>
-                <p style={{ margin: "10px 0", whiteSpace: "pre-wrap" }}>
-                  {announce.description}
-                </p>
-                <small style={{ color: "gray" }}>
-                  Posted on: {new Date(announce.postedAt).toLocaleString()}
-                </small>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No placement announcements available.</p>
-        )}
-
-        {/* Pagination Controls */}
+        <Loading />
+      ) : (
         <div
           style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "20px",
+            position: "relative",
+            left: "250px",
+            margin: "50px auto",
+            width: "80%",
+            padding: "20px",
+            backgroundColor: "#f9f9f9",
+            borderRadius: "10px",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
           }}
         >
-          {Array.from(
-            { length: Math.ceil(announcements.length / itemsPerPage) },
-            (_, index) => (
-              <button
-                key={index}
-                onClick={() => paginate(index + 1)}
-                style={{
-                  margin: "5px",
-                  padding: "10px 15px",
-                  backgroundColor:
-                    currentPage === index + 1 ? "rgb(180, 178, 178)" : "#ddd",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                {index + 1}
-              </button>
-            )
+          <h3 style={{ marginBottom: "20px", fontFamily: "poppins" }}></h3>
+          {currentAnnouncements.length > 0 ? (
+            <ul
+              style={{
+                listStyleType: "none",
+                padding: "0",
+              }}
+            >
+              {currentAnnouncements.map((announce, index) => (
+                <li
+                  key={index}
+                  style={{
+                    marginBottom: "20px",
+                    padding: "15px",
+                    backgroundColor: "#fff",
+                    borderRadius: "8px",
+                    boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
+                  <h4 style={{ margin: "0", fontSize: "20px" }}>
+                    {announce.title}
+                  </h4>
+                  <p style={{ margin: "10px 0", whiteSpace: "pre-wrap" }}>
+                    {announce.description}
+                  </p>
+                  <small style={{ color: "gray" }}>
+                    Posted on: {new Date(announce.postedAt).toLocaleString()}
+                  </small>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No placement announcements available.</p>
           )}
-        </div>
+
       
-      </div>
-                )}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "20px",
+            }}
+          >
+            {Array.from(
+              { length: Math.ceil(announcements.length / itemsPerPage) },
+              (_, index) => (
+                <button
+                  key={index}
+                  onClick={() => paginate(index + 1)}
+                  style={{
+                    margin: "5px",
+                    padding: "10px 15px",
+                    backgroundColor:
+                      currentPage === index + 1 ? "rgb(180, 178, 178)" : "#ddd",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  {index + 1}
+                </button>
+              )
+            )}
+          </div>
+
+        </div>
+      )}
 
     </>
   );

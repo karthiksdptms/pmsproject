@@ -1,16 +1,16 @@
 import React from "react";
-import { Link ,NavLink} from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { GrAchievement } from "react-icons/gr";
 import "./Studenttopbar.css";
 import { useAuth } from "../assets/context/authContext";
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 function Studenttopbar() {
   const { user, logout } = useAuth();
 
   return (<>
     <div className="topbar">
-     <img src="/ritraja.jpg"    alt="logo"/>
+      <img src="/ritraja.jpg" alt="logo" />
 
       <h6 style={{
 
@@ -76,16 +76,16 @@ function Studenttopbar() {
 
           {user.profileImage ? (
             <img
-              src={`http://localhost:3000/${user.profileImage}`}
-              alt="Profile"
-              className="rounded-circle"
-              style={{ width: "50px", height: "50px", objectFit: "cover" }}
+              src={`${API_BASE_URL}/${user.profileImage}`}
+          alt="Profile"
+          className="rounded-circle"
+          style={{ width: "50px", height: "50px", objectFit: "cover" }}
             />
           ) : (
-            <FaUser
-              size={50}
-              style={{ color: "#999", borderRadius: "50%", padding: "10px", background: "#f4f4f4" }}
-            />
+          <FaUser
+            size={50}
+            style={{ color: "#999", borderRadius: "50%", padding: "10px", background: "#f4f4f4" }}
+          />
           )}
         </div>
       </div>
@@ -96,69 +96,69 @@ function Studenttopbar() {
 
 
     <div className="sidebox">
-    <div className="btnn">
-      {" "}
-      <NavLink to="/Studentdashboard" end>
-  {({ isActive }) => (
-    <button className={`btnn ${isActive ? "bgg" : ""}`}>
-      <i className="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
-      Dashboard
-    </button>
-  )}
-</NavLink>
-        </div>
-      
       <div className="btnn">
-      {" "}
-      <NavLink to="/Studentdashboard/Studentprofile" end>
-  {({ isActive }) => (
-    <button className={`btnn ${isActive ? "bgg" : ""}`}>
-      <i className="bi bi-person-circle" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
-      My Profile
-    </button>
-  )}
-</NavLink>
-        </div>
-      
+        {" "}
+        <NavLink to="/Studentdashboard" end>
+          {({ isActive }) => (
+            <button className={`btnn ${isActive ? "bgg" : ""}`}>
+              <i className="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
+              Dashboard
+            </button>
+          )}
+        </NavLink>
+      </div>
+
+      <div className="btnn">
+        {" "}
+        <NavLink to="/Studentdashboard/Studentprofile" end>
+          {({ isActive }) => (
+            <button className={`btnn ${isActive ? "bgg" : ""}`}>
+              <i className="bi bi-person-circle" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
+              My Profile
+            </button>
+          )}
+        </NavLink>
+      </div>
+
+
+
+      <div className="btnn">
+        {" "}
+        <NavLink to="/Studentdashboard/Studentactualtraining" end>
+          {({ isActive }) => (
+            <button className={`btnn ${isActive ? "bgg" : ""}`}>
+              <i className="bi bi-bullseye" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
+              Training
+            </button>
+          )}
+        </NavLink>
+      </div>
 
 
       <div className="btnn">
-      {" "}
-      <NavLink to="/Studentdashboard/Studentactualtraining" end>
-  {({ isActive }) => (
-    <button className={`btnn ${isActive ? "bgg" : ""}`}>
-      <i className="bi bi-bullseye" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
-      Training
-    </button>
-  )}
-</NavLink>
-        </div>
-      
-    
-      <div className="btnn">
-      {" "}
-      <NavLink to="/Studentdashboard/Studenttraining" end>
-  {({ isActive }) => (
-    <button className={`btnn ${isActive ? "bgg" : ""}`}>
-      <i className="bi bi-pen-fill" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
-      Assessments
-    </button>
-  )}
-</NavLink>
-        </div>
+        {" "}
+        <NavLink to="/Studentdashboard/Studenttraining" end>
+          {({ isActive }) => (
+            <button className={`btnn ${isActive ? "bgg" : ""}`}>
+              <i className="bi bi-pen-fill" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
+              Assessments
+            </button>
+          )}
+        </NavLink>
+      </div>
 
-      
+
       <div className="btnn">
-      {" "}
-      <NavLink to="/Studentdashboard/Studentplacement" end>
-  {({ isActive }) => (
-    <button className={`btnn ${isActive ? "bgg" : ""}`}>
-     <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px',fontSize:"20px"}} />    Placement
-    </button>
-  )}
-</NavLink>
-        </div>
-      
+        {" "}
+        <NavLink to="/Studentdashboard/Studentplacement" end>
+          {({ isActive }) => (
+            <button className={`btnn ${isActive ? "bgg" : ""}`}>
+              <GrAchievement style={{ marginRight: "10px", paddingLeft: '5px', fontSize: "20px" }} />    Placement
+            </button>
+          )}
+        </NavLink>
+      </div>
+
 
 
       <div className="btnn">
@@ -218,7 +218,7 @@ function Studenttopbar() {
     </div>
 
     <div className="rajalakshmibottomimg">
-    <img src="/rajbtm.png" alt="" />
+      <img src="/rajbtm.png" alt="" />
     </div>
 
   </>)

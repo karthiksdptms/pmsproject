@@ -3,12 +3,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./Aptitude.css";
 import { IoIosArrowBack } from "react-icons/io";
 import { Link } from "react-router-dom";
-import { Modal, Button,Row,Col,Form } from "react-bootstrap";
+import { Modal, Button, Row, Col, Form } from "react-bootstrap";
 import axios from "axios";
 import "./Settings.css"
 import Swal from "sweetalert2";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 function Settings() {
- 
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState("");
@@ -17,7 +18,7 @@ function Settings() {
   // Fetch Categories
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/category/getcategories");
+      const response = await axios.get(`${API_BASE_URL}/api/category/getcategories`);
       setCategories(response.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -32,33 +33,33 @@ function Settings() {
 
   // Add New Category
   // Add New Category
-const handleAddCategory = async () => {
-  if (!newCategory || newScore === "") {
-    Swal.fire("Error", "Please fill in all fields", "error");
-    return;
-  }
+  const handleAddCategory = async () => {
+    if (!newCategory || newScore === "") {
+      Swal.fire("Error", "Please fill in all fields", "error");
+      return;
+    }
 
-  const scoreValue = parseFloat(newScore);
+    const scoreValue = parseFloat(newScore);
 
- 
-  if (isNaN(scoreValue) || scoreValue < 0) {
-    Swal.fire("Error", "Please enter a valid score", "error");
-    return;
-  }
 
-  try {
-    const response = await axios.post("http://localhost:3000/api/category/add-category", {
-      name: newCategory,
-      scoreValue,
-    });
-    Swal.fire("Success", "Category added successfully!", "success");
-    setNewCategory("");
-    setNewScore("");
-    fetchCategories();
-  } catch (error) {
-    Swal.fire("Error", "Failed to add category", "error");
-  }
-};
+    if (isNaN(scoreValue) || scoreValue < 0) {
+      Swal.fire("Error", "Please enter a valid score", "error");
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/category/add-category`, {
+        name: newCategory,
+        scoreValue,
+      });
+      Swal.fire("Success", "Category added successfully!", "success");
+      setNewCategory("");
+      setNewScore("");
+      fetchCategories();
+    } catch (error) {
+      Swal.fire("Error", "Failed to add category", "error");
+    }
+  };
 
 
   const handleDeleteCategory = async (id) => {
@@ -73,7 +74,7 @@ const handleAddCategory = async () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:3000/api/category/delete-category/${id}`);
+          await axios.delete(`${API_BASE_URL}/api/category/delete-category/${id}`);
           Swal.fire("Deleted!", "Category has been deleted.", "success");
           fetchCategories();
         } catch (error) {
@@ -129,27 +130,27 @@ const handleAddCategory = async () => {
           </div>
         </Link>
         <div className="menu5">
-          
-                    <div>
-                      
-                      <Link to="/Maindashboard/Settingsfilters" style={{textDecoration:"none",width:"20px"}}> <div className='sce'>
-                                    <h4 style={{position:"relative",top:"30px",right:"40px"}}>filters</h4>
-                                    <i className="bi bi-filter" style={{fontSize:"50px",position:"relative",left:"80px",bottom:"30px",color:'rgb(132, 65, 136)'}}></i>
-                                </div></Link></div>
-                                <div style={{fontSize:"50px",position:"relative",left:"20px",color:'rgba(11,132,164,255)'}}> <Link to="/Maindashboard/Settingsstaffs" style={{textDecoration:"none",width:"250px"}}> <div className='att'>
-                                    <h4 style={{position:"relative",top:"30px",right:"40px"}}>Staffs</h4>
-                                    <i className="bi bi-microsoft-teams" style={{fontSize:"50px",position:"relative",left:"80px",bottom:"30px",color:"rgb(114, 107, 169)"}}></i>
-                                </div></Link></div>
-                              <div className='rep' style={{position:'relative',left:"40px"}} onClick={() => setIsModalOpen(true)}>
-                                                <h4 style={{position:"relative",top:"30px",right:"40px"}}>Scores</h4>
-                                                <i className="bi bi-bar-chart-line-fill" style={{fontSize:"60px",position:"relative",left:"70px",bottom:"30px",color:"rgb(181, 113, 149)"}}></i>
-                                            </div>
-                               
-                                
-         
+
+          <div>
+
+            <Link to="/Maindashboard/Settingsfilters" style={{ textDecoration: "none", width: "20px" }}> <div className='sce'>
+              <h4 style={{ position: "relative", top: "30px", right: "40px" }}>filters</h4>
+              <i className="bi bi-filter" style={{ fontSize: "50px", position: "relative", left: "80px", bottom: "30px", color: 'rgb(132, 65, 136)' }}></i>
+            </div></Link></div>
+          <div style={{ fontSize: "50px", position: "relative", left: "20px", color: 'rgba(11,132,164,255)' }}> <Link to="/Maindashboard/Settingsstaffs" style={{ textDecoration: "none", width: "250px" }}> <div className='att'>
+            <h4 style={{ position: "relative", top: "30px", right: "40px" }}>Staffs</h4>
+            <i className="bi bi-microsoft-teams" style={{ fontSize: "50px", position: "relative", left: "80px", bottom: "30px", color: "rgb(114, 107, 169)" }}></i>
+          </div></Link></div>
+          <div className='rep' style={{ position: 'relative', left: "40px" }} onClick={() => setIsModalOpen(true)}>
+            <h4 style={{ position: "relative", top: "30px", right: "40px" }}>Scores</h4>
+            <i className="bi bi-bar-chart-line-fill" style={{ fontSize: "60px", position: "relative", left: "70px", bottom: "30px", color: "rgb(181, 113, 149)" }}></i>
+          </div>
+
+
+
         </div>
       </div>
-   
+
       <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Edit Categories & Scores</Modal.Title>

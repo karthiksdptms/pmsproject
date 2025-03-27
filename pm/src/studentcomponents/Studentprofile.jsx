@@ -11,7 +11,7 @@ import { MdOutlineSmsFailed } from "react-icons/md";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 import { Modal, Button, Form, Row, Col, Container } from "react-bootstrap";
 
@@ -62,9 +62,9 @@ function Studentprofile() {
   const fetchStudent = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`http://localhost:3000/api/students/getone/${user._id}`, {
+      const response = await axios.get(`${API_BASE_URL}/api/students/getone/${user._id}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${ token }`,
         },
       });
       setStudent(response.data.student);
@@ -149,11 +149,11 @@ function Studentprofile() {
 
 
     student.offers.forEach((offer, index) => {
-      formData.append(`offers[${index}][offerno]`, offer.offerno);
-      formData.append(`offers[${index}][company]`, offer.company);
-      formData.append(`offers[${index}][designation]`, offer.designation);
-      formData.append(`offers[${index}][package]`, offer.package);
-      formData.append(`offers[${index}][offertype]`, offer.offertype);
+      formData.append(`offers[${ index }][offerno]`, offer.offerno);
+      formData.append(`offers[${ index }][company]`, offer.company);
+      formData.append(`offers[${ index }][designation]`, offer.designation);
+      formData.append(`offers[${ index }][package]`, offer.package);
+      formData.append(`offers[${ index }][offertype]`, offer.offertype);
 
     });
 
@@ -169,7 +169,7 @@ function Studentprofile() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/students/approveadd",
+        `${API_BASE_URL}/api/students/approveadd`,
         formData,
         {
           headers: {
@@ -372,10 +372,10 @@ function Studentprofile() {
               width: "320px", height: "590px", backgroundColor: "", zIndex: "10px", position: "relative",
               top: "20px", left: "15px", borderRadius: "10px"
             }}>   <div className="profile" ><img
-              src={`http://localhost:3000/${user.profileImage}`}
-              alt="Profile"
-              className="rounded-circle"
-              style={{ width: "170px", height: "170px", objectFit: "cover", position: "relative", right: '1.5px', bottom: '1.5px' }}
+              src={`${API_BASE_URL}/${user.profileImage}`}
+                alt="Profile"
+                className="rounded-circle"
+                style={{ width: "170px", height: "170px", objectFit: "cover", position: "relative", right: '1.5px', bottom: '1.5px' }}
             /></div>
               <br />
               <br />
@@ -597,9 +597,9 @@ function Studentprofile() {
                     />
                     {student.profileImage && (
                       <img
-                        src={`http://localhost:3000/${student.profileImage}`}
-                        alt="Profile"
-                        style={{ width: "100px", height: "100px", objectFit: "cover", marginTop: "10px" }}
+                        src={`${API_BASE_URL}/${student.profileImage}`}
+                    alt="Profile"
+                    style={{ width: "100px", height: "100px", objectFit: "cover", marginTop: "10px" }}
                       />
                     )}
                   </div>
@@ -625,74 +625,75 @@ function Studentprofile() {
                           <label>Resume:</label>
                           <input type="file" className="form-control" name="resume" onChange={handleChange} accept=".pdf" />
                           {student.resume && (
-                            <a href={`http://localhost:3000/${student.resume}`} target="_blank" rel="noopener noreferrer">
-                              View Resume
-                            </a>
+                            <a href={`${API_BASE_URL}/${student.resume}`} target="_blank" rel="noopener noreferrer">
+                          View Resume
+                        </a>
                           )}
-                        </div>
-                      </Col>
-                      <Col md={6}>
-                        <label>Placement:</label>
-                        <select className="form-control" name="placement" onChange={handleChange} value={student.placement || ""} required>
-                          <option value="">Select:</option>
-                          <option value="Placed">Placed</option>
-                          <option value="Not-placed">Not-placed</option>
-                        </select> </Col>
-
-                    </Row>
-                  </div>
-
-
-                  <h5>Enter Placements Offers:</h5>
-                  {student?.offers?.map((offer, index) => (
-
-                    <div key={index} className="mb-3 border p-3">
-                      <div className="d-flex justify-content-between">
-
-
                       </div>
-                      <input type="text" className="form-control mb-2" name="offerno" placeholder="offer number" value={offer.offerno} onChange={(e) => handleOfferChange(index, e)} />
-                      <input type="text" className="form-control mb-2" name="company" placeholder="Company" value={offer.company} onChange={(e) => handleOfferChange(index, e)} />
-                      <input type="text" className="form-control mb-2" name="designation" placeholder="Designation" value={offer.designation} onChange={(e) => handleOfferChange(index, e)} />
-                      <input type="text" className="form-control mb-2" name="package" placeholder="Package" value={offer.package} onChange={(e) => handleOfferChange(index, e)} />
-                      <input type="text" className="form-control mb-2" name="offertype" placeholder="offertype(Elite,Superdream,Dream,Fair)" value={offer.offertype} onChange={(e) => handleOfferChange(index, e)} />
+                    </Col>
+                    <Col md={6}>
+                      <label>Placement:</label>
+                      <select className="form-control" name="placement" onChange={handleChange} value={student.placement || ""} required>
+                        <option value="">Select:</option>
+                        <option value="Placed">Placed</option>
+                        <option value="Not-placed">Not-placed</option>
+                      </select> </Col>
 
-
-                      <button type="button" className="btn  btn-sm" style={{ position: "relative", left: "650px" }} onClick={() => deleteOffer(index)}>
-                        <i className="bi bi-x-circle" style={{ fontSize: "30px", color: "red" }}></i>
-                      </button>
-                    </div>
-                  ))}
-
-                  <button type="button" tyle={{ backgroundColor: "white", border: "none" }} className="btn  mb-3" onClick={addOffer}> <i className="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "grey" }}></i>
-                  </button>
-                  <br />
-                  <div className="mb-3">
-                    <label>Insert the offerletters(pdf,combine all letters as a single pdf):</label>
-                    <input type="file" className="form-control" name="offerpdf" onChange={handleChange} accept="*" />
-                    {student.offerpdf && (
-                      <a href={`http://localhost:3000/${student.offerpdf}`} target="_blank" rel="noopener noreferrer">
-                        View Offer Letter
-                      </a>
-                    )}
-
-                  </div>
-
-                  <div className="modal-footer">
-
-
-                    <button type="submit" className="btn btn-success" >
-                      Send Request
-                    </button>
-                  </div>
-
-                </form>
+                  </Row>
               </div>
 
+
+              <h5>Enter Placements Offers:</h5>
+              {student?.offers?.map((offer, index) => (
+
+                <div key={index} className="mb-3 border p-3">
+                  <div className="d-flex justify-content-between">
+
+
+                  </div>
+                  <input type="text" className="form-control mb-2" name="offerno" placeholder="offer number" value={offer.offerno} onChange={(e) => handleOfferChange(index, e)} />
+                  <input type="text" className="form-control mb-2" name="company" placeholder="Company" value={offer.company} onChange={(e) => handleOfferChange(index, e)} />
+                  <input type="text" className="form-control mb-2" name="designation" placeholder="Designation" value={offer.designation} onChange={(e) => handleOfferChange(index, e)} />
+                  <input type="text" className="form-control mb-2" name="package" placeholder="Package" value={offer.package} onChange={(e) => handleOfferChange(index, e)} />
+                  <input type="text" className="form-control mb-2" name="offertype" placeholder="offertype(Elite,Superdream,Dream,Fair)" value={offer.offertype} onChange={(e) => handleOfferChange(index, e)} />
+
+
+                  <button type="button" className="btn  btn-sm" style={{ position: "relative", left: "650px" }} onClick={() => deleteOffer(index)}>
+                    <i className="bi bi-x-circle" style={{ fontSize: "30px", color: "red" }}></i>
+                  </button>
+                </div>
+              ))}
+
+              <button type="button" tyle={{ backgroundColor: "white", border: "none" }} className="btn  mb-3" onClick={addOffer}> <i className="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "grey" }}></i>
+              </button>
+              <br />
+              <div className="mb-3">
+                <label>Insert the offerletters(pdf,combine all letters as a single pdf):</label>
+                <input type="file" className="form-control" name="offerpdf" onChange={handleChange} accept="*" />
+                {student.offerpdf && (
+                  <a href={`${API_BASE_URL}/${student.offerpdf}`} target="_blank" rel="noopener noreferrer">
+                View Offer Letter
+              </a>
+                    )}
+
             </div>
-          </div>
+
+            <div className="modal-footer">
+
+
+              <button type="submit" className="btn btn-success" >
+                Send Request
+              </button>
+            </div>
+
+          </form>
         </div>
-      )}
+
+            </div >
+          </div >
+        </div >
+      )
+}
 
 
     </>

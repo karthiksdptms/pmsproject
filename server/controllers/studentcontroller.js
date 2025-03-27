@@ -65,12 +65,21 @@ const calculateScore = async (fields) => {
 };
 
 
-
-
 export const getStudentsWithScore = async (req, res) => {
   try {
    
-    const students = await StudentModel.find({ score: { $exists: true } }).sort({ score: -1 });
+    const students = await StudentModel.find(
+      { score: { $exists: true }, cgpa: { $exists: true } },
+      {
+        registration_number: 1,
+        name: 1,
+        department: 1,
+        cgpa: 1,
+        score: 1,
+        offers:1,
+        profileImage:1
+      }
+    ).sort({ score: -1 });
 
     if (students.length === 0) {
       return res.status(404).json({ message: "No students with scores found" });
@@ -82,6 +91,7 @@ export const getStudentsWithScore = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch student records" });
   }
 };
+
 
 export const getTexts = async (req, res) => {
   try {

@@ -10,7 +10,7 @@ import axios from "axios";
 
 import Loading from "./Loading";
 import { Modal, Button, Form, Row, Col, Container } from "react-bootstrap";
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Accountsapprovals() {
 
@@ -64,7 +64,7 @@ function Accountsapprovals() {
     const fetchstudents = async () => {
       setLoading(true)
       try {
-        const responnse = await axios.get("http://localhost:3000/api/students/approved-students", {
+        const responnse = await axios.get(`${API_BASE_URL}/api/students/approved-students`, {
 
         }
         )
@@ -225,7 +225,7 @@ function Accountsapprovals() {
 
 
       const response = await axios.put(
-        "http://localhost:3000/api/students/approveedit",
+        `${API_BASE_URL}/api/students/approveedit`,
         formData,
         {
           headers: {
@@ -251,7 +251,7 @@ function Accountsapprovals() {
   const handleReject = async (email) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/students/reject",
+        `${API_BASE_URL}/api/students/reject`,
         { email },
         {
           headers: {
@@ -276,7 +276,32 @@ function Accountsapprovals() {
 
 
 
+  useEffect(() => {
+    if (student.profileImage) {
+      setPreview(`${API_BASE_URL}/${student.profileImage}`);
+    }
+  }, [student.profileImage]);
+
+
+
+  const [searchRegNo, setSearchRegNo] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+
+
+  const filteredData = getstudents.filter((student) =>
+    String(student.registration_number)
+      .toLowerCase()
+      .includes(searchRegNo.toLowerCase())
+  );
+
+
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+
+  const startIdx = (currentPage - 1) * rowsPerPage;
+  const displayedData = filteredData.slice(startIdx, startIdx + rowsPerPage);
+
+
   const handleRowsPerPageChange = (e) => {
     const value = parseInt(e.target.value, 10);
     if (value > 0) {
@@ -284,19 +309,8 @@ function Accountsapprovals() {
       setCurrentPage(1);
     }
   };
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(getstudents.length / rowsPerPage);
 
-  const startIdx = (currentPage - 1) * rowsPerPage;
-  const displayedData = getstudents.slice(
-    startIdx,
-    startIdx + rowsPerPage
-  );
-  useEffect(() => {
-    if (student.profileImage) {
-      setPreview(`http://localhost:3000/${student.profileImage}`);
-    }
-  }, [student.profileImage]);
+
   return (
     <>
 
@@ -347,10 +361,26 @@ function Accountsapprovals() {
           <Loading />
         ) : (
           <div className="table-responsive" style={{ position: "relative", top: '60px' }}>
+            <div className="mb-3 d-flex align-items-center gap-3">
+              <label className="form-label fw-bold mb-0" style={{ marginRight: "10px" }}>
+                Filter by Registration Number:
+              </label>
+              <br />
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter Reg No"
+                value={searchRegNo}
+                onChange={(e) => setSearchRegNo(e.target.value)}
+                style={{
+                  width: "250px",
+                }}
+              />
+            </div>
 
 
             <h4 className="" style={{ width: "350px", position: "relative", top: "20px" }}>
-              Total Approvals Pending: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 4px', borderRadius: '4px', color: "white", zIndex: "100" }}>{getstudents.flat().length}</span>
+              Total Approvals Pending: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 4px', borderRadius: '4px', color: "white", zIndex: "100" }}>{filteredData.flat().length}</span>
             </h4>
             <div
               className="flex justify-right items-center gap-4 mt-4 "
@@ -423,20 +453,22 @@ function Accountsapprovals() {
                       <td>
                         {student.profileImage ? (
                           <img
-                            src={`http://localhost:3000/${student.profileImage}`}
-                            alt="Profile"
-                            className="rounded-circle"
-                            style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                            src={`${API_BASE_URL}/${student.profileImage}`}
+    alt = "Profile"
+    className = "rounded-circle"
+    style = {{ width: "40px", height: "40px", objectFit: "cover" }
+  }
                           />
-                        ) : (
-                          <img
-                            src="/default-avatar.png"
-                            alt="Default Profile"
-                            className="rounded-circle"
-                            style={{ width: "40px", height: "40px", objectFit: "cover" }}
-                          />
-                        )}
-                      </td>
+  ) : (
+    <img
+      src="/default-avatar.png"
+      alt="Default Profile"
+      className="rounded-circle"
+      style={{ width: "40px", height: "40px", objectFit: "cover" }}
+    />
+  )
+}
+                      </td >
                       <td>{student.registration_number}</td>
                       <td>{student.name}</td>
                       <td>{student.department}</td>
@@ -456,282 +488,284 @@ function Accountsapprovals() {
                           Reject
                         </button>
                       </td>
-                    </tr>
+                    </tr >
                   ))
                 )}
-              </tbody>
+              </tbody >
 
-            </table>
+            </table >
 
 
 
-          </div>
+          </div >
         )}
-        {showw && student && (
-          <div className="modal d-block" tabIndex="-1" key={student._id}>
-            <div className="modal-dialog modal-lg">
-              <div className="modal-content" style={{ minWidth: "100%" }}>
-                <div className="modal-header">
-                  <h5 className="modal-title">Add Student Details To Create Account</h5>
-                  <button type="button" className="btn-close" onClick={() => setShoww(false)}></button>
-                </div>
-                <div className="modal-body">
-                  <form encType="multipart/form-data" onSubmit={handleSubmitt}>
+{
+  showw && student && (
+    <div className="modal d-block" tabIndex="-1" key={student._id}>
+      <div className="modal-dialog modal-lg">
+        <div className="modal-content" style={{ minWidth: "100%" }}>
+          <div className="modal-header">
+            <h5 className="modal-title">Add Student Details To Create Account</h5>
+            <button type="button" className="btn-close" onClick={() => setShoww(false)}></button>
+          </div>
+          <div className="modal-body">
+            <form encType="multipart/form-data" onSubmit={handleSubmitt}>
 
-                    <Row>
-                      <Col md={6}>
-                        <label>Registration Number:<span style={{ color: "red" }}>*</span></label>
-                        <input type="text" className="form-control" name="registration_number" onChange={handleChange} required readOnly value={student.registration_number} />
-                      </Col>
-                      <Col md={6}>
-                        <label>Name:<span style={{ color: "red" }}>*</span></label>
-                        <input type="text" className="form-control" name="name" onChange={handleChange} required readOnly value={student.name} />
-                      </Col>
-                    </Row>
-
-
-                    <Row>
-                      <Col md={6}>
-                        <label>Department:<span style={{ color: "red" }}>*</span></label>
-                        <input type="text" className="form-control" name="department" onChange={handleChange} required readOnly value={student.department} />
-                      </Col>
-                      <Col md={6}>
-                        <label>Batch:<span style={{ color: "red" }}>*</span></label>
-                        <input type="text" className="form-control" name="batch" onChange={handleChange} required readOnly value={student.batch} />
-                      </Col>
-                    </Row>
+              <Row>
+                <Col md={6}>
+                  <label>Registration Number:<span style={{ color: "red" }}>*</span></label>
+                  <input type="text" className="form-control" name="registration_number" onChange={handleChange} required readOnly value={student.registration_number} />
+                </Col>
+                <Col md={6}>
+                  <label>Name:<span style={{ color: "red" }}>*</span></label>
+                  <input type="text" className="form-control" name="name" onChange={handleChange} required readOnly value={student.name} />
+                </Col>
+              </Row>
 
 
-                    <Row>
-                      <Col md={4}>
-                        <label>SSLC(%):<span style={{ color: "red" }}>*</span></label>
-                        <input type="text" className="form-control" name="sslc" onChange={handleChange} required readOnly value={student.sslc} />
-                      </Col>
-                      <Col md={4}>
-                        <label>HSC(%):</label>
-                        <input type="text" className="form-control" name="hsc" onChange={handleChange} value={student.hsc} />
-                      </Col>
-                      <Col md={4}>
-                        <label>Diploma(%):</label>
-                        <input type="text" className="form-control" name="diploma" onChange={handleChange} value={student.diploma} />
-                      </Col>
-                    </Row>
-
-                    <h6>Enter Semester wise CGPA:</h6>
+              <Row>
+                <Col md={6}>
+                  <label>Department:<span style={{ color: "red" }}>*</span></label>
+                  <input type="text" className="form-control" name="department" onChange={handleChange} required readOnly value={student.department} />
+                </Col>
+                <Col md={6}>
+                  <label>Batch:<span style={{ color: "red" }}>*</span></label>
+                  <input type="text" className="form-control" name="batch" onChange={handleChange} required readOnly value={student.batch} />
+                </Col>
+              </Row>
 
 
-                    <Row>
-                      {["sem1", "sem2", "sem3", "sem4"].map((sem, index) => (
-                        <Col md={3} key={index}>
-                          <label>{sem.toUpperCase() + ":"}</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name={sem}
-                            value={student[sem] || ""}
-                            onChange={handleChange}
-                          />
-                        </Col>
-                      ))}
-                    </Row>
+              <Row>
+                <Col md={4}>
+                  <label>SSLC(%):<span style={{ color: "red" }}>*</span></label>
+                  <input type="text" className="form-control" name="sslc" onChange={handleChange} required readOnly value={student.sslc} />
+                </Col>
+                <Col md={4}>
+                  <label>HSC(%):</label>
+                  <input type="text" className="form-control" name="hsc" onChange={handleChange} value={student.hsc} />
+                </Col>
+                <Col md={4}>
+                  <label>Diploma(%):</label>
+                  <input type="text" className="form-control" name="diploma" onChange={handleChange} value={student.diploma} />
+                </Col>
+              </Row>
+
+              <h6>Enter Semester wise CGPA:</h6>
 
 
-                    <Row>
-                      {["sem5", "sem6", "sem7", "sem8"].map((sem, index) => (
-                        <Col md={3} key={index}>
-                          <label>{sem.toUpperCase() + ":"}</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name={sem}
-                            value={student[sem] || ""}
-                            onChange={handleChange}
-                          />
-                        </Col>
-                      ))}
-                    </Row>
+              <Row>
+                {["sem1", "sem2", "sem3", "sem4"].map((sem, index) => (
+                  <Col md={3} key={index}>
+                    <label>{sem.toUpperCase() + ":"}</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name={sem}
+                      value={student[sem] || ""}
+                      onChange={handleChange}
+                    />
+                  </Col>
+                ))}
+              </Row>
 
 
-                    <Row>
-                      <Col md={4}>
-                        <label>CGPA:</label>
-                        <input type="text" className="form-control" name="cgpa" onChange={handleChange} value={student.cgpa} />
-                      </Col>
-                      <Col md={4}>
-                        <label>Arrears:<span style={{ color: "red" }}>*</span></label>
-                        <input type="Number" className="form-control" name="arrears" onChange={handleChange} required value={student.arrears} />
-                      </Col>
-                      <Col md={4}>
-                        <label>History of Arrears:</label>
-                        <input type="Number" className="form-control" name="hoa" onChange={handleChange} value={student.hoa} />
-                      </Col>
-                    </Row>
+              <Row>
+                {["sem5", "sem6", "sem7", "sem8"].map((sem, index) => (
+                  <Col md={3} key={index}>
+                    <label>{sem.toUpperCase() + ":"}</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name={sem}
+                      value={student[sem] || ""}
+                      onChange={handleChange}
+                    />
+                  </Col>
+                ))}
+              </Row>
 
 
-                    <Row>
-                      <Col md={6}>
-                        <label>Internships Attended:</label>
-                        <input type="text" className="form-control" name="internships" onChange={handleChange} value={student.internships} />
-                      </Col>
-                      <Col md={6}>
-                        <label>Certifications Completed:</label>
-                        <input type="text" className="form-control" name="certifications" onChange={handleChange} value={student.certifications} />
-                      </Col>
-                    </Row>
+              <Row>
+                <Col md={4}>
+                  <label>CGPA:</label>
+                  <input type="text" className="form-control" name="cgpa" onChange={handleChange} value={student.cgpa} />
+                </Col>
+                <Col md={4}>
+                  <label>Arrears:<span style={{ color: "red" }}>*</span></label>
+                  <input type="Number" className="form-control" name="arrears" onChange={handleChange} required value={student.arrears} />
+                </Col>
+                <Col md={4}>
+                  <label>History of Arrears:</label>
+                  <input type="Number" className="form-control" name="hoa" onChange={handleChange} value={student.hoa} />
+                </Col>
+              </Row>
 
 
-                    <Row>
-                      <Col md={6}>
-                        <label>Patents Field:</label>
-                        <input type="text" className="form-control" name="patents" onChange={handleChange} value={student.patents} />
-                      </Col>
-                      <Col md={6}>
-                        <label>Publications Field:</label>
-                        <input type="text" className="form-control" name="publications" onChange={handleChange} value={student.publications} />
-                      </Col>
-                      <Col md={6}>
-                        <label>Achievements:</label>
-                        <input type="text" className="form-control" name="achievements" onChange={handleChange} value={student.achievements} />
-                      </Col>
-                    </Row>
+              <Row>
+                <Col md={6}>
+                  <label>Internships Attended:</label>
+                  <input type="text" className="form-control" name="internships" onChange={handleChange} value={student.internships} />
+                </Col>
+                <Col md={6}>
+                  <label>Certifications Completed:</label>
+                  <input type="text" className="form-control" name="certifications" onChange={handleChange} value={student.certifications} />
+                </Col>
+              </Row>
 
 
-                    <Row>
-                      <Col md={6}>
-                        <label>Enter Additional Languages Known:</label>
-                        <input type="text" className="form-control" name="language" onChange={handleChange} value={student.language} />
-                      </Col>
-                      <Col md={6}>
-                        <label>Area of Interest:</label>
-                        <input type="text" className="form-control" name="aoi" onChange={handleChange} value={student.aoi} />
-                      </Col>
-                    </Row>
+              <Row>
+                <Col md={6}>
+                  <label>Patents Field:</label>
+                  <input type="text" className="form-control" name="patents" onChange={handleChange} value={student.patents} />
+                </Col>
+                <Col md={6}>
+                  <label>Publications Field:</label>
+                  <input type="text" className="form-control" name="publications" onChange={handleChange} value={student.publications} />
+                </Col>
+                <Col md={6}>
+                  <label>Achievements:</label>
+                  <input type="text" className="form-control" name="achievements" onChange={handleChange} value={student.achievements} />
+                </Col>
+              </Row>
 
 
-                    <div className="mb-3">
-                      <label>Email:<span style={{ color: "red" }}>*</span></label>
-                      <input type="email" className="form-control" name="email" onChange={handleChange} required value={student.email} readOnly />
-                    </div>
-                    <div className="mb-3">
-                      <label>password:(password given by student: {student.expassword})<span style={{ color: "red" }}>*</span></label>
-                      <input type="text" className="form-control" name="password" onChange={handleChange} required value={student.password} />
-                    </div>
-                    <div className="mb-3">
-                      <label>role:<span style={{ color: "red" }}>*</span></label>
-                      <select className="form-control" name="role" onChange={handleChange} required value={student.role}>
+              <Row>
+                <Col md={6}>
+                  <label>Enter Additional Languages Known:</label>
+                  <input type="text" className="form-control" name="language" onChange={handleChange} value={student.language} />
+                </Col>
+                <Col md={6}>
+                  <label>Area of Interest:</label>
+                  <input type="text" className="form-control" name="aoi" onChange={handleChange} value={student.aoi} />
+                </Col>
+              </Row>
 
-                        <option value="">Select Role</option>
-                        <option value="student">student</option>
-                      </select>
-                    </div>
-                    <div className="mb-3">
-                      <label>Profile Image:</label>
-                      <input
 
-                        type="file"
-                        className="form-control"
-                        name="image"
-                        onChange={handleChange}
-                        accept="image/*"
-                      />
-                      {student.profileImage && (
-                        <img
-                          src={`http://localhost:3000/${student.profileImage}`}
-                          alt="Profile"
-                          style={{ width: "100px", height: "100px", objectFit: "cover", marginTop: "10px" }}
+              <div className="mb-3">
+                <label>Email:<span style={{ color: "red" }}>*</span></label>
+                <input type="email" className="form-control" name="email" onChange={handleChange} required value={student.email} readOnly />
+              </div>
+              <div className="mb-3">
+                <label>password:(password given by student: {student.expassword})<span style={{ color: "red" }}>*</span></label>
+                <input type="text" className="form-control" name="password" onChange={handleChange} required value={student.password} />
+              </div>
+              <div className="mb-3">
+                <label>role:<span style={{ color: "red" }}>*</span></label>
+                <select className="form-control" name="role" onChange={handleChange} required value={student.role}>
+
+                  <option value="">Select Role</option>
+                  <option value="student">student</option>
+                </select>
+              </div>
+              <div className="mb-3">
+                <label>Profile Image:</label>
+                <input
+
+                  type="file"
+                  className="form-control"
+                  name="image"
+                  onChange={handleChange}
+                  accept="image/*"
+                />
+                {student.profileImage && (
+                  <img
+                    src={`${API_BASE_URL}/${student.profileImage}`}
+                alt="Profile"
+                style={{ width: "100px", height: "100px", objectFit: "cover", marginTop: "10px" }}
                         />
                       )}
-                    </div>
+              </div>
 
+              <div className="mb-3">
+                <Row>
+                  <Col md={6}>
+                    <label>Address:<span style={{ color: "red" }}>*</span></label>
+                    <input type="text" className="form-control" name="address" onChange={handleChange} required value={student.address} />
+                  </Col>
+                  <Col md={6}>
+                    <label>Phone Number:<span style={{ color: "red" }}>*</span></label>
+                    <input type="text" className="form-control" name="phoneno" onChange={handleChange} required value={student.phoneno} />
+                  </Col>
+                </Row>
+              </div>
+
+
+              <div className="mb-3">
+                <Row>
+                  <Col md={6}>
                     <div className="mb-3">
-                      <Row>
-                        <Col md={6}>
-                          <label>Address:<span style={{ color: "red" }}>*</span></label>
-                          <input type="text" className="form-control" name="address" onChange={handleChange} required value={student.address} />
-                        </Col>
-                        <Col md={6}>
-                          <label>Phone Number:<span style={{ color: "red" }}>*</span></label>
-                          <input type="text" className="form-control" name="phoneno" onChange={handleChange} required value={student.phoneno} />
-                        </Col>
-                      </Row>
-                    </div>
-
-
-                    <div className="mb-3">
-                      <Row>
-                        <Col md={6}>
-                          <div className="mb-3">
-                            <label>Resume:</label>
-                            <input type="file" className="form-control" name="resume" onChange={handleChange} accept=".pdf" />
-                            {student.resume && (
-                              <a href={`http://localhost:3000/${student.resume}`} target="_blank" rel="noopener noreferrer">
-                                View Resume
-                              </a>
+                      <label>Resume:</label>
+                      <input type="file" className="form-control" name="resume" onChange={handleChange} accept=".pdf" />
+                      {student.resume && (
+                        <a href={`${API_BASE_URL}/${student.resume}`} target="_blank" rel="noopener noreferrer">
+                      View Resume
+                    </a>
                             )}
-                          </div>
-                        </Col>
-                        <Col md={6}>
-                          <label>Placement:</label>
-                          <select className="form-control" name="placement" onChange={handleChange} value={student.placement} >
-                            <option value="">Select:</option>
-                            <option value="Placed">Placed</option>
-                            <option value="Not-placed">Not-placed</option>
-                          </select> </Col>
+                  </div>
+                </Col>
+                <Col md={6}>
+                  <label>Placement:</label>
+                  <select className="form-control" name="placement" onChange={handleChange} value={student.placement} >
+                    <option value="">Select:</option>
+                    <option value="Placed">Placed</option>
+                    <option value="Not-placed">Not-placed</option>
+                  </select> </Col>
 
-                      </Row>
-                    </div>
-
-
-                    <h5>Enter Placements Offers:</h5>
-                    {student.offers.map((offer, index) => (
-                      <div key={index} className="mb-3 border p-3">
-                        <div className="d-flex justify-content-between">
+              </Row>
+          </div>
 
 
-                        </div>
-                        <input type="text" className="form-control mb-2" name="offerno" placeholder="offer number" value={offer.offerno} onChange={(e) => handleOfferChange(index, e)} />
-                        <input type="text" className="form-control mb-2" name="company" placeholder="Company" value={offer.company} onChange={(e) => handleOfferChange(index, e)} />
-                        <input type="text" className="form-control mb-2" name="designation" placeholder="Designation" value={offer.designation} onChange={(e) => handleOfferChange(index, e)} />
-                        <input type="text" className="form-control mb-2" name="package" placeholder="Package" value={offer.package} onChange={(e) => handleOfferChange(index, e)} />
-                        <input type="text" className="form-control mb-2" name="offertype" placeholder="offertype(Elite,Superdream,Dream,Fair)" value={offer.offertype} onChange={(e) => handleOfferChange(index, e)} />
-                        <button type="button" className="btn  btn-sm" style={{ position: "relative", left: "650px" }} onClick={() => deleteOffer(index)}>
-                          <i className="bi bi-x-circle" style={{ fontSize: "30px", color: "red" }}></i>
-                        </button>
-                      </div>
-                    ))}
+          <h5>Enter Placements Offers:</h5>
+          {student.offers.map((offer, index) => (
+            <div key={index} className="mb-3 border p-3">
+              <div className="d-flex justify-content-between">
 
-                    <button type="button" tyle={{ backgroundColor: "white", border: "none" }} className="btn  mb-3" onClick={addOffer}> <i className="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "grey" }}></i>
-                    </button>
-                    <br />
-                    <div className="mb-3">
-                      <label>Insert the offerletters(pdf,combine all letters as a single pdf):</label>
-                      <input type="file" className="form-control" name="offerpdf" onChange={handleChange} accept="*" />
-                      {student.offerpdf && (
-                        <a href={`http://localhost:3000/${student.offerpdf}`} target="_blank" rel="noopener noreferrer">
-                          View Offer Letter
-                        </a>
-                      )}
-
-                    </div>
-
-                    <div className="modal-footer">
-
-                      <button type="button" className="btn btn-danger" onClick={() => setShoww(false)}>
-                        Cancel
-                      </button>
-                      <button type="submit" className="btn btn-success" >
-                        Approve
-                      </button>
-                    </div>
-
-                  </form>
-                </div>
 
               </div>
+              <input type="text" className="form-control mb-2" name="offerno" placeholder="offer number" value={offer.offerno} onChange={(e) => handleOfferChange(index, e)} />
+              <input type="text" className="form-control mb-2" name="company" placeholder="Company" value={offer.company} onChange={(e) => handleOfferChange(index, e)} />
+              <input type="text" className="form-control mb-2" name="designation" placeholder="Designation" value={offer.designation} onChange={(e) => handleOfferChange(index, e)} />
+              <input type="text" className="form-control mb-2" name="package" placeholder="Package" value={offer.package} onChange={(e) => handleOfferChange(index, e)} />
+              <input type="text" className="form-control mb-2" name="offertype" placeholder="offertype(Elite,Superdream,Dream,Fair)" value={offer.offertype} onChange={(e) => handleOfferChange(index, e)} />
+              <button type="button" className="btn  btn-sm" style={{ position: "relative", left: "650px" }} onClick={() => deleteOffer(index)}>
+                <i className="bi bi-x-circle" style={{ fontSize: "30px", color: "red" }}></i>
+              </button>
             </div>
-          </div>
-        )}
-      </div>
+          ))}
+
+          <button type="button" tyle={{ backgroundColor: "white", border: "none" }} className="btn  mb-3" onClick={addOffer}> <i className="bi bi-plus-circle-fill" style={{ fontSize: "40px", color: "grey" }}></i>
+          </button>
+          <br />
+          <div className="mb-3">
+            <label>Insert the offerletters(pdf,combine all letters as a single pdf):</label>
+            <input type="file" className="form-control" name="offerpdf" onChange={handleChange} accept="*" />
+            {student.offerpdf && (
+              <a href={`${API_BASE_URL}/${student.offerpdf}`} target="_blank" rel="noopener noreferrer">
+            View Offer Letter
+          </a>
+                      )}
+
+        </div>
+
+        <div className="modal-footer">
+
+          <button type="button" className="btn btn-danger" onClick={() => setShoww(false)}>
+            Cancel
+          </button>
+          <button type="submit" className="btn btn-success" >
+            Approve
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+              </div >
+            </div >
+          </div >
+        )
+}
+      </div >
 
     </>
   );
