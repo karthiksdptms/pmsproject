@@ -19,8 +19,10 @@ function Login() {
     setError(null);
 
     try {
+
       const response = await axios.post(`${API_BASE_URL}/api/auth/login`,
         { email, password })
+
 
       console.log("Login Response:", response.data);
 

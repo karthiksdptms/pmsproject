@@ -100,6 +100,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
     setLoading(true);
     axios
       .get(`${API_BASE_URL}/api/students/getstudents`)

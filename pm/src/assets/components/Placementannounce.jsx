@@ -32,8 +32,10 @@ function Placementsannounce() {
   };
 
   useEffect(() => {
+
     fetchCompanies();
   }, []);
+
 
 
   const [selectedCompany, setSelectedCompany] = useState(null);

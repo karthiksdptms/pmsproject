@@ -105,7 +105,9 @@ function Aptitudeconfigurequestions() {
         return;
       }
 
+
       axios.put(`${API_BASE_URL}/updateqp/${paperId}`, questionPaperData)
+
         .then((result) => {
           console.log("Updated successfully", result.data);
 
@@ -119,7 +121,9 @@ function Aptitudeconfigurequestions() {
         })
         .catch((err) => console.error("Error updating:", err));
     } else {
+
       axios.post(`${API_BASE_URL}/addqp`, questionPaperData)
+
         .then((result) => {
           console.log("Created successfully", result.data);
           setQuestionPapers([...questionPapers, result.data]);
@@ -153,13 +157,16 @@ function Aptitudeconfigurequestions() {
     axios.get(`${API_BASE_URL}/getqp`)
       .then(result => setQuestionPapers(result.data), setLoading(false))
 
+
       .catch(err => console.log(err))
   }, [])
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this record?")) {
       axios
+
         .delete(`${ API_BASE_URL } / delqp / ${ id }`)
+
         .then((response) => {
           alert("Record deleted successfully!");
           setQuestionPapers(questionPapers.filter((paper) => paper._id !== id));

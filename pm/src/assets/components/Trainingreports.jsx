@@ -18,6 +18,7 @@ function Trainingreports() {
   const [showModal, setShowModal] = useState(false);
   const [selectedBatches, setSelectedBatches] = useState([]);
 
+
   const [scheduleCode, setScheduleCode] = useState("");
   const [trainingName, setSelectedTrainingName] = useState("");
 
@@ -123,6 +124,8 @@ function Trainingreports() {
     const fileName = `${ scheduleCode } - ${ trainingName } - ${ selectedBatchData.batchNumber }.xlsx`;
     XLSX.writeFile(wb, fileName);
   };
+
+
 
 
   return (

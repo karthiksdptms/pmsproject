@@ -1,3 +1,4 @@
+
 import React, { useContext, createContext, useState, useEffect } from "react";
 import axios from "axios";
 
@@ -26,6 +27,7 @@ const AuthContext = ({ children }) => {
             setUser(response.data.user);
 
           } else {
+
 
             setUser(null);
             setLoading(false)

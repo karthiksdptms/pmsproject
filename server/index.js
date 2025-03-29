@@ -9,6 +9,7 @@ import nodemailer from "nodemailer";
 import bodyParser from "body-parser";
 import FilterModel from "./models/FilterModel.js";
 import QpModel from "./models/QpModel.js";
+
 import attendanceStudentRoutes from "./routes/attendanceStudentRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 import answerkeyRouter from "./routes/answerkey.js"
@@ -27,6 +28,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.static('public/uploads'));
+
 app.use(express.json());
 
 
