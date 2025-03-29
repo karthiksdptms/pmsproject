@@ -1,17 +1,33 @@
 import React from "react";
 import "./Topbar.css";
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { GrAchievement } from "react-icons/gr";
 import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Topbar() {
-  const {user} = useAuth();
-  
+  const { user, logout } = useAuth();
+
+
   return (
     <>
       <div className="topbar">
-        <img src="ritraja.jpg" class="img-fluid" alt="Responsive image" />
+
+        <img src="/ritraja.jpg" alt="logo" />
+
+        <h6 style={{
+
+          color: "white",
+          position: "fixed",
+          top: "49px",
+          left: "250px",
+
+          height: "15px",
+        }}>welcome {user.name}!</h6>
+
         <h1 className="placementword">PLACEMENT AND TRAINING</h1>
         <h6
           style={{
@@ -28,131 +44,173 @@ function Topbar() {
         >
           AN AUTONOMOUS INSTITUTION
         </h6>
-        <Link to="/">
-          <button
-            type="button"
-            class="btn "
-            style={{
-              borderRadius: "30px",
-              backgroundColor: "white",
-              width: "110px",
-              height: "40px",
-              position: "relative",
-              left: "330px",
-              top: "13px",
-              marginRight: "20px",
-              boxShadow: "none !important",
-            }}
-          >
-            {" "}
-            <i class="bi bi-box-arrow-left" style={{ marginRight: "10px" }}></i>
-            Logout
-          </button>
-        </Link>
-        <div className="profile">
-          <h6 className="admin">{user.name}</h6>
-          <FaUser className="user1" />
+
+        <button
+          onClick={logout}
+          type="button"
+          className="btn "
+          style={{
+            borderRadius: "30px",
+            backgroundColor: "white",
+            width: "110px",
+            height: "40px",
+            position: "relative",
+            left: "380px",
+            top: "13px",
+            marginRight: "20px",
+            boxShadow: "none !important",
+          }}
+        >
+          {" "}
+          <i className="bi bi-box-arrow-left" style={{ marginRight: "10px" }}></i>
+          Logout
+        </button>
+
+        <div style={{ position: "fixed", right: '20px', top: "10px" }}>
+
+          {user.profileImage ? (
+            <img
+              src={`${API_BASE_URL}/${user.profileImage}`}
+          alt="Profile"
+          className="rounded-circle"
+          style={{ width: "50px", height: "50px", objectFit: "cover" }}
+            />
+          ) : (
+          <FaUser
+            size={50}
+            style={{ color: "#999", borderRadius: "50%", padding: "10px", background: "#f4f4f4" }}
+          />
+          )}
         </div>
+
       </div>
-       
-     
+
+
       <div className="sidebox">
-      <div className="btnn">
-      {" "}
-          <Link to="/Maindashboard">
-            <button class="btnn ">
-            <i class="bi bi-speedometer"  style={{ marginRight: "10px",paddingLeft:'5px' }} ></i>
-             
-              Dashboard
-            </button>
-          </Link>
-        </div>
-    
         <div className="btnn">
-        <Link to="/Dashboard">
-            <button class="btnn">
-            <i class="bi bi-funnel-fill"   style={{ marginRight: "10px" ,paddingLeft:'5px'}} />
-              Student's Filters
-            </button>
-          </Link>
+          {" "}
+          <NavLink to="/Maindashboard" end>
+            {({ isActive }) => (
+              <button className={`btnn ${isActive ? "bgg" : ""}`}>
+                <i className="bi bi-speedometer" style={{ marginRight: "10px", paddingLeft: "5px" }}></i>
+                Dashboard
+              </button>
+            )}
+          </NavLink>
+        </div>
+
+        <div className="btnn">
+          <NavLink to="/Maindashboard/Dashboard" end>
+            {({ isActive }) => (
+              <button className={`btnn ${isActive ? "bgg" : ""}`}>
+                <i className="bi bi-funnel-fill" style={{ marginRight: "10px", paddingLeft: '5px' }} />
+                Student's Filters
+              </button>
+            )}
+          </NavLink>
         </div>
         <div className="btnn">
           {" "}
-          <Link to="/Training">
-            <button class="btnn">
-              <i class="bi bi-bullseye"   style={{ marginRight: "10px",paddingLeft:'5px' }} />
-              Training
-            </button>
-          </Link>
+          <NavLink to="/Maindashboard/Training">
+            {({ isActive }) => (
+              <button className={`btnn ${isActive ? "bgg" : ""}`}>
+                <i className="bi bi-bullseye" style={{ marginRight: "10px", paddingLeft: '5px' }} />
+                Training
+              </button>
+            )}
+          </NavLink>
+
         </div>
         <div className="btnnn">
           {" "}
-          <Link to="/Placementannounce">
-            <button class="btnn ">
-              <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px'}} />
-              Placement Announcements
-            </button>
-          </Link>
+          <NavLink to="/Maindashboard/Placementannounce">
+            {({ isActive }) => (
+              <button className={`btnn ${isActive ? "bgg" : ""}`}>
+                <GrAchievement style={{ marginRight: "10px", paddingLeft: '5px', fontSize: "20px" }} />
+                Placement Announcements
+              </button>
+            )}
+          </NavLink>
         </div>
-       
+
         <div className="btnn">
-        {" "}
-          <Link to="/Aptitude">
-            <button class="btnn ">
-              <GrAchievement   style={{ marginRight: "10px" ,paddingLeft:'5px'}} />
-              Aptitude
-            </button>
-          </Link>
-        </div>
-        <div className="btnn">
-          <button class="btnn"></button>
-        </div>
-        <div className="btnn">
-          <button class="btnn"></button>
-        </div>
-        <div className="btnn">
-          <button class="btnn"></button>
+          {" "}
+          <NavLink to="/Maindashboard/Aptitude">
+            {({ isActive }) => (
+              <button className={`btnn ${isActive ? "bgg" : ""}`}>
+                <i className="bi bi-pen-fill" style={{ marginRight: "10px", paddingLeft: '5px', fontSize: "15px" }}></i>
+
+                Assessments
+              </button>
+            )}
+          </NavLink>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <NavLink to="/Maindashboard/Accounts">
+            {({ isActive }) => (
+              <button className={`btnn ${isActive ? "bgg" : ""}`}>
+                <i className="bi bi-person-fill-gear" style={{ marginRight: "10px", paddingLeft: '5px', fontSize: "17px" }}></i>
+
+                Accounts
+              </button>
+            )}
+          </NavLink>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <NavLink to="/Maindashboard/Settings">
+            {({ isActive }) => (
+              <button className={`btnn ${isActive ? "bgg" : ""}`}>
+                <i className="bi bi-gear" style={{ marginRight: "10px", paddingLeft: '5px', fontSize: "17px" }}></i>
+
+                Settings
+              </button>
+            )}
+          </NavLink>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
         <div className="btnn">
-          <button class="btnn"></button>
+          <button className="btnn"></button>
         </div>
+        <div className="btnn">
+          <button className="btnn"></button>
+        </div>
+        <div className="btnn">
+          <button className="btnn"></button>
+        </div>
+        <div className="btnn">
+          <button className="btnn"></button>
+        </div>
+
       </div>
 
       <div className="rajalakshmibottomimg">
-        <img src="rajalakshmibottom.png" alt="" />
+        <img src="/rajbtm.png" alt="" />
       </div>
     </>
   );

@@ -120,3 +120,60 @@ table{
   1px 1px 15px #dae5f3,
    1px 1px 20px #dae5f3,
    1px 1px 25px #dae5f3; }
+   
+   .slider-btn {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+  }
+  
+  .slider-btn input {
+    display: none;
+  }
+  
+  .slider-btn .slider {
+    position: absolute;
+    cursor: pointer;
+    background: #ccc;
+    border-radius: 25px;
+    transition: 0.4s;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .slider-btn input:checked + .slider {
+    background: #007bff; 
+  }
+  
+  .slider-btn .slider:before {
+    content: "";
+    position: absolute;
+    height: 17px;
+    width: 17px;
+    left: 4px;
+    bottom: 4px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.4s;
+  }
+  
+  .slider-btn input:checked + .slider:before {
+    transform: translateX(25px);
+  }
+
+  .modal {
+    display: flex; 
+    align-items: center;
+    justify-content: center; 
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); 
+    z-index: 1050; 
+    overflow-y: auto; 
+  }
+  
+  

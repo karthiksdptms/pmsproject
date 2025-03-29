@@ -6,48 +6,72 @@ import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
 import axios from "axios";
 
+import Loading from "./Loading";
+import { Button, Table, Modal } from "react-bootstrap";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function Trainingreports() {
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [trainings, setTrainings] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [reports, setReports] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBatches, setSelectedBatches] = useState([]);
+
+
+  const [scheduleCode, setScheduleCode] = useState("");
+  const [trainingName, setSelectedTrainingName] = useState("");
 
   useEffect(() => {
+    setLoading(true)
+    axios.get(`${API_BASE_URL}/api/attendance/attendance-reports`)
+      .then(response => {
+        setReports(response.data);
+        setLoading(false)
+      })
+      .catch(error => {
+        console.error("Error fetching attendance reports:", error);
+      });
+  }, []);
 
-    axios.get('https://pmsproject-api.vercel.app')
-      .then(result => setTrainings(result.data))
-      .catch(err => console.log(err))
-  }, [])
-
-
-  const filterByDate = (training) => {
-    if (!training.fromdate || !training.todate) return false;
-
-    const trainingStart = new Date(training.fromdate);
-    const trainingEnd = new Date(training.todate);
-
-    const filterStart = fromDate ? new Date(fromDate) : null;
-    const filterEnd = toDate ? new Date(toDate) : null;
-
-    if (filterStart && filterEnd) {
-      return trainingStart >= filterStart && trainingEnd <= filterEnd;
-    }
-    if (filterStart) {
-      return trainingStart >= filterStart;
-    }
-    if (filterEnd) {
-      return trainingEnd <= filterEnd;
-    }
-
-    return true;
+  const handleView = (batches, selectedScheduleCode, trainingName) => {
+    setScheduleCode(selectedScheduleCode);
+    setSelectedTrainingName(trainingName)
+    setSelectedBatches(batches);
+    setShowModal(true);
   };
 
 
+  const [showBatchModal, setShowBatchModal] = useState(false);
+  const [selectedBatchData, setSelectedBatchData] = useState(null);
 
-  const filteredTrainings = trainings.filter(filterByDate);
 
 
+  const fetchBatchAttendance = async (scheduleCode, batchNumber) => {
+    if (!scheduleCode) {
+      console.error("Error: scheduleCode is missing.");
+      return;
+    }
 
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/attendance/attendance/${scheduleCode}/${batchNumber}`);
+
+      if (!response.data.batches || response.data.batches.length === 0) {
+        console.warn("No batch data found for", batchNumber);
+        return;
+      }
+
+      setSelectedBatchData(response.data.batches[0]);
+      setShowBatchModal(true);
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error fetching batch attendance:", error);
+    }
+  };
+
+
+  const totalRecords = reports.length;
+  const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const handleRowsPerPageChange = (e) => {
     const value = parseInt(e.target.value, 10);
@@ -56,239 +80,95 @@ function Trainingreports() {
       setCurrentPage(1);
     }
   };
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(trainings.length / rowsPerPage);
+
+  const totalPages = Math.ceil(reports.length / rowsPerPage);
 
   const startIdx = (currentPage - 1) * rowsPerPage;
-  const displayedData = filteredTrainings.slice(
+  const displayedData = reports.slice(
     startIdx,
     startIdx + rowsPerPage
   );
-  const handleExcelDownload = () => {
-    if (filteredTrainings.length === 0) {
-      alert("No records to export.");
+
+  const handleExport = () => {
+    if (!selectedBatchData || !scheduleCode || !trainingName) {
+      console.error("No data available to export.");
       return;
     }
 
+    const wsData = [
+      ["Register Number", "Department", ...selectedBatchData.dates.map(dateObj => dateObj.date), "Attendance %"]
+    ];
 
-    const filteredData = filteredTrainings.map(({ _id, __v, id, ...rest }) => ({ ...rest }));
+    selectedBatchData.dates[0].students.forEach(student => {
+      const attendanceRecords = selectedBatchData.dates.map(dateObj => {
+        const studentRecord = dateObj.students.find(s => s.registerNumber === student.registerNumber);
+        return studentRecord ? studentRecord.status : "-";
+      });
 
+      const totalDays = attendanceRecords.length;
+      const presentDays = attendanceRecords.filter(status => status === "P" || status === "OD").length;
+      const attendancePercentage = ((presentDays / totalDays) * 100).toFixed(2);
 
-    const keys = Object.keys(filteredData.reduce((acc, obj) => ({ ...acc, ...obj }), {}));
-    const consistentData = filteredData.map((obj) =>
-      keys.reduce((acc, key) => ({ ...acc, [key]: obj[key] || "" }), {})
-    );
+      wsData.push([
+        student.registerNumber,
+        student.department,
+        ...attendanceRecords,
+        `${ attendancePercentage } % `
+      ]);
+    });
 
-    const ws = XLSX.utils.json_to_sheet(consistentData);
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Trainings");
+    XLSX.utils.book_append_sheet(wb, ws, "Attendance");
 
-    const fromDateFormatted = fromDate ? new Date(fromDate).toLocaleDateString("en-CA") : "all_dates";
-    const toDateFormatted = toDate ? new Date(toDate).toLocaleDateString("en-CA") : "all_dates";
-    const fileName = `Trainings_from_${fromDateFormatted}_to_${toDateFormatted}.xlsx`;
-
+    const fileName = `${ scheduleCode } - ${ trainingName } - ${ selectedBatchData.batchNumber }.xlsx`;
     XLSX.writeFile(wb, fileName);
   };
 
 
-  //
-  const [trtype, settrtype] = useState("");
-  const [trainee, settrainee] = useState("");
-  const [fromdate, setfromdate] = useState("");
-  const [todate, settodate] = useState();
-  const [duration, setduration] = useState();
-  const [batch, setbatch] = useState("");
-  const [department, setdepartment] = useState("");
-  const [participated, setparticipated] = useState();
 
-  const Submit = (e) => {
-    e.preventDefault();
 
-    if (trtype != '' && trainee != '' && fromdate != '' && todate != '' && duration != '' && batch != '' && department != '' && participated != 0) {
-      axios
-        .post("https://pmsproject-api.vercel.app/createUser", {
-          trtype,
-          trainee,
-          fromdate: new Date(fromdate).toLocaleDateString("en-CA"),
-          todate: new Date(todate).toLocaleDateString("en-CA"),
-          duration,
-          batch,
-          department,
-          participated,
-        })
-        .then((result) => {
-          console.log("Success:", result.data),
-            window.location.reload()
-        })
-        .catch((err) => console.error("Error:", err));
-    }
-    else {
-      alert("Please fill all fields");
-    }
-  };
-
-  const [editData, setEditData] = useState({
-    _id: "",
-    trtype: "",
-    trainee: "",
-    fromdate: "",
-    todate: "",
-    duration: "",
-    batch: "",
-    department: "",
-    participated: "",
-  });
-
-  const formatDate = (isoDate) => {
-    if (!isoDate) return "";
-    return isoDate.split("T")[0];
-  };
-
-  const handleEditClick = (training) => {
-    setEditData({
-      _id: training._id,
-      trtype: training.trtype,
-      trainee: training.trainee,
-      fromdate: formatDate(training.fromdate),
-      todate: formatDate(training.todate),
-      duration: training.duration,
-      batch: training.batch,
-      department: training.department,
-      participated: training.participated,
-    });
-  };
-
-  const handleUpdate = (e) => {
-    e.preventDefault();
-
-    axios
-      .put(`https://pmsproject-api.vercel.app/updateUser/${editData._id}`, editData)
-      .then((result) => {
-        console.log("Updated Successfully:", result.data);
-        window.location.reload();  // Refresh table after update
-      })
-      .catch((err) => console.error("Update Error:", err));
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this record?")) {
-      axios
-        .delete(`https://pmsproject-api.vercel.app/deleteUser/${id}`)
-        .then((response) => {
-          alert("Record deleted successfully!");
-          setTrainings(trainings.filter((training) => training._id !== id)); // Remove from UI
-        })
-        .catch((error) => {
-          console.error("Error deleting record:", error);
-        });
-    }
-  };
   return (
     <>
-      <Topbar />
-      <Link to="/Training">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          style={{
-            marginLeft: "20px",
-            border: "none",
+
+
+      <div className="had">
+        <Link to="/Maindashboard/Training" style={{ textDecoration: "none", color: "black" }}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            style={{
+              marginLeft: "20px",
+              border: "none",
+              position: "relative",
+              top: "95px",
+              right: "40px",
+              fontSize: "35px",
+              color: "black",
+              backgroundColor: "transparent",
+            }}
+          >
+            <IoIosArrowBack />
+          </button>
+          <h2 style={{
             position: "relative",
-
-            top: "95px",
-            right: "40px",
-            left: "210px",
+            top: "45px",
+            left: "30px",
+            fontFamily: "poppins",
             fontSize: "35px",
-            color: "black",
-            backgroundColor: "transparent",
-            zIndex: "100",
-          }}
-        >
-          <IoIosArrowBack />
-        </button>
-      </Link>
-      <h2
-        style={{
-          position: "relative",
-          left: "285px",
-          top: "45px",
-          width: "100px",
-        }}
-      >
-        Report's
-      </h2>
-      <div>
-
-        <div className="row mb-3" style={{ position: "relative", left: "320px", top: "70px", zIndex: "100",width:"600px" }}>
-          <div className="col-md-3">
-            <label>From Date:</label>
-            <input type="date" className="form-control" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
-          </div>
-          <div className="col-md-3">
-            <label>To Date:</label>
-            <input type="date" className="form-control" value={toDate} onChange={(e) => setToDate(e.target.value)} />
-          </div>
-        </div></div>
-      <button className="btn btn-success mb-3" style={{
-        color: "white",
-        backgroundcolor: "green",
-        margin: "20px",
-        width: "120px",
-        position: "relative",
-        left: "1280px",
-        borderRadius: "30px",
-        zIndex: "100"
-      }}
-        onClick={handleExcelDownload}>
-        <i class="bi bi-file-earmark-excel" style={{ marginRight: "10px" }}></i>
-        Excel
-        <i class="bi bi-download" style={{ marginLeft: "5PX" }}></i>
-      </button>
-
-
-
-      <div
-        className="table"
-        style={{
-
-          overflowX: "auto",
-          overflowY: "auto",
-          maxHeight: "700px",
-          minHeight: "400px",
-          maxWidth: "1200px",
-          position: "relative",
-          bottom: '50px'
-        }}
-      >
-        <button className="btn" style={{ backgroundColor: "white", border: "none", color: " #3c6db9" }} data-bs-toggle="modal" data-bs-target="#addtrainModal" ><i class="bi bi-plus-circle-fill" style={{ fontSize: "40px", position: "relative", top: "70px", left: "30px" }}></i></button> <h4 className="mb-4" style={{ position: "relative", left: "100px", top: "30px" }}>
-          Total Records: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white", position: "relative", lef: "1500px" }}>{filteredTrainings.flat().length}</span>
+            width: "100px",
+          }}>
+            Report's
+          </h2>
+        </Link>
+        <h4 className="mb-4" style={{ position: "relative", top: "70px", left: "50px", width: '350px' }}>
+          Total Reports: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{totalRecords}</span>
         </h4>
-        <div className="modal fade" id="addtrainModal" tabIndex="-1">
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title"> Add New Training</h5>
-                <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
-              </div>
-              <div className="modal-body">
-                <input type="text" className="form-control mb-2" placeholder="Type" name="type" onChange={(e) => settrtype(e.target.value)} required />
-                <input type="text" className="form-control mb-2" placeholder="Trainee" name="trainee" onChange={(e) => settrainee(e.target.value)} required />
-                <input type="date" className="form-control mb-2" name="fromDate" onChange={(e) => setfromdate(e.target.value)} required />
-                <input type="date" className="form-control mb-2" name="toDate" onChange={(e) => settodate(e.target.value)} required />
-                <input type="text" className="form-control mb-2" placeholder="Duration" name="duration" onChange={(e) => setduration(e.target.value)} required />
-                <input type="text" className="form-control mb-2" placeholder="Batch" name="batch" onChange={(e) => setbatch(e.target.value)} required />
-                <input type="text" className="form-control mb-2" placeholder="Department" name="department" onChange={(e) => setdepartment(e.target.value)} required />
-                <input type="number" className="form-control mb-2" placeholder="Participated" name="participated" onChange={(e) => setparticipated(e.target.value)} required />
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-success" data-bs-dismiss="modal" onClick={Submit}>Save</button>
-              </div>
-            </div>
-          </div>
-        </div>
+
+
         <div
           className="flex justify-right items-center gap-4 mt-4 "
-          style={{ position: "relative", left: "730px", bottom: "20px", marginRight: "30px" }}
+          style={{ position: "relative", left: "800px", bottom: "-20px", width: '460px' }}
         >
           <label>
             {" "}
@@ -297,18 +177,17 @@ function Trainingreports() {
               type="number"
               value={rowsPerPage}
               onChange={handleRowsPerPageChange}
-              style={{ width: "50px", padding: "5px" }}
+              style={{ width: "50px", padding: "5px", marginRight: "20PX" }}
             />
           </label>
           <button
             onClick={() =>
               setCurrentPage((prev) => Math.max(prev - 1, 1))
             }
-            className="btn "
-            style={{ marginLeft: "20px" }}
+            className="btn"
             disabled={currentPage === 1}
           >
-            <i class="bi bi-chevron-double-left"></i>
+            <i className="bi bi-chevron-double-left"></i>
           </button>
 
           <span className="text-lg">
@@ -317,89 +196,153 @@ function Trainingreports() {
 
           <button
             onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              setCurrentPage((prev) =>
+                Math.min(prev + 1, totalPages)
+              )
             }
             className="btn"
             disabled={currentPage === totalPages}
           >
-            <i class="bi bi-chevron-double-right arr"></i>
+            <i className="bi bi-chevron-double-right arr"></i>
           </button>
         </div>
-        <table
-          border="1"
-          id="my-table"
-          style={{
-            marginTop: "20px",
-            width: "98%",
-            position: "relative",
-            left: "2%",
-            top: "0px",
-          }}
-          class="table table-striped  table-hover tabl"
-        >
-          <thead>
-            <tr>
-              <th>TYPE</th>
-              <th>TRAINEE</th>
-              <th>FROM </th>
-              <th>TO </th>
-              <th>DURATION</th>
-              <th>BATCH</th>
-              <th>DEPARTMENT</th>
-              <th>PARTICIPATED</th>
-              <th>ACTIONS</th>
-            </tr>
-          </thead>
-          <tbody>
+        {loading ? (
+          <Loading />
+        ) : (
+          <div className="container mt-2" style={{ position: "relative", right: "0px", top: "50px" }}>
+            <div style={{
+              position: "relative",
+              top: "20px",
+              left: "-20px",
+              overflowY: "auto",
 
-            {displayedData.length > 0 ? (
-              displayedData.map((training) => (
-                <tr key={training.id}>
-                  <td>{training.trtype}</td>
-                  <td>{training.trainee}</td>
-                  <td>{new Date(training.fromdate).toLocaleDateString("en-GB")}</td>
-                  <td>{new Date(training.todate).toLocaleDateString("en-GB")}</td>
-                  <td>{training.duration}</td>
-                  <td>{training.batch}</td>
-                  <td>{training.department}</td>
-                  <td>{training.participated}</td>
-                  <td>
-                    <button className="btn btn-warning btn-sm mx-3 " data-bs-toggle="modal" data-bs-target="#addEditModal" onClick={() => handleEditClick(training)}>Edit</button>
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(training._id)} >Delete</button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr><td colSpan="9" className="text-center">No records found</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      <div className="modal fade" id="addEditModal" tabIndex="-1">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title"> Edit Training</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div className="modal-body">
-              <input type="text" className="form-control mb-2" placeholder="Type" name="type" value={editData.trtype} onChange={(e) => setEditData({ ...editData, trtype: e.target.value })} />
-              <input type="text" className="form-control mb-2" placeholder="Trainee" name="trainee" value={editData.trainee} onChange={(e) => setEditData({ ...editData, trainee: e.target.value })} />
-              <input type="date" className="form-control mb-2" name="fromDate" value={editData.fromdate}
-                onChange={(e) => setEditData({ ...editData, fromdate: e.target.value })} />
-              <input type="date" className="form-control mb-2" name="toDate" value={editData.todate}
-                onChange={(e) => setEditData({ ...editData, todate: e.target.value })} />
-              <input type="text" className="form-control mb-2" placeholder="Duration" name="duration" value={editData.duration} onChange={(e) => setEditData({ ...editData, duration: e.target.value })} />
-              <input type="text" className="form-control mb-2" placeholder="Batch" name="batch" value={editData.batch} onChange={(e) => setEditData({ ...editData, batch: e.target.value })} />
-              <input type="text" className="form-control mb-2" placeholder="Department" name="department" value={editData.department} onChange={(e) => setEditData({ ...editData, department: e.target.value })} />
-              <input type="number" className="form-control mb-2" placeholder="Participated" name="participated" value={editData.participated} onChange={(e) => setEditData({ ...editData, participated: e.target.value })} />
-            </div>
-            <div className="modal-footer">
-              <button className="btn btn-success" data-bs-dismiss="modal" onClick={handleUpdate}>Save</button>
+
+              maxHeight: "800px",
+            }}>
+              <div style={{ position: "relative", left: "-230px" }}>
+                <Table striped bordered hover className="mt-3" >
+                  <thead>
+
+                    <tr>
+                      <th>Schedule Code</th>
+                      <th>Training Name</th>
+                      <th>Trainee</th>
+                      <th>No. of Batches</th>
+                      <th>Actions</th>
+                    </tr>
+
+                  </thead>
+                  <tbody>
+                    {displayedData.length > 0 ? (
+                      displayedData.map((report, index) => (
+                        <tr key={index}>
+                          <td>{report.scheduleCode}</td>
+                          <td>{report.trainingName}</td>
+                          <td>{report.trainee}</td>
+                          <td>{report.batches.length}</td>
+                          <td>
+                            <Button variant="primary" onClick={() => handleView(report.batches, report.scheduleCode, report.trainingName)}>View</Button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="4" className="text-center">No records found</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </Table>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+        <Modal show={showModal} onHide={() => setShowModal(false)} top >
+          <Modal.Header closeButton>
+            <Modal.Title>Select Batch</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {selectedBatches.length > 0 ? (
+              selectedBatches.map((batch, index) => (
+                <Button key={index} variant="outline-primary" className="m-2" onClick={() => fetchBatchAttendance(scheduleCode, batch.batchNumber)}>
+                  {batch.batchNumber}
+                </Button>
+              ))
+            ) : (
+              <p>No batches available</p>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+
+          </Modal.Footer>
+        </Modal>
+        {showBatchModal && selectedBatchData && (
+          <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+            <div className="modal-dialog modal-xl modal-dialog-centered">
+              <div className="modal-content" style={{ width: "100%" }}>
+                <div className="modal-header">
+                  <h5 className="modal-title">{`Schedule Code: ${ scheduleCode } | Training Name: ${ trainingName }`}</h5>
+
+                  <button className="btn btn-success" style={{ width: '120px', position: "relative", left: '360px' }} onClick={handleExport}> <i className="bi bi-file-earmark-excel" style={{ marginRight: "10px" }}></i>
+                    Excel
+                    <i className="bi bi-download" style={{ marginLeft: "5PX" }}></i></button>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowBatchModal(false)}
+                  ></button>
+                </div>
+
+
+                <div className="modal-body">
+                  <table className="table table-striped table-bordered table-hover" style={{ width: "100%", position: "relative", left: '0px' }}>
+                    <thead>
+                      <tr>
+                        <th>Register Number</th>
+                        <th>Department</th>
+                        {selectedBatchData.dates.map((dateObj) => (
+                          <th key={dateObj.date}>{dateObj.date}</th>
+                        ))}
+                        <th>Attendance %</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedBatchData.dates[0].students.map((student, index) => {
+                        const attendanceRecords = selectedBatchData.dates.map((dateObj) => {
+                          const studentRecord = dateObj.students.find((s) => s.registerNumber === student.registerNumber);
+                          return studentRecord ? studentRecord.status : "-";
+                        });
+
+                        const totalDays = attendanceRecords.length;
+                        const presentDays = attendanceRecords.filter((status) => status === "P" || status === "OD").length;
+                        const attendancePercentage = ((presentDays / totalDays) * 100).toFixed(2);
+
+                        return (
+                          <tr key={index}>
+                            <td>{student.registerNumber}</td>
+                            <td>{student.department}</td>
+                            {attendanceRecords.map((status, i) => (
+                              <td key={i}>{status}</td>
+                            ))}
+                            <td>{attendancePercentage}%</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="modal-footer">
+
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+
       </div>
+
+
 
 
 

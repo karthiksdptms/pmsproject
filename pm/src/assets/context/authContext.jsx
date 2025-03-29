@@ -1,58 +1,69 @@
-import React, {  useContext,createContext, useState } from 'react'
-const userContext=createContext()
-import { useEffect } from 'react'
+
+import React, { useContext, createContext, useState, useEffect } from "react";
+import axios from "axios";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const userContext = createContext();
+
+const AuthContext = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
 
-const authContext =({children})=>{
-    const [user,setUser]=useState(null)
-    const [loading,setLoading]=useState(true)
+  useEffect(() => {
+    const verifyUser = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        if (token) {
+          const response = await axios.get(`${API_BASE_URL}/api/auth/verify`, {
+            headers: {
+              "Authorization": `Bearer ${token}`
+            },
+          });
 
 
-    useEffect(()=>{
-      const verifyUser = async()=>{
-        try{
-            const token= localStorage.getItem('token')
-            if(token){
-            const response= await axios.get('https://pmsproject-api.vercel.app/api/auth/verify',{
-              headers:{
-              "Authorization":`Bearer ${token}`
-            }
-            })
-            if(response.data.success){
-              setUser(response.data.user)
 
-            }
-        }else{
-          setUser(null)
-        }
-      }catch(error){
-          if(error.response && !error.response.data.error){
-            setUser(null)
+          if (response.data.success) {
+            setUser(response.data.user);
 
+          } else {
+
+
+            setUser(null);
+            setLoading(false)
           }
-          
-        } finally{
-          setLoading(false)
         }
+
+      } catch (error) {
+        if (error.response && !error.response.data.error) {
+          setUser(null);
+        }
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
-      verifyUser()
-    },[])
+    };
+    verifyUser();
+  }, []);
 
-    const login=(user)=>{
-        setUser(user)
-    }
-    const logout=()=>{
-        setUser(null)
-        localStorage.removeItem("token")
+  const login = (user) => {
+    setUser(user);
 
-    }
-    return(
-      <userContext.Provider value={{user,login,logout,loading}}>
-        {children}
-      </userContext.Provider>
+  };
 
-    )
+  const logout = () => {
+    setUser(null);
 
-}
- export const useAuth=()=>useContext(userContext)
-export default authContext;
+    localStorage.removeItem("user");
+
+  };
+
+  return (
+    <userContext.Provider value={{ user, login, logout, loading }}>
+      {children}
+    </userContext.Provider>
+  );
+};
+
+export const useAuth = () => useContext(userContext);
+export default AuthContext;

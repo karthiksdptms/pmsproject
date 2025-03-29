@@ -2,29 +2,29 @@ import React, { useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
-import "bootstrap-icons/font/bootstrap-icons.css"; 
+import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from 'axios';
 import { useAuth } from "../context/authContext";
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 function Login() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const [error,setError]=useState(null)
-  const {login} =useAuth()
-  
+  const [error, setError] = useState(null)
+  const { login } = useAuth()
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null); 
+    setError(null);
 
     try {
-      const response = await axios.post("https://pmsproject-api.vercel.app/api/auth/login", {
-        email,
-        password,
-      });
 
-      console.log("Login Response:", response.data); 
+      const response = await axios.post(`${API_BASE_URL}/api/auth/login`,
+        { email, password })
+
+
+      console.log("Login Response:", response.data);
 
       if (response.data.success) {
         login(response.data.user);
@@ -32,8 +32,10 @@ function Login() {
 
         if (response.data.user.role === "admin") {
           navigate("/MainDashboard");
-        } else {
+        } else if (response.data.user.role === "student") {
           navigate("/Studentdashboard");
+        } else {
+          navigate("/");
         }
       } else {
         setError("Login failed. Please check credentials.");
@@ -42,7 +44,7 @@ function Login() {
       console.error("Login Error:", error.response ? error.response.data : error);
       setError(error.response?.data?.error || "Server error. Please try again.");
     }
-};
+  };
 
 
   return (
@@ -58,8 +60,8 @@ function Login() {
         <h1 className="believe">POSSIBILITIES</h1>
         <div className="log">
           <h2 className="logs">LOGIN</h2>
-        
-          {error &&<p className="text-red-500" style={{color:"red"}}>{error}</p>}
+
+          {error && <p className="text-red-500" style={{ color: "red", position: 'relative', top: "20px" }}>{error}</p>}
           <form onSubmit={handleSubmit}>
             <div>
               <input
@@ -67,8 +69,8 @@ function Login() {
                 value={email}
                 className="reg1"
                 onChange={(e) => setEmail(e.target.value)}
-                
-                placeholder="Enter Admin email"
+
+                placeholder="Enter email"
                 required
               />
               <div style={{ position: "relative", display: "inline-block" }}>
@@ -77,7 +79,7 @@ function Login() {
                   value={password}
                   className="pass1"
                   onChange={(e) => setPassword(e.target.value)}
-                 
+
                   placeholder="Enter password"
                   required
                 />
@@ -85,16 +87,22 @@ function Login() {
                   type="button"
                   onClick={() => setIsPasswordVisible((prev) => !prev)}
                   className="password-toggle"
-                  style={{backgroundColor:"white",border:"none",fontSize:"23px",position:"relative",bottom:"-16.5px",left:"-6px"
+                  style={{
+                    backgroundColor: "white", border: "none", fontSize: "23px", position: "relative", bottom: "-16.5px", left: "-6px"
                   }}
                 >
                   <i className={isPasswordVisible ? "bi bi-eye-slash" : "bi bi-eye"}></i>
                 </button>
+                <br />
+
+
               </div>
+
               <br />
               <button className="btn btn-primary submit" type="submit">
                 Submit
               </button>
+
             </div>
             <FaUser className="user" />
           </form>

@@ -10,19 +10,9 @@ import { IoIosArrowBack } from "react-icons/io";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-const departmentOptions = [
-  "AIDS",
-  "ECE",
-  "CCE",
-  "MECH",
-  "CSE",
-  "AIML",
-  "VLSI",
-  "CSBS",
-  "BIO-TECH",
-  "Others",
-];
-const batchOptions = ["2023-2027", "2022-2026", "2021-2025", "2020-2024", "2025-2028", "Others"];
+import Loading from "./Loading";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const cgpaOptions = [
   "9.5 and above",
   "9 and above",
@@ -36,17 +26,10 @@ const cgpaOptions = [
 ];
 const arrearsOptions = ["0", "1", "2", "3", "4", "5", "6"];
 const historyOfArrearsOptions = ["0", "1", "2", "3", "4", "5", "6"];
-const aoiOptions = [
-  "Full stack(react)",
-  "Symposium",
-  "Hackathon",
-  "IOT",
-  "WEB",
-  "Data Analyst",
-  "Frontend development",
-  "API Developer",
-  "Others",
-];
+const placementOptions = ["Placed", "Not-placed"];
+const offertypeOptions = ["Elite", "Dream", "Superdream", "Fair"];
+
+
 function Dashboard() {
   const [hoverVisible, setHoverVisible] = useState(false);
   const [hoverVisiblee, setHoverVisiblee] = useState(false);
@@ -72,6 +55,8 @@ function Dashboard() {
     cgpa: "",
     arrears: "",
     historyOfArrears: "",
+    placement: "",
+    offertype: "",
     aoi: [],
     language: "",
     otherDepartment: "",
@@ -105,36 +90,65 @@ function Dashboard() {
     setFilters((prev) => ({ ...prev, [key]: e.target.value }));
   };
 
-  const [students,setstudents]=useState([])
+
+  const handleAllCheckboxChange = (e, key) => {
+    const isChecked = e.target.checked;
+    if (isChecked) {
+      setFilters((prev) => ({ ...prev, [key]: [] }));
+    }
+  }; const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    axios.get("https://pmsproject-api.vercel.app/getstudents")
-      .then(response => setstudents(response.data))
-      .catch(error => console.error("Error fetching students:", error));
-    }, []);
+
+    setLoading(true);
+    axios
+      .get(`${API_BASE_URL}/api/students/getstudents`)
+      .then((response) => {
+        console.log("Fetched Students:", response.data);
+        setStudents(response.data.students || []);
+      })
+      .catch((error) => console.error("Error fetching students:", error))
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   const filteredStudents = students.filter((student) => {
     return (
       (filters.department.length === 0 ||
-        filters.department.includes(student.DEPARTMENT) ||
+        filters.department.includes(student.department) ||
         (showOtherDepartment &&
-          student.DEPARTMENT.includes(filters.otherDepartment))) &&
+          student.department?.includes(filters.otherDepartment))) &&
       (filters.batch.length === 0 ||
-        filters.batch.includes(student.BATCH) ||
-        (showOtherBatch && student.BATCH.includes(filters.otherBatch))) &&
+        filters.batch.includes(student.batch) ||
+        (showOtherBatch && student.batch?.includes(filters.otherBatch))) &&
       (filters.cgpa === "" ||
-        parseFloat(student.CPGA) >= parseFloat(filters.cgpa)) &&
+        parseFloat(student.cgpa) >= parseFloat(filters.cgpa)) &&
       (filters.arrears === "" ||
-        student.ARREARS.toString() === filters.arrears) &&
+        student.arrears?.toString() === filters.arrears) &&
       (filters.historyOfArrears === "" ||
-        student.HOA.toString() === filters.historyOfArrears) &&
+        student.hoa?.toString() === filters.historyOfArrears) &&
+      (filters.placement === "" ||
+        student.placement?.toString() === filters.placement) &&
+      (filters.offertype === "" ||
+        (Array.isArray(student.offers) &&
+          student.offers.some(
+            (offer) =>
+              offer.offertype?.toString().toLowerCase() ===
+              filters.offertype.toLowerCase()
+          ))) &&
       (filters.aoi.length === 0 ||
-        filters.aoi.includes(student.AOI) ||
-        (showOtherAoi && student.AOI.includes(filters.otherAoi))) &&
+        filters.aoi.includes(student.aoi) ||
+        (showOtherAoi && student.aoi?.includes(filters.otherAoi))) &&
       (filters.language === "" ||
-        student.LANGUAGE.toLowerCase().includes(filters.language.toLowerCase()))
+        (student.language &&
+          student.language.toLowerCase().includes(filters.language.toLowerCase())))
     );
   });
-  
+
+
+
 
   const [showDiv, setShowDiv] = useState(false);
 
@@ -186,22 +200,79 @@ function Dashboard() {
     }
   };
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(students.length / rowsPerPage);
+  const totalPages = Math.ceil(filteredStudents.length / rowsPerPage);
 
   const startIdx = (currentPage - 1) * rowsPerPage;
   const displayedData = filteredStudents.slice(
     startIdx,
     startIdx + rowsPerPage
   );
-  //new
-  
+
+
+  const [departmentOptions, setDepartmentOptions] = useState([]);
+
+  const fetchDepartments = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/filters/getdepartments`);
+      const departmentNames = res.data.map((dept) => dept.name);
+      setDepartmentOptions(departmentNames);
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDepartments();
+  }, []);
+
+  const [batchOptions, setBatchOptions] = useState([]);
+
+
+  const fetchBatches = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/filters/getbatch`);
+      const batchNames = res.data.map((batch) => batch.batchName);
+      setBatchOptions([...batchNames, "Others"]);
+    } catch (error) {
+      console.error("Error fetching batches:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBatches();
+  }, []);
+
+  const [aoiOptions, setAoiOptions] = useState([]);
+
+  const fetchAoiOptions = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/filters/getaoi`);
+      console.log("AOI options received:", res.data);
+      const aoiNames = res.data.map((aoi) => aoi.aoiName);
+      console.log("Mapped AOI Names:", aoiNames);
+      setAoiOptions(aoiNames);
+    } catch (error) {
+      console.error("Error fetching AOI options:", error);
+    }
+  };
+
+
+
+  useEffect(() => {
+    fetchAoiOptions();
+  }, []);
+
+  const profileImageUrl = selectedData.profileImage
+    ? `${API_BASE_URL}/${selectedData.profileImage}`
+    : null;
+
 
   return (
     <>
       <div className="">
         <div className="clr"></div>
-        <div class="container" className="contain">
-          <Topbar />
+        <div className="  contain" >
+
 
           <div className="">
             <div
@@ -216,7 +287,7 @@ function Dashboard() {
               <Link to="/Maindashboard">
                 <button
                   type="button"
-                  class="btn btn-secondary"
+                  className="btn btn-secondary"
                   style={{
                     marginLeft: "20px",
                     border: "none",
@@ -249,25 +320,26 @@ function Dashboard() {
                 <div>
                   <div className="lable1">
                     <div>
-                    <label style={{ fontSize: "23px" }}>Department:</label>
+                      <label style={{ fontSize: "23px" }}>Department:</label>
                       <div >
                         <div
-                          
+
                           onMouseEnter={() => setHoverVisible(true)}
                           onMouseLeave={() => setHoverVisible(false)}
                         >
                           <div className="par">
-                           <div style={{border:"gray 1px solid",padding:"9px",width:"200px",color:"grey"}}> <label style={{ fontSize: "15.5px" }}>
-                             Select Department:
+                            <div style={{ border: "gray 1px solid", padding: "9px", width: "200px", color: "grey" }}> <label style={{ fontSize: "15.5px" }}>
+                              Select Department:
                             </label></div>
                           </div>
                           {hoverVisible && (
-                            <div className="absolute top-full mt-2 w-48 p-4 bg-gray-100 shadow-md rounded-lg" style={{border:" 1px solid rgb(184, 180, 180)",width:"170px",position:"relative"
-                              ,bottom:"2px",boxShadow:"0 0 5px rgb(177, 177, 177)"
+                            <div className="absolute top-full mt-2 w-48 p-4 bg-gray-100 shadow-md rounded-lg" style={{
+                              border: " 1px solid rgb(184, 180, 180)", width: "170px", position: "relative"
+                              , bottom: "2px", boxShadow: "0 0 5px rgb(177, 177, 177)"
                             }}>
                               <label>
                                 <input
-                                className="form-check-input"
+                                  className="form-check-input"
                                   type="checkbox"
                                   checked={filters.department.length === 0}
                                   onChange={(e) =>
@@ -283,9 +355,7 @@ function Dashboard() {
                                     className="form-check-input"
                                     value={dept}
                                     checked={filters.department.includes(dept)}
-                                    onChange={(e) =>
-                                      handleCheckboxChange(e, "department")
-                                    }
+                                    onChange={(e) => handleCheckboxChange(e, "department")}
                                   />
                                   {dept}
                                 </div>
@@ -293,12 +363,12 @@ function Dashboard() {
                               {showOtherDepartment && (
                                 <div>
                                   <input
-                                                        style={{
-                                                          marginBottom: "10px",
-                                                          padding: "8px",
-                                                          width: "100%",
-                                                          maxWidth: "300px",
-                                                        }}
+                                    style={{
+                                      marginBottom: "10px",
+                                      padding: "8px",
+                                      width: "100%",
+                                      maxWidth: "300px",
+                                    }}
                                     type="text"
                                     className="form-check-input"
                                     placeholder="Enter Department"
@@ -317,24 +387,26 @@ function Dashboard() {
                 </div>
                 <div className="lable1">
                   <div>
-                  <label style={{ fontSize: "23px" }}>Batch:</label>
+                    <label style={{ fontSize: "23px" }}>Batch:</label>
                     <div >
-                    
+
                       <div
                         className="relative w-40 h-40 bg-blue-300 rounded-lg flex items-center justify-center cursor-pointer"
                         onMouseEnter={() => setHoverVisiblee(true)}
                         onMouseLeave={() => setHoverVisiblee(false)}
                       >
-                       <div style={{border:"gray 1px solid",padding:"9px",width:"200px",color:"grey"}}> <label style={{ fontSize: "15.5px" }}>
-                             Select Batch:
-                            </label></div>
+                        <div style={{ border: "gray 1px solid", padding: "9px", width: "200px", color: "grey" }}> <label style={{ fontSize: "15.5px" }}>
+                          Select Batch:
+                        </label></div>
                         <br />
                         {hoverVisiblee && (
-                          <div className="absolute top-full mt-2 w-48 p-4 bg-gray-100 shadow-md rounded-lg" style={{border:" rgb(184, 180, 180) 1px solid",width:"180px",position:"relative"
-                            ,bottom:"26px",boxShadow:"0 0 5px rgb(177, 177, 177)"}}>
+                          <div className="absolute top-full mt-2 w-48 p-4 bg-gray-100 shadow-md rounded-lg" style={{
+                            border: " rgb(184, 180, 180) 1px solid", width: "180px", position: "relative"
+                            , bottom: "26px", boxShadow: "0 0 5px rgb(177, 177, 177)"
+                          }}>
                             <label>
                               <input
-                              className="form-check-input"
+                                className="form-check-input"
                                 type="checkbox"
                                 checked={filters.batch.length === 0}
                                 onChange={(e) =>
@@ -343,36 +415,22 @@ function Dashboard() {
                               />
                               All
                             </label>
-                            {batchOptions.map((batch) => (
-                              <div key={batch}>
-                                <input
-                                  type="checkbox"
-                                  className="form-check-input"
-                                  value={batch}
-                                  checked={filters.batch.includes(batch)}
-                                  onChange={(e) =>
-                                    handleCheckboxChange(e, "batch")
-                                  }
-                                />{" "}
-                                {batch}
-                              </div>
-                            ))}
-                            {showOtherBatch && (
-                              <input
-                              style={{
-                                marginBottom: "10px",
-                                padding: "8px",
-                                width: "100%",
-                                maxWidth: "300px",
-                              }}
-                              className="form-check-input"
-                                type="text"
-                                placeholder="Enter Batch"
-                                onChange={(e) =>
-                                  handleInputChange(e, "otherBatch")
-                                }
-                              />
-                            )}
+                            {batchOptions
+                              .filter((batch) => batch !== "Others")
+                              .map((batch) => (
+                                <div key={batch}>
+                                  <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    value={batch}
+                                    checked={filters.batch.includes(batch)}
+                                    onChange={(e) => handleCheckboxChange(e, "batch")}
+                                  />{" "}
+                                  {batch}
+                                </div>
+                              ))}
+
+
                           </div>
                         )}
                       </div>
@@ -381,17 +439,22 @@ function Dashboard() {
                 </div>
                 <div className="lable1">
                   <div>
-                    <label style={{ fontSize: "23px" }}>CGPA:</label><br />
-                    <select onChange={(e) => handleSelectChange(e, "cgpa")} style={{
+                    <label htmlFor="cgpaSelect" style={{ fontSize: "23px" }}>CGPA:</label><br />
+                    <select
+                      id="cgpaSelect"
+                      name="cgpa"
+                      onChange={(e) => handleSelectChange(e, "cgpa")}
+                      style={{
                         marginBottom: "10px",
                         padding: "8px",
                         width: "100%",
                         maxWidth: "300px",
-                      }}>
-                         <option value="" disabled>
-                    select CGPA:
-                  </option>
-                      <option value="" >ANY</option>
+                      }}
+                    >
+                      <option value="" disabled selected>
+                        Select CGPA:
+                      </option>
+                      <option value="">ANY</option>
                       {cgpaOptions.map((cgpa) => (
                         <option key={cgpa} value={cgpa.split(" ")[0]}>
                           {cgpa}
@@ -400,18 +463,27 @@ function Dashboard() {
                     </select>
                   </div>
                 </div>
+
                 <div className="lable1">
                   <div>
-                    <label style={{ fontSize: "23px" }}>Arrears:</label><br />
-                    <select onChange={(e) => handleSelectChange(e, "arrears")} style={{
+                    <label htmlFor="arrearsSelect" style={{ fontSize: "23px" }}>
+                      Arrears:
+                    </label>
+                    <br />
+                    <select
+                      id="arrearsSelect"
+                      name="arrears"
+                      onChange={(e) => handleSelectChange(e, "arrears")}
+                      style={{
                         marginBottom: "10px",
                         padding: "8px",
                         width: "100%",
                         maxWidth: "300px",
-                      }}>
-                    <option value="" disabled>
-                    select Arrears:
-                  </option>
+                      }}
+                    >
+                      <option value="" disabled selected>
+                        Select Arrears:
+                      </option>
                       <option value="">ANY</option>
                       {arrearsOptions.map((arr) => (
                         <option key={arr} value={arr}>
@@ -421,25 +493,26 @@ function Dashboard() {
                     </select>
                   </div>
                 </div>
+
                 <div className="lable1">
                   <div>
-                    <label style={{ fontSize: "23px" }}>
+                    <label htmlFor="hoaSelect" style={{ fontSize: "23px" }}>
                       History of Arrears:
                     </label>
                     <select
-                    
-                      onChange={(e) =>
-                        handleSelectChange(e, "historyOfArrears")
-                      }
+                      id="hoaSelect"
+                      name="historyOfArrears"
+                      onChange={(e) => handleSelectChange(e, "historyOfArrears")}
                       style={{
                         marginBottom: "10px",
                         padding: "8px",
                         width: "210px",
                         maxWidth: "300px",
                       }}
-                    >  <option value="" disabled>
-                    select HOA:
-                  </option>
+                    >
+                      <option value="" disabled selected>
+                        Select HOA:
+                      </option>
                       <option value="">ANY</option>
                       {historyOfArrearsOptions.map((hoa) => (
                         <option key={hoa} value={hoa}>
@@ -449,85 +522,147 @@ function Dashboard() {
                     </select>
                   </div>
                 </div>
+
                 <div
                   className="lable1"
                   style={{ left: "550px", bottom: "575px" }}
                 >
                   <div>
-                  <label style={{ fontSize: "23px" }}>Area Of Intrest:</label>
-                  <div >
-      <div
-        className="relative w-40 h-40 bg-blue-300 rounded-lg flex items-center justify-center cursor-pointer"
-        onMouseEnter={() => setHoverVisibleee(true)}
-        onMouseLeave={() => setHoverVisibleee(false)}
-      ><div style={{border:"gray 1px solid",padding:"9px",width:"200px",color:"grey"}}> <label style={{ fontSize: "15.5px" }}>
-      Select Area of Interest:
-     </label></div>
-                    <br />
-                    {hoverVisibleee && (
-          <div className="absolute top-full mt-2 w-48 p-4 bg-gray-100 shadow-md rounded-lg" style={{border:" rgb(184, 180, 180) 1px solid",width:"270px",position:"relative"
-            ,bottom:"26px",boxShadow:"0 0 5px rgb(177, 177, 177)"}}>
-            <label>
-                      <input
-                      className="form-check-input"
-                        type="checkbox"
-                        checked={filters.aoi.length === 0}
-                        onChange={(e) => handleAllCheckboxChange(e, "aoi")}
-                      />
-                      All
-                    </label>
-                    {aoiOptions.map((aoi) => (
-                      <div key={aoi}>
-                        <input
-                        className="form-check-input"
-                          type="checkbox"
-                          value={aoi}
-                          checked={filters.aoi.includes(aoi)}
-                          onChange={(e) => handleCheckboxChange(e, "aoi")}
-                        />{" "}
-                        {aoi}
+                    <label style={{ fontSize: "23px" }}>Area Of Intrest:</label>
+                    <div >
+                      <div
+                        className="relative w-40 h-40 bg-blue-300 rounded-lg flex items-center justify-center cursor-pointer"
+                        onMouseEnter={() => setHoverVisibleee(true)}
+                        onMouseLeave={() => setHoverVisibleee(false)}
+                      ><div style={{ border: "gray 1px solid", padding: "9px", width: "200px", color: "grey" }}> <label style={{ fontSize: "15.5px" }}>
+                        Select Area of Interest:
+                      </label></div>
+                        <br />
+                        {hoverVisibleee && (
+                          <div className="absolute top-full mt-2 w-48 p-4 bg-gray-100 shadow-md rounded-lg" style={{
+                            border: " rgb(184, 180, 180) 1px solid", width: "270px", position: "relative"
+                            , bottom: "26px", boxShadow: "0 0 5px rgb(177, 177, 177)"
+                          }}>
+                            <label>
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                checked={filters.aoi.length === 0}
+                                onChange={(e) => handleAllCheckboxChange(e, "aoi")}
+                              />
+                              All
+                            </label>
+                            {aoiOptions.map((aoi) => (
+                              <div key={aoi}>
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  value={aoi}
+                                  checked={filters.aoi.includes(aoi)}
+                                  onChange={(e) => handleCheckboxChange(e, "aoi")}
+                                />{" "}
+                                {aoi}
+                              </div>
+                            ))}
+
+                            {showOtherAoi && (
+                              <input
+                                style={{
+                                  marginBottom: "10px",
+                                  padding: "8px",
+                                  width: "100%",
+                                  maxWidth: "300px",
+                                }}
+
+                                type="text"
+                                placeholder="Enter Area of Interest"
+                                onChange={(e) => handleInputChange(e, "otherAoi")}
+                              />
+                            )}
+                          </div>
+                        )}
                       </div>
-                    ))}
-                    {showOtherAoi && (
-                      <input
-                      style={{
-                        marginBottom: "10px",
-                        padding: "8px",
-                        width: "100%",
-                        maxWidth: "300px",
-                      }}
-                      
-                        type="text"
-                        placeholder="Enter Area of Interest"
-                        onChange={(e) => handleInputChange(e, "otherAoi")}
-                      />
-                    )}
-          </div>
-        )}
-      </div>
-    </div>
-                   
+                    </div>
+
                   </div>
                 </div>
-                <div
-                  className="lable1"
-                  style={{ left: "0px", bottom: "575px" }}
-                >
+                <div className="lable1" style={{ position: "relative", left: "0px", bottom: "-0.25px" }}>
                   <div>
-                    <label style={{ fontSize: "23px" }}>Languages:</label>
+                    <label htmlFor="languageInput" style={{ fontSize: "23px" }}>Languages:</label>
                     <input
+                      id="languageInput"
                       type="text"
-                      placeholder="Enter Language:"
+                      name="language"
+                      placeholder="Enter Language"
                       onChange={(e) => handleInputChange(e, "language")}
                       style={{
                         marginBottom: "10px",
                         padding: "8px",
                         width: "100%",
                         maxWidth: "300px",
+                        border: "1px solid #ccc",
+                        borderRadius: "5px"
                       }}
                     />
                   </div>
+                </div><div className="lable1">
+                  <div>
+                    <label htmlFor="placementSelect" style={{ fontSize: "23px" }}>
+                      Placement_Details:
+                    </label>
+                    <select
+                      id="placementSelect"
+                      name="placement"
+                      onChange={(e) => handleSelectChange(e, "placement")}
+                      style={{
+                        marginBottom: "10px",
+                        padding: "8px",
+                        width: "210px",
+                        maxWidth: "300px",
+                      }}
+                    >
+                      <option value="" disabled selected>
+                        Select :
+                      </option>
+                      <option value="">ANY</option>
+                      {placementOptions.map((hoa) => (
+                        <option key={hoa} value={hoa}>
+                          {hoa}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+
                 </div>
+                <div style={{ position: 'relative', left: '45px' }}>
+                  <label htmlFor="offertypeSelect" style={{ fontSize: "23px" }}>
+                    Select offertype:
+                  </label>
+                  <br />
+                  <select
+                    id="offertypeSelect"
+                    name="offertype"
+                    onChange={(e) => handleSelectChange(e, "offertype")}
+                    style={{
+                      marginBottom: "10px",
+                      padding: "8px",
+                      width: "210px",
+                      maxWidth: "300px",
+                    }}
+                  >
+                    <option value="" disabled selected>
+                      Select :
+                    </option>
+                    <option value="">ANY</option>
+                    {offertypeOptions.map((hoa) => (
+                      <option key={hoa} value={hoa}>
+                        {hoa}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
               </div>
               <div
                 className="filinner"
@@ -542,203 +677,243 @@ function Dashboard() {
                   <button
                     onClick={downloadExcel}
                     type="button"
-                    class=" "
                     className=" "
+
                     style={{
                       color: "white",
-                      border:"none",
+                      border: "none",
                       margin: "20px",
                       width: "120px",
-                      height:"40px",
-                      
+                      height: "40px",
+
                       position: "relative",
                       left: "1080px",
                       borderRadius: "30px",
                       bottom: "50px",
-                      backgroundColor:"green"
+                      backgroundColor: "green"
                     }}
                   >
                     {" "}
                     <i
-                      class="bi bi-file-earmark-excel"
+                      className="bi bi-file-earmark-excel"
                       style={{ marginRight: "10px" }}
                     ></i>
                     Excel
-                    <i class="bi bi-download" style={{ marginLeft: "5PX" }}></i>
+                    <i className="bi bi-download" style={{ marginLeft: "5PX" }}></i>
                   </button>
 
                   <div>
-                  <h4 className="mb-4">
-  Total Records: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color:"white" }}>{filteredStudents.flat().length}</span>
-</h4>
-                    <div
-                      style={{
-                        position: "relative",
-                        bottom: "60px",
-                        overflowY: "auto",
-                        maxHeight: "800px",
-                      }}
-                    >
-                         <div
-                        className="flex justify-right items-center gap-4 mt-4 "
-                        style={{ position: "relative", left: "800px",bottom:"20PX" }}
+                    <h4 className="mb-4">
+                      Total Records: <span style={{ backgroundColor: 'rgb(73, 73, 73)', padding: '2px 5px', borderRadius: '4px', color: "white" }}>{filteredStudents.flat().length}</span>
+                    </h4>
+                    {loading ? (
+                      <div >
+
+                        <Loading />
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          position: "relative",
+                          bottom: "60px",
+                          overflowY: "auto",
+                          maxHeight: "800px",
+                        }}
                       >
-                        <label>
-                          {" "}
-                          No of records per page:{" "}
+                        <div
+                          className="flex justify-right items-center gap-4 mt-4"
+                          style={{ position: "relative", left: "800px", bottom: "20px" }}
+                        >
+                          <label htmlFor="rowsPerPage">No of records per page:</label>
                           <input
                             type="number"
+                            id="rowsPerPage"
+                            name="rowsPerPage"
                             value={rowsPerPage}
                             onChange={handleRowsPerPageChange}
-                            style={{ width: "50px", padding: "5px",marginRight:"20PX" }}
+                            style={{ width: "50px", padding: "5px", marginRight: "20px" }}
                           />
-                        </label>
-                        <button
-                          onClick={() =>
-                            setCurrentPage((prev) => Math.max(prev - 1, 1))
-                          }
-                          className="btn"
-                          disabled={currentPage === 1}
-                        >
-                          <i class="bi bi-chevron-double-left"></i>
-                        </button>
 
-                        <span className="text-lg">
-                          Page {currentPage} of {totalPages}
-                        </span>
+                          <button
+                            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                            className="btn"
+                            disabled={currentPage === 1}
+                          >
+                            <i className="bi bi-chevron-double-left"></i>
+                          </button>
 
-                        <button
-                          onClick={() =>
-                            setCurrentPage((prev) =>
-                              Math.min(prev + 1, totalPages)
-                            )
-                          }
-                          className="btn"
-                          disabled={currentPage === totalPages}
-                        >
-                          <i class="bi bi-chevron-double-right arr"></i>
-                        </button>
-                      </div>
-                      <div>
-                        <table
-                          border="1"
-                          class="table table-striped  table-hover tabl"
-                          id="my-table"
-                          style={{
-                            position: "relative",
-                            left: "-0px",
-                            bottom: "0px",
-                          }}
-                        >
-                          <thead>
-                            <tr>
-                              <th scope="col">s.no</th>
-                              <th scope="col">REGISTRATION_NO</th>
-                              <th scope="col">NAME</th>
-                              <th scope="col">DEPARTMENT</th>
-                              <th scope="col">BATCH(YEAR)</th>
-                              <th scope="col">SSLC(%)</th>
-                              <th scope="col">HSC(%)</th>
-                              <th scope="col">Diploma(%)</th>
-                              <th scope="col">Sem 1</th>
-                              <th scope="col">Sem 2</th>
-                              <th scope="col">Sem 3</th>
-                              <th scope="col">Sem 4</th>
-                              <th scope="col">Sem 5</th>
-                              <th scope="col">Sem 6</th>
-                              <th scope="col">Sem 7</th>
-                              <th scope="col">Sem 8</th>
-                              <th scope="col">CGPA</th>
-                              <th scope="col">ARREARS</th>
-                              <th scope="col">HISTORY_OF_ARREARS</th>
-                              <th scope="col">ADDITIONAL_LANGUAGES</th>
-                              <th scope="col">INTERNSHIPS</th>
-                              <th scope="col">CERTIFICATIONS</th>
-                              <th scope="col">PATENTS/PUBLICATIONS</th>
-                              <th scope="col">AWARDS/ACHIEVMENTS</th>
-                              <th scope="col">AREA_OF_INTEREST</th>
-                              <th scope="col">PLACEMENT_INFO</th>
-                              <th>INFO</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {displayedData.map((item, index) => (
-                              <tr key="index">
-                                <td>{index + 1}</td>
-                                <td>{item["REGISTRATION_NUMBER"]}</td>
-                                <td>{item.NAME}</td>
-                                <td>{item.DEPARTMENT}</td>
-                                <td>{item.BATCH}</td>
-                                <td>{item.SSLC}</td>
-                                <td>{item.HSC}</td>
-                                <td>{item.HSC}</td>
-                                <td>{item.SEM1}</td>
-                                <td>{item.SEM2}</td>
-                                <td>{item.SEM3}</td>
-                                <td>{item.SEM4}</td>
-                                <td>{item.SEM5}</td>
-                                <td>{item.SEM6}</td>
-                                <td>{item.SEM7}</td>
-                                <td>{item.SEM8}</td>
-                                <td>{item.CPGA}</td>
-                                <td>{item.ARREARS}</td>
-                                <td>{item.HOA}</td>
-                                <td>{item.LANGUAGE}</td>
-                                <td>{item.INTERNSHIPS}</td>
-                                <td>{item.CERTIFICATIONS}</td>
-                                <td>{item.PATENTSPUBLICATIONS}</td>
-                                <td>{item.ACHEIVEMENTS}</td>
-                                <td>{item.AOI}</td>
-                                <td>{item.PLACEMENT}</td>
+                          <span className="text-lg">Page {currentPage} of {totalPages}</span>
+
+                          <button
+                            onClick={() =>
+                              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                            }
+                            className="btn"
+                            disabled={currentPage === totalPages}
+                          >
+                            <i className="bi bi-chevron-double-right arr"></i>
+                          </button>
+                        </div>
+
+                        <div>
+                          <table
+                            border="1"
+                            className="table table-striped table-hover tabl"
+                            id="my-table"
+                            style={{
+                              position: "relative",
+                              left: "0px",
+                              bottom: "0px",
+                              minWidth: "3900px",
+                            }}
+                          >
+                            <thead>
+                              <tr>
+                                <th scope="col">s.no</th>
+                                <th scope="col">REGISTRATION_NO</th>
+                                <th scope="col">NAME</th>
+                                <th scope="col">DEPARTMENT</th>
+                                <th scope="col">BATCH(YEAR)</th>
+                                <th scope="col">SSLC(%)</th>
+                                <th scope="col">HSC(%)</th>
+                                <th scope="col">Diploma(%)</th>
+                                <th scope="col">Sem 1</th>
+                                <th scope="col">Sem 2</th>
+                                <th scope="col">Sem 3</th>
+                                <th scope="col">Sem 4</th>
+                                <th scope="col">Sem 5</th>
+                                <th scope="col">Sem 6</th>
+                                <th scope="col">Sem 7</th>
+                                <th scope="col">Sem 8</th>
+                                <th scope="col">CGPA</th>
+                                <th scope="col">ARREARS</th>
+                                <th scope="col">HISTORY_OF_ARREARS</th>
+                                <th scope="col">ADDITIONAL_LANGUAGES</th>
+                                <th scope="col">INTERNSHIPS</th>
+                                <th scope="col">CERTIFICATIONS</th>
+                                <th scope="col">PATENTS</th>
+                                <th scope="col">PUBLICATIONS</th>
+                                <th scope="col">AWARDS/ACHIEVMENTS</th>
+                                <th scope="col">AREA_OF_INTEREST</th>
+                                <th scope="col">PLACEMENT_INFO</th>
+                                <th scope="col">OFFERS</th>
+
+                                <th>INFO</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {displayedData.map((item, index) => (
+                                <tr key={item.registration_number}>
+                                  <td>{index + 1}</td>
+                                  <td>{item.registration_number}</td>
+                                  <td>{item.name}</td>
+                                  <td>{item.department}</td>
+                                  <td>{item.batch}</td>
+                                  <td>{item.sslc}</td>
+                                  <td>{item.hsc}</td>
+                                  <td>{item.diploma}</td>
+                                  <td>{item.sem1}</td>
+                                  <td>{item.sem2}</td>
+                                  <td>{item.sem3}</td>
+                                  <td>{item.sem4}</td>
+                                  <td>{item.sem5}</td>
+                                  <td>{item.sem6}</td>
+                                  <td>{item.sem7}</td>
+                                  <td>{item.sem8}</td>
+                                  <td>{item.cgpa}</td>
+                                  <td>{item.arrears}</td>
+                                  <td>{item.hoa}</td>
+                                  <td>{item.language}</td>
+                                  <td>{item.internships}</td>
+                                  <td>{item.certifications}</td>
+                                  <td>{item.patents}</td>
+                                  <td>{item.publications}</td>
+                                  <td>{item.achievements}</td>
+                                  <td>{item.aoi}</td>
+                                  <td>{item.placement}</td>
+                                  <td>
+                                    {item.offers?.length > 0 ? (
+                                      item.offers.map((offer, idx) => (
+                                        <span
+
+                                        >
+                                          <i
+                                            className="bi bi-bookmark-check-fill"
+                                            style={{
+                                              color:
+                                                offer.offertype === "Elite"
+                                                  ? "#00bfff"
+                                                  : offer.offertype === "Superdream"
+                                                    ? "rgb(255, 215, 0)"
+                                                    : offer.offertype === "Dream"
+                                                      ? "#BCC6CC"
+                                                      : offer.offertype === "Fair"
+                                                        ? "rgb(205, 127, 50)"
+                                                        : "#d3d3d3",
+                                              marginRight: "5px",
+                                            }}
+                                          ></i>
+                                          {offer.offertype}
+                                        </span>
+                                      ))
+                                    ) : (
+                                      <span style={{ color: "red" }}>No Offers</span>
+                                    )}
+                                  </td>
+
+                                  <td>
+                                    <button
+                                      style={{
+                                        border: "none",
+                                        width: "50px",
+                                        fontSize: "20px",
+                                        borderRadius: "50%",
+                                        backgroundColor: "transparent",
+                                      }}
+                                      type="button"
+                                      data-bs-toggle="offcanvas"
+                                      data-bs-target="#offcanvasRight"
+                                      aria-controls="offcanvasRight"
+                                      onClick={() => handleClick(item)}
+                                    >
+                                      <i className="bi bi-info-circle"></i>
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                            <tfoot>
+                              <tr className="norec">
                                 <td>
-                                  <button
-                                    style={{
-                                      border: "none",
-                                      width: "50px",
-                                      fontSize: "20px",
-                                      borderRadius: "50%",
-                                      backgroundColor: "transparent",
-                                    }}
-                                    type="button"
-                                    data-bs-toggle="offcanvas"
-                                    data-bs-target="#offcanvasRight"
-                                    aria-controls="offcanvasRight"
-                                    onClick={() => handleClick(item)}
-                                  >
-                                    <i class="bi bi-info-circle"></i>
-                                  </button>
+                                  {filteredStudents.length === 0 && (
+                                    <h5 style={{ color: "red" }}>
+                                      <img src="/norec.png" alt="" />
+                                      No records found
+                                    </h5>
+                                  )}
                                 </td>
                               </tr>
-                            ))}
-                          </tbody>
-                          <tfoot>
-                            <tr className="norec">
-                              <td>
-                                {filteredStudents.length === 0 && (
-                                  <h5 style={{ color: "red" }}>
-                                    <img src="norec.png" alt="" />
-                                    No_records_found
-                                  </h5>
-                                )}
-                              </td>
-                            </tr>
-                          </tfoot>
-                        </table>
+                            </tfoot>
+                          </table>
+                        </div>
                       </div>
-                   
-                    </div>
+                    )}
+
 
                     {selectedData && (
                       <div
-                        class="offcanvas offcanvas-end"
-                        tabindex="-1"
+                        className="offcanvas offcanvas-end"
+
+
+                        tabIndex="-1"
+
                         id="offcanvasRight"
                         aria-labelledby="offcanvasRightLabel"
                         data-bs-backdrop="static"
-                        style={{ width: "700px",marginLeft:"1000px" }}
+                        style={{ width: "700px", marginLeft: "1000px" }}
                       >
                         <div
-                          class="offcanvas-header"
+                          className="offcanvas-header"
                           style={{
                             width: "100%",
                             height: "230px",
@@ -746,25 +921,42 @@ function Dashboard() {
                             backgroundColor: "rgb(245, 245, 245)",
                           }}
                         >
-                          <h5 class="offcanvas-title" id="offcanvasRightLabel">
-                            <FaUserCircle
-                              style={{
-                                width: "200px",
-                                height: "200px",
-                                color: "rgb(205, 205, 205)",
-                                position: "relative",
-                                top: "15px",
-                              }}
-                            />
-                            <h2
+                          <h5 className="offcanvas-title" id="offcanvasRightLabel">
+                            {profileImageUrl ? (
+                              <img
+                                src={profileImageUrl}
+                                alt="Profile"
+                                style={{
+                                  width: "200px",
+                                  height: "200px",
+                                  borderRadius: "50%",
+                                  objectFit: "cover",
+                                  position: "relative",
+                                  top: "15px",
+                                }}
+                              />
+                            ) : (
+                              <FaUserCircle
+                                style={{
+                                  width: "200px",
+                                  height: "200px",
+                                  color: "rgb(205, 205, 205)",
+                                  position: "relative",
+                                  top: "15px",
+                                }}
+                              />
+                            )}
+
+                            <p
                               style={{
                                 position: "relative",
                                 bottom: "100px",
                                 left: "240px",
+                                fontSize: '25px'
                               }}
                             >
-                              {selectedData.NAME}
-                            </h2>
+                              {selectedData.name}
+                            </p>
                           </h5>
                           <h5
                             style={{
@@ -773,10 +965,10 @@ function Dashboard() {
                               right: "-40px",
                             }}
                           >
-                            {selectedData.REGISTRATION_NUMBER}
+                            {selectedData.registration_number}
                           </h5>
                           <div
-                            class="ribbon1"
+                            className="ribbon1"
                             style={{
                               width: "400px",
                               position: "relative",
@@ -789,7 +981,7 @@ function Dashboard() {
                             <h3 style={{ width: "250px" }}>STUDENT PROFILE </h3>
                           </div>
                           <div
-                            class="btn-group"
+                            className="btn-group"
                             role="group"
                             style={{
                               position: "relative",
@@ -800,19 +992,19 @@ function Dashboard() {
                           >
                             <input
                               type="radio"
-                              class="btn-check"
+                              className="btn-check"
                               name="btnradio"
                               id="btnradio1"
-                              autocomplete="off"
+                              autoComplete="off"
                             />
                             <label
                               style={{
                                 backgroundColor: " rgba(57,102,172,255)",
                                 color: "white",
                               }}
-                              class="btn btn-outline-primary"
+                              className="btn btn-outline-primary"
                               onClick={closeDivs}
-                              for="btnradio1"
+                              htmlFor="btnradio1"
                             >
                               {" "}
                               1
@@ -820,19 +1012,19 @@ function Dashboard() {
 
                             <input
                               type="radio"
-                              class="btn-check bnt"
+                              className="btn-check bnt"
                               name="btnradio"
                               id="btnradio2"
-                              autocomplete="off"
+                              autoComplete="off"
                             />
                             <label
                               style={{
                                 backgroundColor: " rgba(57,102,172,255)",
                                 color: "white",
                               }}
-                              class="btn btn-outline-primary"
+                              className="btn btn-outline-primary"
                               onClick={handleButtonClick}
-                              for="btnradio2"
+                              htmlFor="btnradio2"
                             >
                               {" "}
                               2
@@ -840,38 +1032,38 @@ function Dashboard() {
 
                             <input
                               type="radio"
-                              class="btn-check bnt"
+                              className="btn-check bnt"
                               name="btnradio"
                               id="btnradio3"
-                              autocomplete="off"
+                              autoComplete="off"
                             />
                             <label
                               style={{
                                 backgroundColor: " rgba(57,102,172,255)",
                                 color: "white",
                               }}
-                              class="btn btn-outline-primary"
+                              className="btn btn-outline-primary"
                               onClick={handleButtonnClick}
-                              for="btnradio3"
+                              htmlFor="btnradio3"
                             >
                               {" "}
                               3
                             </label>
                             <input
                               type="radio"
-                              class="btn-check bnt"
+                              className="btn-check bnt"
                               name="btnradio"
-                              id="btnradio3"
-                              autocomplete="off"
+                              id="btnradio4"
+                              autoComplete="off"
                             />
                             <label
                               style={{
                                 backgroundColor: " rgba(57,102,172,255)",
                                 color: "white",
                               }}
-                              class="btn btn-outline-primary"
+                              className="btn btn-outline-primary"
                               onClick={handleButtonnnClick}
-                              for="btnradio3"
+                              htmlFor="btnradio4"
                             >
                               {" "}
                               4
@@ -880,7 +1072,7 @@ function Dashboard() {
 
                           <button
                             type="button"
-                            class=""
+                            className=""
                             data-bs-dismiss="offcanvas"
                             aria-label="Close"
                             style={{
@@ -895,11 +1087,11 @@ function Dashboard() {
                             <IoIosArrowBack />
                           </button>
                         </div>
-                        <div class="offcanvas-body offcanvasbody">
+                        <div className="offcanvas-body offcanvasbody">
                           <div id="canvasbody">
                             <div style={{ position: "relative", left: "40px" }}>
                               <ul
-                                class="nav"
+                                className="nav"
                                 style={{
                                   gap: "70px",
                                   fontSize: "20px",
@@ -907,7 +1099,7 @@ function Dashboard() {
                                 }}
                               >
                                 <li
-                                  class="nav-item"
+                                  className="nav-item"
                                   style={{
                                     borderBottom: "2px solid rgb(3, 44, 190)",
                                   }}
@@ -920,7 +1112,7 @@ function Dashboard() {
                                     onClick={closeDivs}
                                   >
                                     <a
-                                      class="nav-link active"
+
                                       href="#"
                                       className="acolor"
                                     >
@@ -929,7 +1121,7 @@ function Dashboard() {
                                   </button>
                                 </li>
                                 <li
-                                  class="nav-item"
+                                  className="nav-item"
                                   style={{
                                     borderBottom: "2px solid rgb(3, 44, 190)",
                                   }}
@@ -942,7 +1134,7 @@ function Dashboard() {
                                     onClick={handleButtonClick}
                                   >
                                     <a
-                                      class="nav-link active"
+
                                       href="#"
                                       className="acolor"
                                     >
@@ -951,7 +1143,7 @@ function Dashboard() {
                                   </button>
                                 </li>
                                 <li
-                                  class="nav-item"
+                                  className="nav-item"
                                   style={{
                                     borderBottom: "2px solid rgb(3, 44, 190)",
                                   }}
@@ -964,7 +1156,7 @@ function Dashboard() {
                                     onClick={handleButtonnClick}
                                   >
                                     <a
-                                      class="nav-link active"
+
                                       href="#"
                                       className="acolor"
                                     >
@@ -973,7 +1165,7 @@ function Dashboard() {
                                   </button>
                                 </li>
                                 <li
-                                  class="nav-item"
+                                  className="nav-item"
                                   style={{
                                     borderBottom: "2px solid rgb(3, 44, 190)",
                                   }}
@@ -986,7 +1178,7 @@ function Dashboard() {
                                     onClick={handleButtonnnClick}
                                   >
                                     <a
-                                      class="nav-link active"
+
                                       href="#"
                                       className="acolor"
                                     >
@@ -1008,9 +1200,9 @@ function Dashboard() {
                               >
                                 Basic Details
                               </h5>
-                              <button class="btn resume bnt">
+                              <button className="btn resume bnt">
                                 <a
-                                  href={selectedData.RESUME}
+                                  href={selectedData.resume}
                                   download="resume.pdf"
                                   style={{
                                     zIndex: "10",
@@ -1024,7 +1216,7 @@ function Dashboard() {
                                 >
                                   RESUME :{" "}
                                   <i
-                                    class="bi bi-download resdow"
+                                    className="bi bi-download resdow"
                                     style={{
                                       position: "relative",
                                       right: "-5PX",
@@ -1037,12 +1229,12 @@ function Dashboard() {
                                 <div className="bdemail bdbase mar">
                                   <p>
                                     <i
-                                      class="bi bi-envelope-at"
+                                      className="bi bi-envelope-at"
                                       style={{ marginRight: "10px" }}
                                     ></i>
                                     Email
                                   </p>
-                                  <h5 className="ul"> {selectedData.EMAIL}</h5>
+                                  <h5 className="ul"> {selectedData.email}</h5>
                                 </div>
                                 <div className="bdyear bdbase mar">
                                   <p>
@@ -1051,57 +1243,57 @@ function Dashboard() {
                                     />
                                     BATCH
                                   </p>
-                                  <h6 className="hsty ul">
-                                    {selectedData.BATCH}
+                                  <h6 className="hsty ul ulll">
+                                    {selectedData.batch}
                                   </h6>
                                 </div>
                                 <div className="bdcgpa bdbase mar">
                                   <p>
                                     <i
-                                      class="bi bi-bookmark-check"
+                                      className="bi bi-bookmark-check"
                                       style={{ marginRight: "10px" }}
                                     ></i>
                                     CGPA
                                   </p>
-                                  <h5 className="hsty ul">
-                                    {selectedData.CPGA}
+                                  <h5 className="hsty ul ">
+                                    {selectedData.cgpa}
                                   </h5>
                                 </div>
                                 <div className="bdph bdbase mar">
                                   <p>
                                     <i
-                                      class="bi bi-telephone"
+                                      className="bi bi-telephone"
                                       style={{ marginRight: "10px" }}
                                     ></i>
                                     Phone
                                   </p>
                                   <h5 className="ul">
                                     {" "}
-                                    {selectedData.PHONENO}
+                                    {selectedData.phoneno}
                                   </h5>
                                 </div>
                                 <div className="bddept bdbase mar">
                                   <p>
                                     <i
-                                      class="bi bi-building-down"
+                                      className="bi bi-building-down"
                                       style={{ marginRight: "10px" }}
                                     ></i>
                                     Department
                                   </p>
                                   <h5 className="hsty ul">
-                                    {selectedData.DEPARTMENT}
+                                    {selectedData.department}
                                   </h5>
                                 </div>
                                 <div className="bdarrear bdbase mar">
                                   <p>
                                     <i
-                                      class="bi bi-bookmark-dash"
+                                      className="bi bi-bookmark-dash"
                                       style={{ marginRight: "10px" }}
                                     ></i>
                                     Arrear
                                   </p>
                                   <h5 className="hsty ul">
-                                    {selectedData.ARREARS}
+                                    {selectedData.arrears}
                                   </h5>
                                 </div>
                                 <div className="bdaddress bdbase mar">
@@ -1113,7 +1305,7 @@ function Dashboard() {
                                   </p>
                                   <h5 className="ul">
                                     {" "}
-                                    {selectedData.ADDRESS}
+                                    {selectedData.address}
                                   </h5>
                                 </div>
                               </div>
@@ -1147,10 +1339,28 @@ function Dashboard() {
                                       <ul style={{ marginTop: "40px" }}>
                                         <li className="ul">
                                           <h5 style={{ margin: "10px" }}>
-                                            {selectedData.ACHEIVEMENTS}
+                                            {selectedData.achievements}
                                           </h5>{" "}
                                         </li>
                                       </ul>
+                                    </div>
+                                    <div
+                                      style={{
+                                        position: "relative",
+                                        top: "150px",
+                                      }}
+                                    >
+                                      <h6 className="hpatent">Publications:</h6>
+
+                                      <div>
+                                        <ul>
+                                          <li>
+                                            <h5 className="ul">
+                                              {selectedData.publications}
+                                            </h5>{" "}
+                                          </li>
+                                        </ul>
+                                      </div>
                                     </div>
                                   </div>
                                   <div className="rightproj2">
@@ -1159,7 +1369,7 @@ function Dashboard() {
                                       <ul style={{ marginTop: "40px" }}>
                                         <li className="ul">
                                           <h5 style={{ margin: "10px" }}>
-                                            {selectedData.CERTIFICATIONS}
+                                            {selectedData.certifications}
                                           </h5>{" "}
                                         </li>
                                       </ul>
@@ -1176,7 +1386,7 @@ function Dashboard() {
                                         <ul>
                                           <li>
                                             <h5 className="ul">
-                                              {selectedData.PATENTSPUBLICATIONS}
+                                              {selectedData.patents}
                                             </h5>{" "}
                                           </li>
                                         </ul>
@@ -1228,96 +1438,109 @@ function Dashboard() {
                                 <ul style={{ marginTop: "40px" }}>
                                   <li className="ul">
                                     <h5 style={{ marginTop: "30px" }}>
-                                      {selectedData.INTERNSHIPS}
+                                      {selectedData.internships}
                                     </h5>{" "}
                                   </li>
                                 </ul>
                               </div>
                             )}
-                      {showDivii && selectedData && (
-  <div
-    className="projectdata p-3"
-    style={{
-      backgroundColor: "#f9f9f9",
-      borderRadius: "10px",
-      overflowY: "auto", 
-      maxHeight: "80vh",
-      transition: "max-height 0.3s ease-in-out",
-    }}
-  >
-   
-    <div
-      className="projectitle d-flex justify-content-between align-items-center p-2"
-      style={{ backgroundColor: "#f5f5f5", borderRadius: "8px",width:"101%",position:"relative",bottom:"20px",right:"10px" }}
-    >
-      <h5 className="m-0">Placement Details</h5>
-      <button className="btn btn-sm " onClick={closeDivii}>
-        X
-      </button>
-    </div>
-    <br />
-    
-    <div style={{position:"relative",bottom:"30px"}}>
-    <h5 className="mx-3">Placement Status: {selectedData.PLACEMENT}</h5>
-    
+                            {showDivii && selectedData && (
+                              <div
+                                className="projectdata p-3"
+                                style={{
+                                  backgroundColor: "#f9f9f9",
+                                  borderRadius: "10px",
+                                  overflowY: "auto",
+                                  maxHeight: "80vh",
+                                  transition: "max-height 0.3s ease-in-out",
+                                }}
+                              >
 
-    {/* Transform the Offers Data */}
-    {(() => {
-      const offers = [];
-      Object.keys(selectedData).forEach((key) => {
-        if (key.startsWith("OFFERS/")) {
-          const index = key.split("/")[1]; // Extract offer index
-          const field = key.split("/")[2]; // Extract field name
+                                <div
+                                  className="projectitle d-flex justify-content-between align-items-center p-2"
+                                  style={{ backgroundColor: "#f5f5f5", borderRadius: "8px", width: "101%", position: "relative", bottom: "20px", right: "10px" }}
+                                >
+                                  <h5 className="m-0">Placement Details</h5>
+                                  <button className="btn btn-sm " onClick={closeDivii}>
+                                    X
+                                  </button>
+                                </div>
+                                <br />
 
-          if (!offers[index]) {
-            offers[index] = {}; // Initialize empty object
-          }
-          offers[index][field] = selectedData[key]; // Assign value
-        }
-      });
-      
-
-      return (
-        <>
-          {offers.length > 0 ? (
-            <div className="row mx-2 d-flex justify-content-center">
-              {offers.map((offer, index) => (
-                <div key={index} className="col-lg-4 col-md-6 mb-3">
-                  <div className="offer-details card p-2 border rounded shadow-sm ">
-                    <h5 className="card-title p-1 " style={{backgroundColor:"rgb(218, 216, 216)" ,width:"112.5%",position:"relative",bottom:"8px",right:"10px",borderTopLeftRadius:"5px",borderTopRightRadius:"5px"}}> {offer.OFFERNO}</h5>
-                    <h6><strong>Company:</strong> {offer.COMPDETAIL}</h6>
-                    <p><strong>Designation:</strong> {offer.DESIGNATION}</p>
-                    <p><strong>Package:</strong> {offer.PACKAGE}</p>
-                  <a href={offer.OFFER} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-sm">
-                      📄  Offer Letter
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="mx-3">No offers available.</p>
-          )}
-        </>
-      );
-    })()}
-   </div>
-  </div>
-)}
+                                <div style={{ position: "relative", bottom: "30px" }}>
+                                  <h5 className="mx-3">Placement Status: {selectedData.placement}</h5>
 
 
-                           
-                          </div>
+                                  {selectedData?.offers?.length > 0 ? (
+                                    <div className="row mx-2 d-flex justify-content-center">
+                                      {selectedData.offers.map((offer, index) => (
+                                        <div key={index} className="col-lg-4 col-md-6 mb-3">
+                                          <div className="offer-details card p-2 border rounded shadow-sm">
+                                            <h5
+                                              className="card-title p-1"
+                                              style={{
+                                                backgroundColor: "rgb(218, 216, 216)",
+                                                width: "112.5%",
+                                                position: "relative",
+                                                bottom: "8px",
+                                                right: "10px",
+                                                borderTopLeftRadius: "5px",
+                                                borderTopRightRadius: "5px",
+                                              }}
+                                            >
+                                              Offer {offer.offerno || index + 1}
+                                            </h5>
+                                            <h6>
+                                              <strong>Company:</strong> {offer.company || "N/A"}
+                                            </h6>
+                                            <p>
+                                              <strong>Designation:</strong> {offer.designation || "N/A"}
+                                            </p>
+                                            <p>
+                                              <strong>Package:</strong> {offer.package || "N/A"}
+                                            </p>
+                                            <p>
+                                              <strong>offertype:</strong> {offer.offertype || "N/A"}
+                                            </p>
+
+                                          </div>
+
+                                        </div>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <p className="mx-3">No offers available.</p>
+                                  )}
+                                  {selectedData.offerpdf ? (
+                                    <a
+                                      href={`${API_BASE_URL}/${selectedData.offerpdf}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="btn btn-primary btn-sm"
+                                    >
+                                  📄 Offer Letters
+                                </a>
+                                ) : (
+                                <p className="text-muted">No offer letter available.</p>
+                                  )}
+
+                              </div>
+                              </div>
+                            )}
+
+
+
                         </div>
                       </div>
+                      </div>
                     )}
-                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div >
     </>
   );
 }

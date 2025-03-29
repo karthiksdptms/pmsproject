@@ -5,7 +5,7 @@
    body {
     overflow-y: scroll;
     position: relative;
-    z-index: 2; /* Higher z-index for scrollbar */
+    z-index: 2;
   }
   
    .topbar{
@@ -18,10 +18,16 @@
        z-index: 101;
        img{
            height: 80px;
+           width: 233.9px;
+        
+           object-fit: cover; 
+           
+           display: block;
 
        }
       
    }
+  
    .placementword{
    position: relative;
    left: 370px;
@@ -34,10 +40,20 @@
        height: 50px;
        background-color:white;
        position: relative;
-       left: 320px;
+       left: 300px;
        border-radius: 100px;
        top: 10px;
    }
+   
+   .profile1{
+    width: 50px;
+    height: 50px;
+    background-color:white;
+    position: relative;
+    left: 320px;
+    border-radius: 100px;
+    top: 10px;
+}
    .admin{
        color:white;
        position: relative;
@@ -48,7 +64,7 @@
    .user1{
        font-size: 30px;
        position: relative;
-       bottom: 13px;
+       bottom: 15px;
        left: 10px;
    }
    .filterbox{
@@ -243,4 +259,7 @@ button{
     border-width: 0.8px;
     text-align: left;
     overflow-x: hidden;
+}
+.bgg{
+    background-color: #3c6db9  ; 
 }

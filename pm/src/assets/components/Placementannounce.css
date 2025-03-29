@@ -1,201 +1,112 @@
-.trcontainer{
-    position: relative;
-   top: 40px;
-   left: 250px;
-    
-    width: 1200px;
+
+body{
+  background-color: rgb(247, 247, 247);
 }
-.trainingflex{
-    box-shadow:1px 1px 5px #d1d1d1,
-    1px 1px 10px #d1d1d1,
-     1px 1px 15px #d1d1d1,
-     1px 1px 20px #d1d1d1;
+
+.placement-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+  }
+  
+
+  .header {
     display: flex;
-    flex-wrap: wrap;
-   gap: 35px;
-    
-    margin: 20px;
-    padding: 40px;
-    width: 103%;
-    border-radius: 10px;
-    border-radius: 30px;
-}
-.compdimen{
-    box-shadow:1px 1px 5px #d1d1d1,
-    1px 1px 10px #d1d1d1,
-     1px 1px 15px #d1d1d1,
-     1px 1px 20px #d1d1d1;
-    display: flex;
-    flex-wrap: wrap;
-    width: 360px;
-    height: 210px;
- 
-   
-}
-/* width:300px;
-height:100px;
-background-color: red; */
-
-.compdes{
-    width:200px;
-    height:130px;
-    border-radius:50%;
-    
-    transform: rotate(135deg);
-    position: relative;
-    right: 53px;
-    bottom: 20px;
-   
-}
-.compdesign2{
-    width:150px;
-    height:110px;
-    border-radius:50%;
-   
-    position: absolute;
-    left: 26px;
-    top: 22px;
-
-}
-.compdesign3{
-    width:120px;
-    height:90px;
-    border-radius:50%;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
   
-    position: absolute;
-    left: 17px;
-    top: 22px;
-
-}
-.compdes1{
-    width:200px;
-    height:130px;
-    border-radius:50%;
+  .back-button {
+    border: none;
+    font-size: 30px;
+    color: #333;
+    background: none;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+  }
   
-    transform: rotate(314.5deg);
-    position: relative;
-    right: -160px;
-    bottom: 30px;
-   
-}
-.compdesign21{
-    width:150px;
-    height:110px;
-    border-radius:50%;
+  .back-button:hover {
+    transform: scale(1.1);
+  }
   
-   
-    position: absolute;
-    left: 26px;
-    top: 22px;
-
-}
-.compdesign31{
-    width:120px;
-    height:90px;
-    border-radius:50%;
-   
-   
-    position: absolute;
-    left: 17px;
-    top: 22px;
-
-}
-.cname{
-    box-shadow:1px 1px 5px #d1d1d1,
-    1px 1px 10px #d1d1d1,
-     1px 1px 15px #d1d1d1,
-     1px 1px 20px #d1d1d1;
-    background-color: rgb(255, 255, 255);
-    width: 190px;
-    font-weight: 800;
-    position: relative;
-    bottom: 210px;
-    padding: 10px;
-    left: 85px;
-}
-.wavee{
-    position: relative;
-    top: px;
-    width: 400px;
-    right: px;
-    opacity: 40%;
-}
-.wavfil{
- 
-    width: 400PX; height: 80px;
-    background-color:   rgba(57,102,172,255);
-    position: relative;
-    
-   
-}
-.wavee2{
-    position: relative;
-    opacity: 60%;
-    top: -110px;
-    width: 400px;
-    right: px;}
-    .wavee3{
-        position: relative;
-        opacity: 90%;
-        top: -190px;
-        width: 400px;
-        right: px;}
-        .bg{
-            background-color: #d1d1d1;
-            width: 70%;
-            margin: 40px;
-            position: relative;
-            top: -60px;
-            left: 200px;
-
-        }
-        .bg1{
-            margin: 10px;
-            background-color: beige;
-            width: 90%;
-            height: 200px;
-            margin-bottom: 5px;
-        }
-        .HH{
-            padding:10px;
-        }
-.generalouter{
-    background-color: blueviolet;
-    width: 100%;
-}
-.ic{
-   position: relative;
-}
-.skills{
-    position: relative;
-    bottom: 20px;
-}
-
-
-.container {
-   
+  .title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #222;
+  }
+  
+  /* Companies Grid */
+  .companies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
-    position: relative;
-    bottom:60px;
-    margin: 50px auto;
   }
   
-  .text-area {
-    max-height: 150px;
-    width: 100%;
-    height: 150px;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    resize: vertical; /* Allow resizing vertically */
-    overflow-y: auto; /* Enable vertical scroll when content overflows */
+  /* Company Card */
+  .company-card {
+    background: rgb(162, 160, 160);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
   }
-  .filterboxes1{
-    display: flex;
-    flex-wrap: wrap;
-   position: relative;
-   right:20px;
-   top: -60px;
-   width: 1500px;
+  
+  .company-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .company-logo {
+    width: 80px;
+    height: auto;
+    margin-bottom: 15px;
+  }
+  
+  .company-name {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .company-description {
+    font-size: 14px;
+    color: #666;
+  }
+
+  .offcanvas.offcanvas-center {
+    width: 80vw !important; 
+    max-width: 1200px; 
+  }
+  /* Full-screen loading overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(63, 63, 63, 0.8);
+  z-index: 1050;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+/* Spinner and text container */
+.spinner-container {
+  text-align: center;
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Spinner animation */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+/* Optional styles to enhance UI */
